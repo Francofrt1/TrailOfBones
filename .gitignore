@@ -74,3 +74,6 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 MMD4Mecanim/
+.vscode/extensions.json
+.vscode/launch.json
+.vscode/settings.json
