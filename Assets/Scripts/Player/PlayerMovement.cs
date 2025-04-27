@@ -13,18 +13,20 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float jumpForce = 7f;
     [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private Transform groundCheck;
-    [SerializeField] private float groundCheckRadius = 0.2f;
 
-    private float mouseSensitivityX = 2f;
-    private float currentRotation = 0f;
+    private Transform cameraPivot;
+    private float currentYRotation = 0f;
+    private Collider groundCollider;
 
     private bool isGrounded;
+    private bool isJumping;
 
     private void Awake()
     {
         inputActions = new PlayerInputActions();
         rb = GetComponent<Rigidbody>();
+        cameraPivot = GameObject.Find("CameraPivot").transform;
+        groundCollider = GameObject.Find("GroundCheck").GetComponent<Collider>();
     }
 
     private void OnEnable()
@@ -50,16 +52,21 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnJump(InputAction.CallbackContext context)
     {
-        if (IsGrounded())
+        if (isGrounded)
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            isJumping = true;
         }
+    }
+
+    private void Update()
+    {
+        ManageRotation();
     }
 
     private void FixedUpdate()
     {
         PerformMovement();
-        ManageRotation();
     }
 
     private void PerformMovement()
@@ -74,17 +81,33 @@ public class PlayerMovement : MonoBehaviour
         rb.velocity = move;
     }
 
-    private bool IsGrounded()
+    private void OnTriggerEnter(Collider collision)
     {
-        return Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundLayer);
+        if (IsGroundLayer(collision.gameObject))
+        {
+            isGrounded = true;
+            isJumping = false;
+        }
+    }
+
+    private void OnTriggerExit(Collider collision)
+    {
+        if (IsGroundLayer(collision.gameObject))
+        {
+            isGrounded = false;
+        }
+    }
+
+    private bool IsGroundLayer(GameObject obj)
+    {
+        // Chequea la layer por bits (mas eficiente que el tag)
+        return (groundLayer.value & (1 << obj.layer)) != 0;
     }
 
     private void ManageRotation()
     {
-        float mouseInputX = Input.GetAxis("Mouse X") * mouseSensitivityX;
+        currentYRotation = cameraPivot.rotation.eulerAngles.y;
 
-        currentRotation += mouseInputX;
-
-        transform.rotation = Quaternion.Euler(0, currentRotation, 0);
+        transform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
     }
 }
