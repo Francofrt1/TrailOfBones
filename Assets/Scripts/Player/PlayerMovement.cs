@@ -4,43 +4,56 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(PlayerInput))]
 public class PlayerMovement : MonoBehaviour
 {
-    PlayerInputActions inputActions;
+    private InputActionAsset inputActions;
+    private InputAction moveAction;
+    private InputAction jumpAction;
+    
     Vector2 movementInput;
     Rigidbody rb;
 
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float jumpForce = 7f;
     [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private Transform groundCheck;
-    [SerializeField] private float groundCheckRadius = 0.2f;
 
-    private float mouseSensitivityX = 2f;
-    private float currentRotation = 0f;
+    private Transform cameraPivot;
+    private float currentYRotation = 0f;
+    private Collider groundCollider;
 
     private bool isGrounded;
+    private bool isJumping;
 
     private void Awake()
     {
-        inputActions = new PlayerInputActions();
         rb = GetComponent<Rigidbody>();
+        cameraPivot = GameObject.Find("CameraPivot").transform;
+        groundCollider = GameObject.Find("GroundCheck").GetComponent<Collider>();
+        
+        var playerInput = GetComponent<PlayerInput>();
+        inputActions = playerInput.actions;
+        
+        moveAction = inputActions.FindAction("Player/Move");
+        jumpAction = inputActions.FindAction("Player/Jump");
     }
 
     private void OnEnable()
     {
-        inputActions.Player.Enable();
-        inputActions.Player.Move.performed += OnMove;
-        inputActions.Player.Move.canceled += OnMove;
-        inputActions.Player.Jump.performed += OnJump;
+        moveAction.performed += OnMove;
+        moveAction.canceled += OnMove;
+        jumpAction.performed += OnJump;
+        moveAction.Enable();
+        jumpAction.Enable();
     }
 
     private void OnDisable()
     {
-        inputActions.Player.Move.performed -= OnMove;
-        inputActions.Player.Move.canceled -= OnMove;
-        inputActions.Player.Jump.performed -= OnJump;
-        inputActions.Player.Disable();
+        moveAction.performed -= OnMove;
+        moveAction.canceled -= OnMove;
+        jumpAction.performed -= OnJump;
+        moveAction.Disable();
+        jumpAction.Disable();
     }
 
     private void OnMove(InputAction.CallbackContext context)
@@ -50,41 +63,60 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnJump(InputAction.CallbackContext context)
     {
-        if (IsGrounded())
+        if (isGrounded)
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            isJumping = true;
         }
+    }
+
+    private void Update()
+    {
+        ManageRotation();
+        if (!isJumping && !isGrounded) {} //animación de caída
     }
 
     private void FixedUpdate()
     {
         PerformMovement();
-        ManageRotation();
     }
 
     private void PerformMovement()
     {
         Vector3 moveDirection = new Vector3(movementInput.x, 0f, movementInput.y);
 
-        // Transforma el movimiento local a global (según la rotación del jugador)
-        Vector3 move = transform.TransformDirection(moveDirection) * moveSpeed;
+        Vector3 move = transform.TransformDirection(moveDirection) * moveSpeed; // Transforma el movimiento local a global (según la rotación del jugador)
 
         move.y = rb.velocity.y;
 
         rb.velocity = move;
     }
 
-    private bool IsGrounded()
+    private void OnTriggerEnter(Collider collision)
     {
-        return Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundLayer);
+        if (IsGroundLayer(collision.gameObject))
+        {
+            isGrounded = true;
+            isJumping = false;
+        }
+    }
+
+    private void OnTriggerExit(Collider collision)
+    {
+        if (IsGroundLayer(collision.gameObject))
+        {
+            isGrounded = false;
+        }
+    }
+
+    private bool IsGroundLayer(GameObject obj)
+    {
+        return (groundLayer.value & (1 << obj.layer)) != 0; // Chequea la layer por bits (mas eficiente que el tag)
     }
 
     private void ManageRotation()
     {
-        float mouseInputX = Input.GetAxis("Mouse X") * mouseSensitivityX;
-
-        currentRotation += mouseInputX;
-
-        transform.rotation = Quaternion.Euler(0, currentRotation, 0);
+        currentYRotation = cameraPivot.rotation.eulerAngles.y;
+        transform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
     }
 }
