@@ -4,9 +4,13 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(PlayerInput))]
 public class PlayerMovement : MonoBehaviour
 {
-    PlayerInputActions inputActions;
+    private InputActionAsset inputActions;
+    private InputAction moveAction;
+    private InputAction jumpAction;
+    
     Vector2 movementInput;
     Rigidbody rb;
 
@@ -23,26 +27,33 @@ public class PlayerMovement : MonoBehaviour
 
     private void Awake()
     {
-        inputActions = new PlayerInputActions();
         rb = GetComponent<Rigidbody>();
         cameraPivot = GameObject.Find("CameraPivot").transform;
         groundCollider = GameObject.Find("GroundCheck").GetComponent<Collider>();
+        
+        var playerInput = GetComponent<PlayerInput>();
+        inputActions = playerInput.actions;
+        
+        moveAction = inputActions.FindAction("Player/Move");
+        jumpAction = inputActions.FindAction("Player/Jump");
     }
 
     private void OnEnable()
     {
-        inputActions.Player.Enable();
-        inputActions.Player.Move.performed += OnMove;
-        inputActions.Player.Move.canceled += OnMove;
-        inputActions.Player.Jump.performed += OnJump;
+        moveAction.performed += OnMove;
+        moveAction.canceled += OnMove;
+        jumpAction.performed += OnJump;
+        moveAction.Enable();
+        jumpAction.Enable();
     }
 
     private void OnDisable()
     {
-        inputActions.Player.Move.performed -= OnMove;
-        inputActions.Player.Move.canceled -= OnMove;
-        inputActions.Player.Jump.performed -= OnJump;
-        inputActions.Player.Disable();
+        moveAction.performed -= OnMove;
+        moveAction.canceled -= OnMove;
+        jumpAction.performed -= OnJump;
+        moveAction.Disable();
+        jumpAction.Disable();
     }
 
     private void OnMove(InputAction.CallbackContext context)
@@ -62,6 +73,7 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         ManageRotation();
+        if (!isJumping && !isGrounded) {} //animación de caída
     }
 
     private void FixedUpdate()
@@ -73,8 +85,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector3 moveDirection = new Vector3(movementInput.x, 0f, movementInput.y);
 
-        // Transforma el movimiento local a global (según la rotación del jugador)
-        Vector3 move = transform.TransformDirection(moveDirection) * moveSpeed;
+        Vector3 move = transform.TransformDirection(moveDirection) * moveSpeed; // Transforma el movimiento local a global (según la rotación del jugador)
 
         move.y = rb.velocity.y;
 
@@ -100,14 +111,12 @@ public class PlayerMovement : MonoBehaviour
 
     private bool IsGroundLayer(GameObject obj)
     {
-        // Chequea la layer por bits (mas eficiente que el tag)
-        return (groundLayer.value & (1 << obj.layer)) != 0;
+        return (groundLayer.value & (1 << obj.layer)) != 0; // Chequea la layer por bits (mas eficiente que el tag)
     }
 
     private void ManageRotation()
     {
         currentYRotation = cameraPivot.rotation.eulerAngles.y;
-
         transform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
     }
 }
