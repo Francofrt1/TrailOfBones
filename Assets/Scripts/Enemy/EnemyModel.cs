@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 
-public class EnemyModel
+public class EnemyModel : MonoBehaviour
 {
     public int maxHealth { get; private set; }
     public int currentHealth { get; private set; }

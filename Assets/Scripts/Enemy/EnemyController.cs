@@ -21,7 +21,7 @@ public class EnemyController : MonoBehaviour
     {
         // finds players and target on the scene
         players = GameObject.FindObjectsOfType<MovementTest>();
-        defendableObject = GameObject.Find("DefendableObject");
+        defendableObject = GameObject.Find("DefendableObject"); 
 
         // gets navigation and view components
         agent = GetComponent<NavMeshAgent>();
