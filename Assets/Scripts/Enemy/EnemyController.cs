@@ -8,7 +8,7 @@ public class EnemyController : MonoBehaviour
 {
     // References to the current target, player list, and defendable object
     public GameObject targetObject { get; private set; }
-    public PlayerController[] players { get; private set; }
+    public List<PlayerController> players { get; private set; }
     public GameObject defendableObject { get; private set; }
 
     // Component and logic references
@@ -20,8 +20,8 @@ public class EnemyController : MonoBehaviour
     void Start()
     {
         // finds players and target on the scene
-        players = FindObjectsOfType<PlayerController>();
-        defendableObject = GameObject.Find("DefendableObject");
+        players = GameObject.FindGameObjectsWithTag("Player").Select(x => x.GetComponent<PlayerController>()).ToList();
+        defendableObject = GameObject.Find("Wheelcart");
 
         // gets navigation and view components
         agent = GetComponent<NavMeshAgent>();

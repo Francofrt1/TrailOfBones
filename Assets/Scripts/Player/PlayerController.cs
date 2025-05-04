@@ -26,7 +26,8 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        cameraPivot = GameObject.Find("CameraPivot").transform;
+        GameObject camera = GameObject.Find("CameraPivot");
+        cameraPivot = camera != null ? camera.transform : this.transform;
         
         inputHandler = GetComponent<InputHandler>();
         playerModel = GetComponent<PlayerModel>();
@@ -120,12 +121,12 @@ public class PlayerController : MonoBehaviour
 
     public int GetEnemyCount()
     {
-        return playerModel.enemies.Count;
+        return this.playerModel.enemies.Count;
     }
 
     public void AddEnemy(GameObject newEnemy)
     {
-        playerModel.enemies.Add(newEnemy);
+        this.playerModel.enemies.Add(newEnemy);
     }
 
     public void Attack()

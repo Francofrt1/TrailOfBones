@@ -11,6 +11,10 @@ public class PlayerModel : MonoBehaviour
     public int currentShield { get; private set; } = 0;
     public List<GameObject> enemies { get; set; }
 
+    private void Awake()
+    {
+        enemies = new List<GameObject>();
+    }
     private void Start()
     {
         currentHealth = maxHealth;
