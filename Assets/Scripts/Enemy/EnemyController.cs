@@ -8,7 +8,7 @@ public class EnemyController : MonoBehaviour
 {
     // References to the current target, player list, and defendable object
     public GameObject targetObject { get; private set; }
-    public MovementTest[] players { get; private set; }
+    public List<PlayerController> players { get; private set; }
     public GameObject defendableObject { get; private set; }
 
     // Component and logic references
@@ -20,8 +20,8 @@ public class EnemyController : MonoBehaviour
     void Start()
     {
         // finds players and target on the scene
-        players = GameObject.FindObjectsOfType<MovementTest>();
-        defendableObject = GameObject.Find("DefendableObject"); 
+        players = GameObject.FindGameObjectsWithTag("Player").Select(x => x.GetComponent<PlayerController>()).ToList();
+        defendableObject = GameObject.Find("Wheelcart");
 
         // gets navigation and view components
         agent = GetComponent<NavMeshAgent>();
@@ -41,7 +41,7 @@ public class EnemyController : MonoBehaviour
         // check if any player can receive more enemies
         if (players.Any(p => p.GetEnemyCount() < 2))
         {
-            MovementTest player = players.First(p => p.GetEnemyCount() < 2);
+            PlayerController player = players.First(p => p.GetEnemyCount() < 2);
             player.AddEnemy(gameObject);
             targetObject = player.gameObject;
             inPlayer = true;
@@ -72,7 +72,7 @@ public class EnemyController : MonoBehaviour
         view.SetAttackAnimation();
 
         // check if it's attacking the player
-        MovementTest player = targetObject.GetComponent<MovementTest>();
+        PlayerController player = targetObject.GetComponent<PlayerController>();
         if (player != null)
         {
             Debug.Log($"Dealt {model.attackDamage} damage to player {player.name}");

@@ -14,10 +14,10 @@ public class Health : PowerUp
 
     public override void Activate(GameObject player)
     {
-        var stats = player.GetComponent<PlayerStats>();
+        var stats = player.GetComponent<PlayerModel>();
         if (stats != null)
         {
-            stats.Heal(healAmount);
+            stats.SetHealth(healAmount);
             Debug.Log("Health PowerUp applied");
         }
 
@@ -31,10 +31,10 @@ public class AttackSpeed : PowerUp
 
     public override void Activate(GameObject player)
     {
-        var stats = player.GetComponent<PlayerStats>();
+        var stats = player.GetComponent<PlayerModel>();
         if (stats != null)
         {
-            stats.ModifyAttackSpeed(multiplier, duration);
+            stats.SetAttackSpeed(multiplier, duration);
             Debug.Log("Attack Speed PowerUp applied");
         }
 
@@ -48,10 +48,10 @@ public class Shield : PowerUp
 
     public override void Activate(GameObject player)
     {
-        var stats = player.GetComponent<PlayerStats>();
+        var stats = player.GetComponent<PlayerModel>();
         if (stats != null)
         {
-            stats.AddShield(shieldAmount, duration);
+            stats.SetShield(shieldAmount, duration);
             Debug.Log("Shield PowerUp applied");
         }
 

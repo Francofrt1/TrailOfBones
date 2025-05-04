@@ -7,7 +7,7 @@ public class WheelcartModel
     
     public WheelcartModel()
     {
-        speed = 0.5f;
+        speed = 2f;
         maxHealth = 100;
         currentHealth = 100;
     }

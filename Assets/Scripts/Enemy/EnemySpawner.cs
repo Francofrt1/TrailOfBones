@@ -50,7 +50,7 @@ public class EnemySpawner : MonoBehaviour
             Vector3 randomPos = transform.position + Random.insideUnitSphere * spawnRadius;
             randomPos.y = transform.position.y; //Keeps enemies on same Y axis
 
-            Instantiate(enemyPrefab, transform.position, Quaternion.identity);
+            Instantiate(enemyPrefab, randomPos, Quaternion.identity);
         }
     }
 
