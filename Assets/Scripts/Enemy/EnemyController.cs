@@ -8,7 +8,7 @@ public class EnemyController : MonoBehaviour
 {
     // References to the current target, player list, and defendable object
     public GameObject targetObject { get; private set; }
-    public MovementTest[] players { get; private set; }
+    public PlayerController[] players { get; private set; }
     public GameObject defendableObject { get; private set; }
 
     // Component and logic references
@@ -20,7 +20,7 @@ public class EnemyController : MonoBehaviour
     void Start()
     {
         // finds players and target on the scene
-        players = GameObject.FindObjectsOfType<MovementTest>();
+        players = FindObjectsOfType<PlayerController>();
         defendableObject = GameObject.Find("DefendableObject");
 
         // gets navigation and view components
@@ -41,7 +41,7 @@ public class EnemyController : MonoBehaviour
         // check if any player can receive more enemies
         if (players.Any(p => p.GetEnemyCount() < 2))
         {
-            MovementTest player = players.First(p => p.GetEnemyCount() < 2);
+            PlayerController player = players.First(p => p.GetEnemyCount() < 2);
             player.AddEnemy(gameObject);
             targetObject = player.gameObject;
             inPlayer = true;

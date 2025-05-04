@@ -3,6 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerModel))]
 [RequireComponent(typeof(PlayerView))]
+[RequireComponent(typeof(InputHandler))]
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody rb;
@@ -15,7 +16,6 @@ public class PlayerController : MonoBehaviour
 
     private Transform cameraPivot;
     private float currentYRotation = 0f;
-    private Collider groundCollider;
 
     private bool isGrounded;
     private bool isJumping;
@@ -27,7 +27,6 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         cameraPivot = GameObject.Find("CameraPivot").transform;
-        groundCollider = GameObject.Find("GroundCheck").GetComponent<Collider>();
         
         inputHandler = GetComponent<InputHandler>();
         playerModel = GetComponent<PlayerModel>();
@@ -36,22 +35,16 @@ public class PlayerController : MonoBehaviour
 
     private void OnEnable()
     {
-        if (inputHandler != null)
-        {
-            inputHandler.OnMovePerformed += OnMovePerformed;
-            inputHandler.OnMoveCanceled += OnMoveCanceled;
-            inputHandler.OnJumpPerformed += OnJumpPerformed;
-        }
+        inputHandler.OnMovePerformed += OnMovePerformed;
+        inputHandler.OnMoveCanceled += OnMoveCanceled;
+        inputHandler.OnJumpPerformed += OnJumpPerformed;
     }
 
     private void OnDisable()
     {
-        if (inputHandler != null)
-        {
-            inputHandler.OnMovePerformed -= OnMovePerformed;
-            inputHandler.OnMoveCanceled -= OnMoveCanceled;
-            inputHandler.OnJumpPerformed -= OnJumpPerformed;
-        }
+        inputHandler.OnMovePerformed -= OnMovePerformed;
+        inputHandler.OnMoveCanceled -= OnMoveCanceled;
+        inputHandler.OnJumpPerformed -= OnJumpPerformed;
     }
 
     private void OnMovePerformed(Vector2 direction)
