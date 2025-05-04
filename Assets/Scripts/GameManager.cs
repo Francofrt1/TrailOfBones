@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
 
     public event Action<bool> OnGamePaused;
     public event Action OnWinScreen;
-    public event Action OnLooseScreen;
+    public event Action OnLoseScreen;
 
     private SplineAnimate wheelcartSpline;
     private WheelcartController wheelcart;
@@ -92,7 +92,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0f;
 
         SetCursorState(true);
-        OnLooseScreen?.Invoke();
+        OnLoseScreen?.Invoke();
 
         Debug.Log("Fin de la partida, perdiste");   // Y ac� la de volver al men� o reempezar?
     }
@@ -121,10 +121,13 @@ public class GameManager : MonoBehaviour
         if (gamePaused ^ value) {TogglePause();}
     }
 
-    public void RestartGame()   // No funciona jaja
+    public void StartGame()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
+        SetCursorState(false);
+        SceneManager.LoadScene("MainLevel",LoadSceneMode.Single);
+        SetPauseGame(false);
     }
 
     public void SetCursorState(bool value)

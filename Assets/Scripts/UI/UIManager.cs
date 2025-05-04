@@ -24,7 +24,7 @@ public class UIManager : MonoBehaviour
 
         GameManager.Instance.OnGamePaused += PauseMenuVisibility;
         GameManager.Instance.OnWinScreen += WinScreenShow;
-        GameManager.Instance.OnLooseScreen += LooseScreenShow;
+        GameManager.Instance.OnLoseScreen += LoseScreenShow;
 
         pauseMenu.SetActive(false);
         winScreen.SetActive(false);
@@ -40,7 +40,7 @@ public class UIManager : MonoBehaviour
     {
         GameManager.Instance.OnGamePaused -= PauseMenuVisibility;
         GameManager.Instance.OnWinScreen -= WinScreenShow;
-        GameManager.Instance.OnLooseScreen -= LooseScreenShow;
+        GameManager.Instance.OnLoseScreen -= LoseScreenShow;
     }
 
     private void PauseMenuVisibility(bool value)
@@ -62,7 +62,7 @@ public class UIManager : MonoBehaviour
         winScreen.SetActive(true);
     }
 
-    private void LooseScreenShow()
+    private void LoseScreenShow()
     {
         if (looseScreen == null) return;
 
