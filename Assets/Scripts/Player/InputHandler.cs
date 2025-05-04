@@ -8,7 +8,7 @@ public class InputHandler : MonoBehaviour
     public event Action<Vector2> OnMovePerformed;
     public event Action<Vector2> OnMoveCanceled;
     public event Action OnJumpPerformed;
-    public event Action OnPauseTooglePerformed;
+    public event Action OnPauseTogglePerformed;
 
     private InputActionAsset inputActions;
     private InputAction moveAction;
@@ -19,7 +19,7 @@ public class InputHandler : MonoBehaviour
     {
         var playerInput = GetComponent<PlayerInput>();
         inputActions = playerInput.actions;
-        
+
         moveAction = inputActions.FindAction("Player/Move");
         jumpAction = inputActions.FindAction("Player/Jump");
         pauseAction = inputActions.FindAction("UI/Pause");
@@ -31,7 +31,7 @@ public class InputHandler : MonoBehaviour
         moveAction.canceled += HandleMove;
         jumpAction.performed += HandleJump;
         pauseAction.performed += HandlePause;
-        
+
         moveAction.Enable();
         jumpAction.Enable();
         pauseAction.Enable();
@@ -43,7 +43,7 @@ public class InputHandler : MonoBehaviour
         moveAction.canceled -= HandleMove;
         jumpAction.performed -= HandleJump;
         pauseAction.performed -= HandlePause;
-        
+
         moveAction.Disable();
         jumpAction.Disable();
         pauseAction.Disable();
@@ -52,7 +52,7 @@ public class InputHandler : MonoBehaviour
     private void HandleMove(InputAction.CallbackContext context)
     {
         Vector2 inputValue = context.ReadValue<Vector2>();
-        
+
         if (context.phase == InputActionPhase.Performed)
         {
             OnMovePerformed?.Invoke(inputValue);
@@ -75,8 +75,7 @@ public class InputHandler : MonoBehaviour
     {
         if (context.performed)
         {
-            OnPauseTooglePerformed?.Invoke();
-            print("Pause button pressed.");
+            OnPauseTogglePerformed?.Invoke();
         }
     }
 
