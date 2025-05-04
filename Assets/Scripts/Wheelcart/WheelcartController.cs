@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,7 +7,9 @@ using UnityEngine.Splines;
 public class WheelcartController : MonoBehaviour
 {
     private WheelcartModel wheelcart;
-    private SplineAnimate splineAnimate;
+    public SplineAnimate splineAnimate;
+
+    public event Action OnWheelcartDestroyed;
 
     private void Awake()
     {
@@ -16,21 +19,32 @@ public class WheelcartController : MonoBehaviour
 
     private void Start()
     {
-        splineAnimate.MaxSpeed = wheelcart.getSpeed();
+        splineAnimate.MaxSpeed = wheelcart.GetSpeed();
         splineAnimate.Play();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
-    void onTriggerEnter(Collider other)
+    void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Enemy")    // Cambiar el tag al que tengan puestos los enemigos
         {
-            wheelcart.takeDamage(10);
+            TakeDamage(10);
         }
+    }
+
+    public void TakeDamage(int damageAmount)
+    {
+        wheelcart.SetHealth(wheelcart.currentHealth - damageAmount);
+
+        if (wheelcart.currentHealth <= 0)
+        {
+            OnWheelcartDestroyed?.Invoke();
+        }
+
     }
 }

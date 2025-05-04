@@ -1,9 +1,9 @@
 public class WheelcartModel
 {
 
-    private float speed;
-    private int maxHealth;
-    private int currentHealth;
+    public float speed { get; private set; }
+    public int maxHealth { get; private set; }
+    public int currentHealth { get; private set; }
     
     public WheelcartModel()
     {
@@ -12,29 +12,14 @@ public class WheelcartModel
         currentHealth = 100;
     }
 
-    public float getSpeed()
+    public float GetSpeed()
     {
         return speed;
     }
 
-    public int getMaxHealth()
+    public void SetHealth(int health)
     {
-        return maxHealth;
-    }
-
-    public int getCurrentHealth()
-    {
-        return currentHealth;
-    }
-
-    public void takeDamage(int damageAmount)
-    {
-        currentHealth -= damageAmount;
-
-        if (currentHealth <= 0)
-        {
-            GameManager.Instance.GameOverScreen();
-        }
+        currentHealth = health;
     }
 
 }

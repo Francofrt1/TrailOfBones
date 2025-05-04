@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using UnityEngine.Splines;
 
 public class GameManager : MonoBehaviour
 {
@@ -16,7 +16,8 @@ public class GameManager : MonoBehaviour
     public event Action OnWinScreen;
     public event Action OnLooseScreen;
 
-
+    private SplineAnimate wheelcartSpline;
+    private WheelcartController wheelcart;
     private InputHandler playerInputHandler;
 
     private void Awake()
@@ -39,6 +40,7 @@ public class GameManager : MonoBehaviour
     void OnEnable()
     {
         _suscribeToPlayerInputHandler();
+        _suscribeToWheelcart();
     }
 
     private void _suscribeToPlayerInputHandler()
@@ -48,6 +50,14 @@ public class GameManager : MonoBehaviour
         playerInputHandler = player.GetComponent<InputHandler>();
         if (playerInputHandler == null) return;
         playerInputHandler.OnPauseTogglePerformed += TogglePause;
+    }
+
+    private void _suscribeToWheelcart()
+    {
+        wheelcartSpline = GameObject.Find("Wheelcart").GetComponent<SplineAnimate>();
+        wheelcart = GameObject.Find("Wheelcart").GetComponent<WheelcartController>();
+        wheelcart.OnWheelcartDestroyed += GameOverScreen;
+        wheelcartSpline.Completed += WinScreen;
     }
 
     void OnDisable()
