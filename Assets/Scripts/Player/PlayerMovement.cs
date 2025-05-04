@@ -1,18 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(PlayerInput))]
 public class PlayerMovement : MonoBehaviour
 {
-    private InputActionAsset inputActions;
-    private InputAction moveAction;
-    private InputAction jumpAction;
-    
-    Vector2 movementInput;
-    Rigidbody rb;
+    private Rigidbody rb;
+    private Vector2 movementInput;
+    private InputHandler inputHandler;
 
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float jumpForce = 7f;
@@ -31,37 +26,40 @@ public class PlayerMovement : MonoBehaviour
         cameraPivot = GameObject.Find("CameraPivot").transform;
         groundCollider = GameObject.Find("GroundCheck").GetComponent<Collider>();
         
-        var playerInput = GetComponent<PlayerInput>();
-        inputActions = playerInput.actions;
-        
-        moveAction = inputActions.FindAction("Player/Move");
-        jumpAction = inputActions.FindAction("Player/Jump");
+        inputHandler = GetComponent<InputHandler>();
     }
 
     private void OnEnable()
     {
-        moveAction.performed += OnMove;
-        moveAction.canceled += OnMove;
-        jumpAction.performed += OnJump;
-        moveAction.Enable();
-        jumpAction.Enable();
+        if (inputHandler != null)
+        {
+            inputHandler.OnMovePerformed += OnMovePerformed;
+            inputHandler.OnMoveCanceled += OnMoveCanceled;
+            inputHandler.OnJumpPerformed += OnJumpPerformed;
+        }
     }
 
     private void OnDisable()
     {
-        moveAction.performed -= OnMove;
-        moveAction.canceled -= OnMove;
-        jumpAction.performed -= OnJump;
-        moveAction.Disable();
-        jumpAction.Disable();
+        if (inputHandler != null)
+        {
+            inputHandler.OnMovePerformed -= OnMovePerformed;
+            inputHandler.OnMoveCanceled -= OnMoveCanceled;
+            inputHandler.OnJumpPerformed -= OnJumpPerformed;
+        }
     }
 
-    private void OnMove(InputAction.CallbackContext context)
+    private void OnMovePerformed(Vector2 direction)
     {
-        movementInput = context.ReadValue<Vector2>();
+        movementInput = direction;
     }
 
-    private void OnJump(InputAction.CallbackContext context)
+    private void OnMoveCanceled(Vector2 direction)
+    {
+        movementInput = Vector2.zero;
+    }
+
+    private void OnJumpPerformed()
     {
         if (isGrounded)
         {

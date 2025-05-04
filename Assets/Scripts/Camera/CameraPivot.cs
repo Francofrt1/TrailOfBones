@@ -31,10 +31,12 @@ public class CameraPivot : MonoBehaviour
 
     private void ManageRotation()
     {
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
+        if (Time.timeScale == 0f) return;
+        
+        float mouseInputY = Input.GetAxis("Mouse Y") * mouseSensitivity;
         float mouseInputX = Input.GetAxis("Mouse X") * mouseSensitivity;
 
-        verticalRotation -= mouseY;
+        verticalRotation -= mouseInputY;
         horizontalRotation += mouseInputX;
         verticalRotation = Mathf.Clamp(verticalRotation, rotationLimitDown, rotationLimitUp);
 
