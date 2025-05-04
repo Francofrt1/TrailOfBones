@@ -72,7 +72,7 @@ public class EnemyController : MonoBehaviour
         view.SetAttackAnimation();
 
         // check if it's attacking the player
-        MovementTest player = targetObject.GetComponent<MovementTest>();
+        PlayerController player = targetObject.GetComponent<PlayerController>();
         if (player != null)
         {
             Debug.Log($"Dealt {model.attackDamage} damage to player {player.name}");
