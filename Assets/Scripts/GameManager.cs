@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,9 +12,16 @@ public class GameManager : MonoBehaviour
     public bool gamePaused = false;
     public bool winConditionReached = false;
 
+    public event Action<bool> OnGamePaused;
+    public event Action OnWinScreen;
+    public event Action OnLooseScreen;
+
+
+    private InputHandler playerInputHandler;
+
     private void Awake()
     {
-        // LOS COMENTARIOS DE ACÁ SON DEL EJEMPLO DEL PROFE
+        // LOS COMENTARIOS DE ACï¿½ SON DEL EJEMPLO DEL PROFE
         // Creamos la instancia unica.
         // Si ya existe una instancia, destruye esta
         if (Instance != null && Instance != this)
@@ -28,11 +36,31 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void OnEnable()
+    {
+        _suscribeToPlayerInputHandler();
+    }
+
+    private void _suscribeToPlayerInputHandler()
+    {
+        GameObject player = GameObject.Find("Player");
+        if (player == null) return;
+        playerInputHandler = player.GetComponent<InputHandler>();
+        if (playerInputHandler == null) return;
+        playerInputHandler.OnPauseTogglePerformed += TogglePause;
+    }
+
+    void OnDisable()
+    {
+        if (playerInputHandler != null) { playerInputHandler.OnPauseTogglePerformed -= TogglePause; }
+    }
+
+
     void Start()
     {
         gameOver = false;
+        SetCursorState(gamePaused);
         Debug.Log("Game Started");
-
     }
 
     public void WinScreen()
@@ -41,7 +69,10 @@ public class GameManager : MonoBehaviour
 
         Time.timeScale = 0f;
 
-        Debug.Log("Fin de la partida, ganaste");    // Acá se mostraría la UI del fin del nivel
+        SetCursorState(true);
+        OnWinScreen?.Invoke();
+
+        Debug.Log("Fin de la partida, ganaste");    // Acï¿½ se mostrarï¿½a la UI del fin del nivel
     }
 
     public void GameOverScreen()
@@ -50,25 +81,34 @@ public class GameManager : MonoBehaviour
 
         Time.timeScale = 0f;
 
-        Debug.Log("Fin de la partida, perdiste");   // Y acá la de volver al menú o reempezar?
+        SetCursorState(true);
+        OnLooseScreen?.Invoke();
+
+        Debug.Log("Fin de la partida, perdiste");   // Y acï¿½ la de volver al menï¿½ o reempezar?
     }
 
-
-
-    public void PauseGame()
+    private void TogglePause()
     {
         gamePaused = !gamePaused;
 
         if (gamePaused)
         {
             Time.timeScale = 0f;
-            Debug.Log("Juego pausado"); // Acá se mostraría el menú de pausa
+            Debug.Log("Juego pausado"); // Acï¿½ se mostrarï¿½a el menï¿½ de pausa
         }
         else
         {
             Time.timeScale = 1f;
-            Debug.Log("Juego resumido"); // Y acá se cerraría
+            Debug.Log("Juego resumido"); // Y acï¿½ se cerrarï¿½a
         }
+
+        SetCursorState(gamePaused);
+        OnGamePaused?.Invoke(gamePaused);
+    }
+
+    public void SetPauseGame(bool value)
+    {
+        if (gamePaused ^ value) {TogglePause();}
     }
 
     public void RestartGame()   // No funciona jaja
@@ -77,4 +117,17 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
+    public void SetCursorState(bool value)
+    {
+        if (value)
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
+        else
+        {
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+    }
 }
