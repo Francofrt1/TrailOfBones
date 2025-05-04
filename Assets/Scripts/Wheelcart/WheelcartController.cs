@@ -25,4 +25,12 @@ public class WheelcartController : MonoBehaviour
     {
         
     }
+
+    void onTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Enemy")    // Cambiar el tag al que tengan puestos los enemigos
+        {
+            wheelcart.takeDamage(10);
+        }
+    }
 }
