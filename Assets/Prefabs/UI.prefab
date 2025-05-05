@@ -1050,7 +1050,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: You Loose...
+  m_text: You Lose...
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1169,7 +1169,7 @@ MonoBehaviour:
   continueButton: {fileID: 7131001913653812261}
   exitButton: {fileID: 8517493299177771380}
   winExitButton: {fileID: 1059290786911347496}
-  looseExitButton: {fileID: 4073988706822231602}
+  loseExitButton: {fileID: 4073988706822231602}
 --- !u!1 &5039417106866680968
 GameObject:
   m_ObjectHideFlags: 0
@@ -1839,7 +1839,7 @@ GameObject:
   - component: {fileID: 3191415292152046705}
   - component: {fileID: 1354857370880242495}
   m_Layer: 0
-  m_Name: LooseScreen
+  m_Name: LoseScreen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1943,7 +1943,7 @@ GameObject:
   - component: {fileID: 9006932867830512830}
   - component: {fileID: 4073988706822231602}
   m_Layer: 0
-  m_Name: LooseToMain
+  m_Name: LoseToMain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
