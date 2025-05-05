@@ -1,39 +1,24 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 
 public class EnemyModel : MonoBehaviour
 {
-    public int maxHealth { get; private set; }
-    public int currentHealth { get; private set; }
-    public int attackDamage { get; private set; }
-    public float attackCooldown { get; private set; }
-    public float lastAttackTime { get; private set; }
+    public float maxHealth { get; private set; } = 100f;
+    public float currentHealth { get; private set; }
+    public float baseDamage { get; private set; } = 10f;
+    public float attackCooldown { get; private set; } = 2f;
+    public float lastAttackTime { get; private set; } = 0f;
+    public bool inPlayer { get; set; } = false;
 
     // enemy initialization
-    public EnemyModel(int maxHealth, int attackDamage, float attackCooldown)
+
+    private void Start()
     {
-        this.maxHealth = maxHealth;
         currentHealth = maxHealth;
-        this.attackDamage = attackDamage; 
-        this.attackCooldown = attackCooldown;
-        lastAttackTime = 0;
-    }
-    // applies damage to the enemy and triggers death if health reaches 0
-    public void TakeDamage(int amount)
-    {
-        currentHealth -= amount;
-        if (currentHealth <= 0)
-        {
-            Die();
-        }
     }
 
-    private void Die()
+    public void SetHealth(float amount)
     {
-        Console.WriteLine("Enemy died.");
+        currentHealth = amount;
     }
 
     public bool CanAttack(float time)

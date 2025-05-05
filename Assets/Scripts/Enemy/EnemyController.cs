@@ -1,10 +1,14 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using System.Linq;
+using Assets.Scripts.Interfaces;
 
-public class EnemyController : MonoBehaviour
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(EnemyModel))]
+[RequireComponent(typeof(EnemyView))]
+[RequireComponent(typeof(NavMeshAgent))]
+public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
 {
     // References to the current target, player list, and defendable object
     public GameObject targetObject { get; private set; }
@@ -15,7 +19,9 @@ public class EnemyController : MonoBehaviour
     private NavMeshAgent agent;
     private EnemyModel model;
     private EnemyView view;
-    private bool inPlayer = false;
+
+    private AttackArea attackArea;
+    private int maxAssignedEnemiesToPlayer = 4;
 
     void Start()
     {
@@ -33,20 +39,22 @@ public class EnemyController : MonoBehaviour
         view = GetComponent<EnemyView>();
 
         // initializes combat logic model
-        model = new EnemyModel(100, 10, 2f); 
+        model = GetComponent<EnemyModel>();
+
+        attackArea = GetComponentInChildren<AttackArea>();
     }
 
     void Update()
     {
         // check if any player can receive more enemies
-        if (players.Any(p => p.GetEnemyCount() < 2))
+        if (players.Any(p => p.GetEnemyCount() < maxAssignedEnemiesToPlayer))
         {
-            PlayerController player = players.First(p => p.GetEnemyCount() < 2);
+            PlayerController player = players.First(p => p.GetEnemyCount() < maxAssignedEnemiesToPlayer);
             player.AddEnemy(gameObject);
             targetObject = player.gameObject;
-            inPlayer = true;
+            model.inPlayer = true;
         }
-        else if (!inPlayer)
+        else if (!model.inPlayer)
         {
             targetObject = defendableObject;
         }
@@ -62,43 +70,42 @@ public class EnemyController : MonoBehaviour
         {
             if (model.CanAttack(Time.time))
             {
-                Attack();           
+                OnAttack();           
             }
         }
     }
 
-    private void Attack()
+    public void OnAttack()
     {
         view.SetAttackAnimation();
 
-        // check if it's attacking the player
-        PlayerController player = targetObject.GetComponent<PlayerController>();
-        if (player != null)
+        foreach (IDamageable damageable in attackArea.DamageablesInRange)
         {
-            Debug.Log($"Dealt {model.attackDamage} damage to player {player.name}");
-            /* TO DO when the Player class is ready :)
-             * playerHealth.TakeDamage(model.AttackDamage);
-             */
-        }
-        else if (targetObject.name == "DefendableObject")
-        {
-            Debug.Log($"Dealt {model.attackDamage} to DefendableObject");
-            /* TO DO 
-             * defendableHealth.TakeDamage(model.AttackDamage);
-             */
+            if (damageable.GetTag() == "Enemy") return;
+            damageable.TakeDamage(model.baseDamage);
+            Debug.Log($"{model.baseDamage} done to {damageable.GetTag()}");
         }
     }
 
-    public void TakeDamage(int amount)
-    {
-        view.SetTakeDamageAnimation();
-        model.TakeDamage(amount);
-    }
-
-    private void Die()
+    public void OnDeath()
     {
         Debug.Log("Enemy died.");
         view.SetDieAnimation();
         Destroy(gameObject);
+    }
+
+    public void TakeDamage(float damageAmout)
+    {
+        model.SetHealth(model.currentHealth - damageAmout);
+        view.SetTakeDamageAnimation();
+        if (model.currentHealth <= 0)
+        {
+            OnDeath();
+        }
+    }
+
+    public string GetTag()
+    {
+        return gameObject.tag;
     }
 }

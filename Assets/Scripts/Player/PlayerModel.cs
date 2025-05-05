@@ -3,17 +3,24 @@ using UnityEngine;
 
 public class PlayerModel : MonoBehaviour
 {
-    public int maxHealth { get; private set; } = 100;
-    public int currentHealth { get; private set; }
+    [SerializeField]
+    public float maxHealth { get; private set; } = 100f;
+    [SerializeField]
+    public float currentHealth { get; private set; }
     public float baseAttackSpeed { get; private set; } = 1f;
+    [SerializeField]
     public float baseDamage { get; private set; } = 10f;
     public float currentAttackSpeed { get; private set; }
-    public int currentShield { get; private set; } = 0;
+    public float currentShield { get; private set; } = 0;
     //If moveSpeed default changed, walk and run animation transitions must be changed too
+    [SerializeField]
     public float moveSpeed { get; private set; } = 5f;
+    [SerializeField]
     public float jumpForce { get; private set; } = 7f;
+    [SerializeField]
     public float acceleration { get; set; } = 1f;
     public List<GameObject> enemies { get; set; }
+    public bool isDead { get; set; } = false;
 
     private void Awake()
     {
@@ -25,7 +32,7 @@ public class PlayerModel : MonoBehaviour
         currentAttackSpeed = baseAttackSpeed;
     }
 
-    public void SetHealth(int amount)
+    public void SetHealth(float amount)
     {
         currentHealth += amount;
         if (currentHealth > maxHealth)

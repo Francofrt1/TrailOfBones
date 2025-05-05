@@ -1,10 +1,12 @@
+using Assets.Scripts.Interfaces;
 using UnityEngine;
+using UnityEngine.InputSystem.Processors;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerModel))]
 [RequireComponent(typeof(PlayerView))]
 [RequireComponent(typeof(InputHandler))]
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath
 {
     private Rigidbody rigidBody;
     private Vector2 movementInput;
@@ -20,6 +22,7 @@ public class PlayerController : MonoBehaviour
 
     private PlayerModel playerModel;
     private PlayerView playerView;
+    private AttackArea attackArea;
 
     private void Awake()
     {
@@ -30,6 +33,7 @@ public class PlayerController : MonoBehaviour
         inputHandler = GetComponent<InputHandler>();
         playerModel = GetComponent<PlayerModel>();
         playerView = GetComponent<PlayerView>();
+        attackArea = GetComponentInChildren<AttackArea>();
 
         AssignEvents();
     }
@@ -67,6 +71,11 @@ public class PlayerController : MonoBehaviour
         ManageRotation();
         if (!isJumping && !isGrounded) {
             playerView.SetIsFallingAnimation(true);
+        }
+
+        if(playerModel.isDead && !playerView.IsDying())
+        {
+            OnDeath();
         }
     }
 
@@ -127,10 +136,15 @@ public class PlayerController : MonoBehaviour
         playerModel.enemies.Add(newEnemy);
     }
 
-    private void OnAttack()
+    public void OnAttack()
     {
         if(playerView.IsAttacking()) return;
         playerView.SetAttackAnimation();
+        foreach (IDamageable damageable in attackArea.DamageablesInRange)
+        {
+            damageable.TakeDamage(playerModel.baseDamage);
+            Debug.Log($"{playerModel.baseDamage} done to {damageable.GetTag()}");
+        }
     }
 
     private void OnSprint()
@@ -145,5 +159,28 @@ public class PlayerController : MonoBehaviour
         inputHandler.OnJumpPerformed -= OnJumpPerformed;
         inputHandler.OnAttack -= OnAttack;
         inputHandler.OnSprint -= OnSprint;
+    }
+
+    public void TakeDamage(float damageAmout)
+    {
+        playerModel.SetHealth(-damageAmout);
+
+        if (playerModel.currentHealth <= 0)
+        {
+            playerView.SetIsDeadAnimation();
+            playerModel.isDead = true;
+        }
+    }
+
+    public void OnDeath()
+    {
+        Destroy(playerModel);
+        Destroy(playerView);
+        Destroy(gameObject);
+    }
+
+    public string GetTag()
+    {
+        return gameObject.tag;
     }
 }

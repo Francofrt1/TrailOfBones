@@ -18,31 +18,46 @@ public class PlayerView : MonoBehaviour
 
     public void SetMovementAnimation(float speed)
     {
+        if(IsDying()) return;
         animator.SetFloat("Speed", speed);
     }
 
     public void SetJumpAnimation()
     {
+        if (IsDying()) return;
         animator.SetTrigger("Jump");
     }
 
     public void SetAttackAnimation()
     {
+        if (IsDying()) return;
         animator.SetTrigger("Attack");
     }
 
     public void SetIsFallingAnimation(bool isFalling)
     {
+        if (IsDying()) return;
         animator.SetBool("IsFalling", isFalling);
     }
 
     public void SetIsDeadAnimation()
     {
+        if (IsDying()) return;
         animator.SetTrigger("Dead");
     }
 
     public bool IsAttacking()
     {
         return animator.GetCurrentAnimatorStateInfo(0).IsName("Attack");
-    }   
+    }
+
+    public bool IsDying()
+    {
+        return animator.GetCurrentAnimatorStateInfo(0).IsName("Death");
+    }
+
+    private void OnDestroy()
+    {
+        Destroy(animator);
+    }
 }

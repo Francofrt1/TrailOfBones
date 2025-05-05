@@ -1,25 +1,26 @@
+using Assets.Scripts.Interfaces;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Splines;
 
-public class WheelcartController : MonoBehaviour
+[RequireComponent(typeof(WheelcartModel))]
+[RequireComponent(typeof(SplineAnimate))]
+public class WheelcartController : MonoBehaviour, IDamageable, IDeath
 {
-    private WheelcartModel wheelcart;
+    private WheelcartModel wheelcartModel;
     public SplineAnimate splineAnimate;
 
     public event Action OnWheelcartDestroyed;
 
     private void Awake()
     {
-        wheelcart = new WheelcartModel();
+        wheelcartModel = GetComponent<WheelcartModel>();
         splineAnimate = GetComponent<SplineAnimate>();
     }
 
     private void Start()
     {
-        splineAnimate.MaxSpeed = wheelcart.GetSpeed();
+        splineAnimate.MaxSpeed = wheelcartModel.speed;
         splineAnimate.Play();
     }
 
@@ -33,18 +34,30 @@ public class WheelcartController : MonoBehaviour
     {
         if (other.gameObject.tag == "Enemy")    // Cambiar el tag al que tengan puestos los enemigos
         {
-            TakeDamage(10);
+            TakeDamage(wheelcartModel.maxHealth * 5 / 100);
         }
     }
 
-    public void TakeDamage(int damageAmount)
+    public void TakeDamage(float damageAmout)
     {
-        wheelcart.SetHealth(wheelcart.currentHealth - damageAmount);
+        wheelcartModel.SetHealth(wheelcartModel.currentHealth - damageAmout);
 
-        if (wheelcart.currentHealth <= 0)
+        if (wheelcartModel.currentHealth <= 0)
         {
-            OnWheelcartDestroyed?.Invoke();
+            OnDeath();
         }
+    }
 
+    public void OnDeath()
+    {
+        Destroy(splineAnimate);
+        Destroy(wheelcartModel);
+        OnWheelcartDestroyed?.Invoke();
+        Destroy(gameObject);
+    }
+
+    public string GetTag()
+    {
+        return gameObject.tag;
     }
 }
