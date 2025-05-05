@@ -21,14 +21,14 @@ public class PlayerView : MonoBehaviour
         animator.SetFloat("Speed", speed);
     }
 
-    public void SetJumpAnimation(bool isJumping)
+    public void SetJumpAnimation()
     {
-        animator.SetBool("IsJumping", isJumping);
+        animator.SetTrigger("Jump");
     }
 
-    public void SetAttackAnimation(bool isAttacking)
+    public void SetAttackAnimation()
     {
-        animator.SetBool("IsAttacking", isAttacking);
+        animator.SetTrigger("Attack");
     }
 
     public void SetIsFallingAnimation(bool isFalling)
@@ -36,8 +36,13 @@ public class PlayerView : MonoBehaviour
         animator.SetBool("IsFalling", isFalling);
     }
 
-    public void SetIsDeadAnimation(bool isDead)
+    public void SetIsDeadAnimation()
     {
-        animator.SetBool("IsDead", isDead);
+        animator.SetTrigger("Dead");
     }
+
+    public bool IsAttacking()
+    {
+        return animator.GetCurrentAnimatorStateInfo(0).IsName("Attack");
+    }   
 }

@@ -6,47 +6,98 @@ using UnityEngine.InputSystem;
 public class InputHandler : MonoBehaviour
 {
     public event Action<Vector2> OnMovePerformed;
-    public event Action<Vector2> OnMoveCanceled;
+    public event Action OnMoveCanceled;
     public event Action OnJumpPerformed;
     public event Action OnPauseTogglePerformed;
+    public event Action OnAttack;
+    public event Action OnSprint;
 
     private InputActionAsset inputActions;
     private InputAction moveAction;
     private InputAction jumpAction;
     private InputAction pauseAction;
+    private InputAction attackAction;
+    private InputAction sprintAction;
 
     private void Awake()
+    {
+        AssignActions();
+        AssignEvents();
+    }
+
+    private void AssignActions()
     {
         var playerInput = GetComponent<PlayerInput>();
         inputActions = playerInput.actions;
 
         moveAction = inputActions.FindAction("Player/Move");
         jumpAction = inputActions.FindAction("Player/Jump");
+        attackAction = inputActions.FindAction("Player/Attack");
+        sprintAction = inputActions.FindAction("Player/Sprint");
         pauseAction = inputActions.FindAction("UI/Pause");
     }
 
-    private void OnEnable()
+    private void AssignEvents()
     {
         moveAction.performed += HandleMove;
         moveAction.canceled += HandleMove;
         jumpAction.performed += HandleJump;
         pauseAction.performed += HandlePause;
+        attackAction.performed += HandleAttack;
+        sprintAction.performed += HandleSprint;
+    }
 
-        moveAction.Enable();
-        jumpAction.Enable();
-        pauseAction.Enable();
+    private void OnEnable()
+    {
+        OnPlayerInputEnabled();
+        OnUIInputEnabled();
     }
 
     private void OnDisable()
+    {
+        OnPlayerInputDisabled();
+        OnUIInputDisabled();
+    }
+
+    private void OnDestroy()
     {
         moveAction.performed -= HandleMove;
         moveAction.canceled -= HandleMove;
         jumpAction.performed -= HandleJump;
         pauseAction.performed -= HandlePause;
+        attackAction.performed -= HandleAttack;
+        sprintAction.performed -= HandleSprint;
+        moveAction.Dispose();
+        jumpAction.Dispose();
+        pauseAction.Dispose();
+        attackAction.Dispose();
+        sprintAction.Dispose();
+    }
 
+    public void OnPlayerInputEnabled()
+    {
+        moveAction.Enable();
+        jumpAction.Enable();
+        attackAction.Enable();
+        sprintAction.Enable();
+    }
+
+    public void OnPlayerInputDisabled()
+    {
         moveAction.Disable();
         jumpAction.Disable();
-        pauseAction.Disable();
+        attackAction.Disable();
+        sprintAction.Disable();
+    }
+
+    public void OnUIInputEnabled()
+    {
+        pauseAction.Enable();
+    }
+
+    public void OnUIInputDisabled()
+    {
+        pauseAction.Enable();
     }
 
     private void HandleMove(InputAction.CallbackContext context)
@@ -59,7 +110,7 @@ public class InputHandler : MonoBehaviour
         }
         else if (context.phase == InputActionPhase.Canceled)
         {
-            OnMoveCanceled?.Invoke(inputValue);
+            OnMoveCanceled?.Invoke();
         }
     }
 
@@ -79,4 +130,19 @@ public class InputHandler : MonoBehaviour
         }
     }
 
+    private void HandleAttack(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            OnAttack?.Invoke();
+        }
+    }
+
+    private void HandleSprint(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            OnSprint?.Invoke();
+        }
+    }
 }

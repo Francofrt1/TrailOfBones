@@ -27,7 +27,7 @@
                     "name": "Fire",
                     "type": "Button",
                     "id": "5dca9465-6bc4-4a6a-9ae8-773d764ad567",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -36,6 +36,24 @@
                     "name": "Jump",
                     "type": "Button",
                     "id": "e9300d03-4fe0-4b6e-af07-c57acaf4a954",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Attack",
+                    "type": "Button",
+                    "id": "db3ae00a-42c5-4ff0-b740-b478925d288e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Sprint",
+                    "type": "Button",
+                    "id": "11bcdcd6-3ab0-4545-931d-c06fc5d40403",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -271,6 +289,28 @@
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "21583a44-cd66-4125-ab29-2ef3df130f59",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "120a87b5-ca66-4de4-8657-4934b47fb55e",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Sprint",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
