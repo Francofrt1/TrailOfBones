@@ -9,6 +9,10 @@ public class PlayerModel : MonoBehaviour
     public float baseDamage { get; private set; } = 10f;
     public float currentAttackSpeed { get; private set; }
     public int currentShield { get; private set; } = 0;
+    //If moveSpeed default changed, walk and run animation transitions must be changed too
+    public float moveSpeed { get; private set; } = 5f;
+    public float jumpForce { get; private set; } = 7f;
+    public float acceleration { get; set; } = 1f;
     public List<GameObject> enemies { get; set; }
 
     private void Awake()

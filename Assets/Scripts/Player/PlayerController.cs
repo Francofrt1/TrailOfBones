@@ -6,46 +6,41 @@ using UnityEngine;
 [RequireComponent(typeof(InputHandler))]
 public class PlayerController : MonoBehaviour
 {
-    private Rigidbody rb;
+    private Rigidbody rigidBody;
     private Vector2 movementInput;
     private InputHandler inputHandler;
 
-    [SerializeField] private float moveSpeed = 5f;
-    [SerializeField] private float jumpForce = 7f;
     [SerializeField] private LayerMask groundLayer;
 
     private Transform cameraPivot;
     private float currentYRotation = 0f;
 
     private bool isGrounded;
-    private bool isJumping;
+    private bool isJumping = false;
 
     private PlayerModel playerModel;
     private PlayerView playerView;
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
+        rigidBody = GetComponent<Rigidbody>();
         GameObject camera = GameObject.Find("CameraPivot");
         cameraPivot = camera != null ? camera.transform : this.transform;
         
         inputHandler = GetComponent<InputHandler>();
         playerModel = GetComponent<PlayerModel>();
         playerView = GetComponent<PlayerView>();
+
+        AssignEvents();
     }
 
-    private void OnEnable()
+    private void AssignEvents()
     {
         inputHandler.OnMovePerformed += OnMovePerformed;
         inputHandler.OnMoveCanceled += OnMoveCanceled;
         inputHandler.OnJumpPerformed += OnJumpPerformed;
-    }
-
-    private void OnDisable()
-    {
-        inputHandler.OnMovePerformed -= OnMovePerformed;
-        inputHandler.OnMoveCanceled -= OnMoveCanceled;
-        inputHandler.OnJumpPerformed -= OnJumpPerformed;
+        inputHandler.OnAttack += OnAttack;
+        inputHandler.OnSprint += OnSprint;
     }
 
     private void OnMovePerformed(Vector2 direction)
@@ -53,7 +48,7 @@ public class PlayerController : MonoBehaviour
         movementInput = direction;
     }
 
-    private void OnMoveCanceled(Vector2 direction)
+    private void OnMoveCanceled()
     {
         movementInput = Vector2.zero;
     }
@@ -62,8 +57,8 @@ public class PlayerController : MonoBehaviour
     {
         if (isGrounded)
         {
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-            isJumping = true;
+            rigidBody.AddForce(Vector3.up * playerModel.jumpForce, ForceMode.Impulse);
+            playerView.SetJumpAnimation();
         }
     }
 
@@ -84,23 +79,26 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 moveDirection = new Vector3(movementInput.x, 0f, movementInput.y);
 
-        Vector3 move = transform.TransformDirection(moveDirection) * moveSpeed; // Transforma el movimiento local a global (según la rotación del jugador)
+        Vector3 move = transform.TransformDirection(moveDirection) * playerModel.moveSpeed * playerModel.acceleration; // Transforma el movimiento local a global (según la rotación del jugador)
 
-        move.y = rb.velocity.y;
+        move.y = rigidBody.velocity.y;
 
-        rb.velocity = move;
+        rigidBody.velocity = move;
+
+        float horizontalVelocity = Vector2.Dot(rigidBody.velocity, Vector2.right);
+        playerView.SetMovementAnimation(horizontalVelocity);
     }
 
-    private void OnTriggerEnter(Collider collision)
+    private void OnCollisionEnter(Collision collision)
     {
         if (IsGroundLayer(collision.gameObject.layer))
         {
             isGrounded = true;
-            isJumping = false;
+            playerView.SetIsFallingAnimation(false);
         }
     }
 
-    private void OnTriggerExit(Collider collision)
+    private void OnCollisionExit(Collision collision)
     {
         if (IsGroundLayer(collision.gameObject.layer))
         {
@@ -121,16 +119,31 @@ public class PlayerController : MonoBehaviour
 
     public int GetEnemyCount()
     {
-        return this.playerModel.enemies.Count;
+        return playerModel.enemies.Count;
     }
 
     public void AddEnemy(GameObject newEnemy)
     {
-        this.playerModel.enemies.Add(newEnemy);
+        playerModel.enemies.Add(newEnemy);
     }
 
-    public void Attack()
+    private void OnAttack()
     {
-        playerView.SetAttackAnimation(true);
+        if(playerView.IsAttacking()) return;
+        playerView.SetAttackAnimation();
+    }
+
+    private void OnSprint()
+    {
+        playerModel.acceleration = playerModel.acceleration == 1f ? 2f : 1f;
+    }
+
+    private void OnDestroy()
+    {
+        inputHandler.OnMovePerformed -= OnMovePerformed;
+        inputHandler.OnMoveCanceled -= OnMoveCanceled;
+        inputHandler.OnJumpPerformed -= OnJumpPerformed;
+        inputHandler.OnAttack -= OnAttack;
+        inputHandler.OnSprint -= OnSprint;
     }
 }
