@@ -1,25 +1,16 @@
-public class WheelcartModel
+using UnityEngine;
+
+public class WheelcartModel : MonoBehaviour
 {
+    [SerializeField]
+    public float speed { get; private set; } = 2f;
+    [SerializeField]
+    public float maxHealth { get; private set; } = 100f;
+    [SerializeField]
+    public float currentHealth { get; private set; } = 100f;
 
-    public float speed { get; private set; }
-    public int maxHealth { get; private set; }
-    public int currentHealth { get; private set; }
-    
-    public WheelcartModel()
-    {
-        speed = 2f;
-        maxHealth = 100;
-        currentHealth = 100;
-    }
-
-    public float GetSpeed()
-    {
-        return speed;
-    }
-
-    public void SetHealth(int health)
+    public void SetHealth(float health)
     {
         currentHealth = health;
     }
-
 }

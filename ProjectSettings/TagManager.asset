@@ -6,6 +6,7 @@ TagManager:
   tags:
   - DefendableObject
   - LevelFinish
+  - Enemy
   layers:
   - Default
   - TransparentFX
