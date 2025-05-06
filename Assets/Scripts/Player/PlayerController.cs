@@ -1,4 +1,5 @@
 using Assets.Scripts.Interfaces;
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem.Processors;
 
@@ -23,6 +24,8 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath
     private PlayerModel playerModel;
     private PlayerView playerView;
     private AttackArea attackArea;
+
+    public event Action playerDie;
 
     private void Awake()
     {
@@ -174,9 +177,11 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath
 
     public void OnDeath()
     {
+        playerDie?.Invoke();
         Destroy(playerModel);
         Destroy(playerView);
         Destroy(gameObject);
+
     }
 
     public string GetTag()
