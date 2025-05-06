@@ -43,6 +43,7 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath
         inputHandler.OnMovePerformed += OnMovePerformed;
         inputHandler.OnMoveCanceled += OnMoveCanceled;
         inputHandler.OnJumpPerformed += OnJumpPerformed;
+        inputHandler.OnMouseMoveX += ManageRotation;
         inputHandler.OnAttack += OnAttack;
         inputHandler.OnSprint += OnSprint;
     }
@@ -68,7 +69,6 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath
 
     private void Update()
     {
-        ManageRotation();
         if (!isJumping && !isGrounded) {
             playerView.SetIsFallingAnimation(true);
         }
@@ -88,7 +88,7 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath
     {
         Vector3 moveDirection = new Vector3(movementInput.x, 0f, movementInput.y);
 
-        Vector3 move = transform.TransformDirection(moveDirection) * playerModel.moveSpeed * playerModel.acceleration; // Transforma el movimiento local a global (según la rotación del jugador)
+        Vector3 move = transform.TransformDirection(moveDirection) * playerModel.moveSpeed * playerModel.acceleration;
 
         move.y = rigidBody.velocity.y;
 
@@ -117,12 +117,12 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath
 
     private bool IsGroundLayer(int layer)
     {
-        return (groundLayer.value & (1 << layer)) != 0; // Chequea la layer por bits (mas eficiente que el tag)
+        return (groundLayer.value & (1 << layer)) != 0;
     }
 
-    private void ManageRotation()
+    private void ManageRotation(float amount)
     {
-        currentYRotation = cameraPivot.rotation.eulerAngles.y;
+        currentYRotation += amount;
         transform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
     }
 
@@ -157,6 +157,7 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath
         inputHandler.OnMovePerformed -= OnMovePerformed;
         inputHandler.OnMoveCanceled -= OnMoveCanceled;
         inputHandler.OnJumpPerformed -= OnJumpPerformed;
+        inputHandler.OnMouseMoveX -= ManageRotation;
         inputHandler.OnAttack -= OnAttack;
         inputHandler.OnSprint -= OnSprint;
     }
