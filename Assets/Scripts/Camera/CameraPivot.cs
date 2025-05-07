@@ -5,41 +5,39 @@ using UnityEngine;
 
 public class CameraPivot : MonoBehaviour
 {
-    [SerializeField] private float mouseSensitivity = 2f;
-    [SerializeField] private float rotationLimitUp = 80f;
-    [SerializeField] private float rotationLimitDown = -15f;
+    [SerializeField] private float pitchLimitUp = 80f;
+    [SerializeField] private float pitchLimitDown = -12f;
 
     private Transform player;
 
-    private float verticalRotation = 0f;
-    private float horizontalRotation = 0f;
+    private InputHandler inputHandler;
 
-    private void Awake() {
+    private float currentPitch = 0f;
+
+    private void Awake()
+    {
         player = GameObject.Find("Player").transform;
-    }
-    
-    void Update()
-    {
-        UpdatePosition();
-        ManageRotation();
+        inputHandler = player.GetComponent<InputHandler>();
     }
 
-    private void UpdatePosition()
+    private void OnEnable()
     {
-        transform.position = player.transform.position;
+        inputHandler.OnMouseMoveY += ManagePitch;
     }
 
-    private void ManageRotation()
+    private void OnDisable()
+    {
+        inputHandler.OnMouseMoveY -= ManagePitch;
+    }
+
+    private void ManagePitch(float amount)
     {
         if (Time.timeScale == 0f) return;
-        
-        float mouseInputY = Input.GetAxis("Mouse Y") * mouseSensitivity;
-        float mouseInputX = Input.GetAxis("Mouse X") * mouseSensitivity;
 
-        verticalRotation -= mouseInputY;
-        horizontalRotation += mouseInputX;
-        verticalRotation = Mathf.Clamp(verticalRotation, rotationLimitDown, rotationLimitUp);
+        currentPitch -= amount;
 
-        transform.localRotation = Quaternion.Euler(verticalRotation, horizontalRotation, 0f);
+        currentPitch = Mathf.Clamp(currentPitch, pitchLimitDown, pitchLimitUp);
+
+        transform.localRotation = Quaternion.Euler(currentPitch, 0f, 0f);
     }
 }
