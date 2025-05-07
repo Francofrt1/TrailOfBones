@@ -5,7 +5,11 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(PlayerInput))]
 public class InputHandler : MonoBehaviour
 {
+    [SerializeField] private float mouseSensitivity = 0.5f;
+
     public event Action<Vector2> OnMovePerformed;
+    public event Action<float> OnMouseMoveX;
+    public event Action<float> OnMouseMoveY;
     public event Action OnMoveCanceled;
     public event Action OnJumpPerformed;
     public event Action OnPauseTogglePerformed;
@@ -15,6 +19,7 @@ public class InputHandler : MonoBehaviour
     private InputActionAsset inputActions;
     private InputAction moveAction;
     private InputAction jumpAction;
+    private InputAction lookAction;
     private InputAction pauseAction;
     private InputAction attackAction;
     private InputAction sprintAction;
@@ -32,6 +37,7 @@ public class InputHandler : MonoBehaviour
 
         moveAction = inputActions.FindAction("Player/Move");
         jumpAction = inputActions.FindAction("Player/Jump");
+        lookAction = inputActions.FindAction("Player/Look");
         attackAction = inputActions.FindAction("Player/Attack");
         sprintAction = inputActions.FindAction("Player/Sprint");
         pauseAction = inputActions.FindAction("UI/Pause");
@@ -42,6 +48,7 @@ public class InputHandler : MonoBehaviour
         moveAction.performed += HandleMove;
         moveAction.canceled += HandleMove;
         jumpAction.performed += HandleJump;
+        lookAction.performed += HandleLook;
         pauseAction.performed += HandlePause;
         attackAction.performed += HandleAttack;
         sprintAction.performed += HandleSprint;
@@ -64,11 +71,13 @@ public class InputHandler : MonoBehaviour
         moveAction.performed -= HandleMove;
         moveAction.canceled -= HandleMove;
         jumpAction.performed -= HandleJump;
+        lookAction.performed -= HandleLook;
         pauseAction.performed -= HandlePause;
         attackAction.performed -= HandleAttack;
         sprintAction.performed -= HandleSprint;
         moveAction.Dispose();
         jumpAction.Dispose();
+        lookAction.Dispose();
         pauseAction.Dispose();
         attackAction.Dispose();
         sprintAction.Dispose();
@@ -78,6 +87,7 @@ public class InputHandler : MonoBehaviour
     {
         moveAction.Enable();
         jumpAction.Enable();
+        lookAction.Enable();
         attackAction.Enable();
         sprintAction.Enable();
     }
@@ -86,6 +96,7 @@ public class InputHandler : MonoBehaviour
     {
         moveAction.Disable();
         jumpAction.Disable();
+        lookAction.Disable();
         attackAction.Disable();
         sprintAction.Disable();
     }
@@ -119,6 +130,23 @@ public class InputHandler : MonoBehaviour
         if (context.performed)
         {
             OnJumpPerformed?.Invoke();
+        }
+    }
+
+    private void HandleLook(InputAction.CallbackContext context)
+    {
+        Vector2 mouseDelta = context.ReadValue<Vector2>();
+        float mouseInputX = mouseDelta.x * mouseSensitivity;
+        float mouseInputY = mouseDelta.y * mouseSensitivity;
+
+        if (Mathf.Abs(mouseInputX) > Mathf.Epsilon)
+        {
+            OnMouseMoveX?.Invoke(mouseInputX);
+        }
+
+        if (Mathf.Abs(mouseInputY) > Mathf.Epsilon)
+        {
+            OnMouseMoveY?.Invoke(mouseInputY);
         }
     }
 

@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Splines;
@@ -18,6 +20,7 @@ public class GameManager : MonoBehaviour
     private WheelcartController wheelcart;
     private InputHandler playerInputHandler;
     private HUD headsUpDisplay;
+    private PlayerController playerController;
 
     private void Awake()
     {
@@ -41,8 +44,15 @@ public class GameManager : MonoBehaviour
         _suscribeToPlayerInputHandler();
         _suscribeToWheelcart();
         _suscribeToHUD();
+        _suscribeToPlayerController();
     }
 
+    private void _suscribeToPlayerController()
+    {
+        playerController = GameObject.Find("Player").GetComponent<PlayerController>();
+        if (playerController == null) return;
+        playerController.playerDie += GameOverScreen;
+    }
     private void _suscribeToPlayerInputHandler()
     {
         GameObject player = GameObject.Find("Player");
@@ -135,7 +145,17 @@ public class GameManager : MonoBehaviour
 
         SetCursorState(false);
         SceneManager.LoadScene("MainLevel",LoadSceneMode.Single);
+        StartCoroutine("LoadListeners");
         SetPauseGame(false);
+    }
+
+    IEnumerator LoadListeners()
+    {
+        yield return new WaitForSeconds(1f);
+        _suscribeToPlayerInputHandler();
+        _suscribeToWheelcart();
+        _suscribeToPlayerController();
+
     }
 
     public void SetCursorState(bool value)
