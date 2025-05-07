@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -29,16 +30,15 @@ public class PlayerModel : MonoBehaviour
     private void Start()
     {
         currentHealth = maxHealth;
+        isDead = false;
         currentAttackSpeed = baseAttackSpeed;
     }
-
     public void SetHealth(float amount)
     {
         currentHealth += amount;
         if (currentHealth > maxHealth)
             currentHealth = maxHealth;
     }
-
     public void SetAttackSpeed(float multiplier, float duration)
     {
         //StopCoroutine("ResetAttackSpeed");
