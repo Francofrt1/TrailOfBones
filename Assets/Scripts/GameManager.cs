@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     private SplineAnimate wheelcartSpline;
     private WheelcartController wheelcart;
     private InputHandler playerInputHandler;
+    private HUD headsUpDisplay;
     private PlayerController playerController;
 
     private void Awake()
@@ -42,6 +43,7 @@ public class GameManager : MonoBehaviour
     {
         _suscribeToPlayerInputHandler();
         _suscribeToWheelcart();
+        _suscribeToHUD();
         _suscribeToPlayerController();
     }
 
@@ -68,6 +70,12 @@ public class GameManager : MonoBehaviour
         wheelcartSpline.Completed += WinScreen;
     }
 
+    private void _suscribeToHUD()
+    {
+        headsUpDisplay = GameObject.Find("HUD").GetComponent<HUD>();
+        headsUpDisplay.UpdateHUD += UpdateHealthbars;
+    }
+
     void OnDisable()
     {
         if (playerInputHandler != null) { playerInputHandler.OnPauseTogglePerformed -= TogglePause; }
@@ -79,6 +87,8 @@ public class GameManager : MonoBehaviour
         gameOver = false;
         SetCursorState(gamePaused);
         Debug.Log("Game Started");
+
+        headsUpDisplay.UpdateHealthbars(50, 10);
     }
 
     public void WinScreen()
@@ -161,4 +171,10 @@ public class GameManager : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
         }
     }
+
+    public void UpdateHealthbars()
+    {
+
+    }
+
 }

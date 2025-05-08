@@ -7,6 +7,7 @@ TagManager:
   - DefendableObject
   - LevelFinish
   - Enemy
+  - HUD
   layers:
   - Default
   - TransparentFX
