@@ -7,7 +7,7 @@ using UnityEngine.InputSystem.Processors;
 [RequireComponent(typeof(PlayerModel))]
 [RequireComponent(typeof(PlayerView))]
 [RequireComponent(typeof(InputHandler))]
-public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath
+public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IAttackRangeProvider
 {
     private Rigidbody rigidBody;
     private Vector2 movementInput;
@@ -188,5 +188,9 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath
     public string GetTag()
     {
         return gameObject.tag;
+    }
+    public float RangeToBeAttacked()
+    {
+        return playerModel.distToBeAttacked;
     }
 }

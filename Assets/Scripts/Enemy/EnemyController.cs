@@ -66,7 +66,7 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
         view.SetMovingAnimation(isMoving);
 
         // check the distance to attack
-        if (targetObject != null && Vector3.Distance(transform.position, targetObject.transform.position) <= 2f)
+        if (targetObject != null && Vector3.Distance(transform.position, targetObject.transform.position) <= targetObject.GetComponent<IAttackRangeProvider>().RangeToBeAttacked())
         {
             if (model.CanAttack(Time.time))
             {

@@ -23,6 +23,9 @@ public class PlayerModel : MonoBehaviour
     public List<GameObject> enemies { get; set; }
     public bool isDead { get; set; } = false;
 
+    [SerializeField]
+    public float distToBeAttacked { get; } = 2f;
+
     private void Awake()
     {
         enemies = new List<GameObject>();
