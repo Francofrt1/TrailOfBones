@@ -29,5 +29,6 @@ public class EnemyModel : MonoBehaviour
     public void Attack() // registers the current time as the moment of the last attack
     {
         lastAttackTime = Time.time;
+        Debug.Log($"Enemy attacked at time {lastAttackTime}"); // TESTEANDO
     }
 }
