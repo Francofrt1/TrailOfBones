@@ -98,7 +98,7 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IAt
 
         rigidBody.velocity = move;
 
-        float horizontalVelocity = Vector2.Dot(rigidBody.velocity, Vector2.right);
+        float horizontalVelocity = Math.Abs(Vector2.Dot(rigidBody.velocity, Vector2.right));
         playerView.SetMovementAnimation(horizontalVelocity);
     }
 
