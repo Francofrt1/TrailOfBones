@@ -40,13 +40,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void OnEnable()
-    {
-        _suscribeToPlayerInputHandler();
-        _suscribeToWheelcart();
-        _suscribeToPlayerController();
-    }
-
     private void _suscribeToPlayerController()
     {
         playerController = GameObject.Find("Player").GetComponent<PlayerController>();
