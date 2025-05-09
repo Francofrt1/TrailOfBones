@@ -15,11 +15,12 @@ public class GameManager : MonoBehaviour
     public event Action<bool> OnGamePaused;
     public event Action OnWinScreen;
     public event Action OnLoseScreen;
+    public event Action<float> OnPlayerHealthUpdate;
+    public event Action<float> OnWheelcartHealthUpdate;
 
     private SplineAnimate wheelcartSpline;
     private WheelcartController wheelcart;
     private InputHandler playerInputHandler;
-    private HUD headsUpDisplay;
     private PlayerController playerController;
 
     private void Awake()
@@ -43,7 +44,6 @@ public class GameManager : MonoBehaviour
     {
         _suscribeToPlayerInputHandler();
         _suscribeToWheelcart();
-        _suscribeToHUD();
         _suscribeToPlayerController();
     }
 
@@ -52,6 +52,7 @@ public class GameManager : MonoBehaviour
         playerController = GameObject.Find("Player").GetComponent<PlayerController>();
         if (playerController == null) return;
         playerController.playerDie += GameOverScreen;
+        playerController.OnPlayerHealthVariation += UpdatePlayerHealthbar;
     }
     private void _suscribeToPlayerInputHandler()
     {
@@ -68,12 +69,7 @@ public class GameManager : MonoBehaviour
         wheelcart = GameObject.Find("Wheelcart").GetComponent<WheelcartController>();
         wheelcart.OnWheelcartDestroyed += GameOverScreen;
         wheelcartSpline.Completed += WinScreen;
-    }
-
-    private void _suscribeToHUD()
-    {
-        headsUpDisplay = GameObject.Find("HUD").GetComponent<HUD>();
-        headsUpDisplay.UpdateHUD += UpdateHealthbars;
+        wheelcart.OnWheelcartHealthVariation += UpdateWheelcartHealthbar;
     }
 
     void OnDisable()
@@ -87,8 +83,6 @@ public class GameManager : MonoBehaviour
         gameOver = false;
         SetCursorState(gamePaused);
         Debug.Log("Game Started");
-
-        headsUpDisplay.UpdateHealthbars(50, 10);
     }
 
     public void WinScreen()
@@ -172,9 +166,14 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void UpdateHealthbars()
+    public void UpdatePlayerHealthbar(float currentPlayerHealth)
     {
+        OnPlayerHealthUpdate?.Invoke(currentPlayerHealth);
+    }
 
+    public void UpdateWheelcartHealthbar(float currentWheelcartHealth)
+    {
+        OnWheelcartHealthUpdate?.Invoke(currentWheelcartHealth);
     }
 
 }
