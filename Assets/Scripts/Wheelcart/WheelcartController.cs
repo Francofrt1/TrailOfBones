@@ -11,6 +11,7 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IAttackRa
     public SplineAnimate splineAnimate;
 
     public event Action OnWheelcartDestroyed;
+    public event Action<float> OnWheelcartHealthVariation;
 
     private void Awake()
     {
@@ -24,20 +25,6 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IAttackRa
         splineAnimate.Play();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.tag == "Enemy")    // Cambiar el tag al que tengan puestos los enemigos
-        {
-            TakeDamage(wheelcartModel.maxHealth * 5 / 100);
-        }
-    }
-
     public void TakeDamage(float damageAmout)
     {
         wheelcartModel.SetHealth(wheelcartModel.currentHealth - damageAmout);
@@ -46,6 +33,8 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IAttackRa
         {
             OnDeath();
         }
+        Debug.Log(wheelcartModel.currentHealth);
+        OnWheelcartHealthVariation?.Invoke(wheelcartModel.currentHealth);
     }
 
     public void OnDeath()

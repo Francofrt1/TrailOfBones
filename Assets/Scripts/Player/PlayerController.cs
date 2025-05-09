@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IAt
     private AttackArea attackArea;
 
     public event Action playerDie;
+    public event Action<float> OnPlayerHealthVariation;
 
     private void Awake()
     {
@@ -174,6 +175,8 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IAt
             playerView.SetIsDeadAnimation();
             playerModel.isDead = true;
         }
+
+        OnPlayerHealthVariation?.Invoke(playerModel.currentHealth);
     }
 
     public void OnDeath()
