@@ -20,6 +20,8 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
     private EnemyModel model;
     private EnemyView view;
 
+    
+    [SerializeField] 
     private AttackArea attackArea;
     private int maxAssignedEnemiesToPlayer = 4;
 
@@ -46,20 +48,31 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
 
     void Update()
     {
-        // check if any player can receive more enemies
-        if (players.Any(p => p.GetEnemyCount() < maxAssignedEnemiesToPlayer))
+        if (players == null || players.Count == 0)
+            return;
+
+        // if there is still no target assigned to a player assign it
+        if (!model.inPlayer)
         {
-            PlayerController player = players.First(p => p.GetEnemyCount() < maxAssignedEnemiesToPlayer);
-            player.AddEnemy(gameObject);
-            targetObject = player.gameObject;
-            model.inPlayer = true;
-        }
-        else if (!model.inPlayer)
-        {
-            targetObject = defendableObject;
+            PlayerController player = players.FirstOrDefault(p => p.GetEnemyCount() < maxAssignedEnemiesToPlayer);
+
+            if (player != null)
+            {
+                player.AddEnemy(gameObject);
+                targetObject = player.gameObject;
+                model.inPlayer = true;
+            }
+            else
+            {
+                targetObject = defendableObject;
+            }
         }
 
-        // move toward the target
+        // if there is still no valid target, we do nothing more
+        if (targetObject == null)
+            return;
+
+        // move to target 
         Vector3 target = targetObject.transform.position;
         agent.SetDestination(target);
         bool isMoving = agent.velocity.magnitude > 0.1f;
@@ -70,21 +83,24 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
         {
             if (model.CanAttack(Time.time))
             {
-                OnAttack();           
+                OnAttack();
             }
         }
     }
-
     public void OnAttack()
     {
         view.SetAttackAnimation();
 
         foreach (IDamageable damageable in attackArea.DamageablesInRange)
         {
-            if (damageable.GetTag() == "Enemy") return;
+            if (damageable.GetTag() == "Enemy") continue; // ignore other enemies
             damageable.TakeDamage(model.baseDamage);
+            
             Debug.Log($"{model.baseDamage} done to {damageable.GetTag()}");
+            
         }
+
+        model.Attack(); // record the attack time for the CD
     }
 
     public void OnDeath()
@@ -108,4 +124,10 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
     {
         return gameObject.tag;
     }
+
+    
 }
+
+    
+
+
