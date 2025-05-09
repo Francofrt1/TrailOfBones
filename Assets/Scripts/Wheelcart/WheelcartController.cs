@@ -5,7 +5,7 @@ using UnityEngine.Splines;
 
 [RequireComponent(typeof(WheelcartModel))]
 [RequireComponent(typeof(SplineAnimate))]
-public class WheelcartController : MonoBehaviour, IDamageable, IDeath
+public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IAttackRangeProvider
 {
     private WheelcartModel wheelcartModel;
     public SplineAnimate splineAnimate;
@@ -59,5 +59,10 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath
     public string GetTag()
     {
         return gameObject.tag;
+    }
+
+    public float RangeToBeAttacked()
+    {
+        return wheelcartModel.distToBeAttacked;
     }
 }
