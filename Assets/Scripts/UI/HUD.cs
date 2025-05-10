@@ -11,7 +11,12 @@ public class HUD : MonoBehaviour
     public Slider wheelcartHealthBar = null;
     public TextMeshProUGUI playerHealthText = null;
     public TextMeshProUGUI wheelcartHealthText = null;
+    public Slider progressBar = null;
 
+    private void Start()
+    {
+        StartCoroutine("UpdateProgressBar");
+    }
     private void OnEnable()
     {
         GameManager.Instance.OnWheelcartHealthUpdate += UpdateWheelcartHealthbar;
@@ -33,5 +38,14 @@ public class HUD : MonoBehaviour
     {
         wheelcartHealthBar.value = wheelcartHealthAmount;
         wheelcartHealthText.text = "Wheelcart HP: " + wheelcartHealthAmount.ToString();
+    }
+
+    IEnumerator UpdateProgressBar()
+    {
+        for(int i = 0; i<= progressBar.maxValue; i++)
+        {
+            yield return new WaitForSeconds(1f);
+            progressBar.value = progressBar.value+1f;
+        }
     }
 }

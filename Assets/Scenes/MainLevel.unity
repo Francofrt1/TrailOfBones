@@ -5499,7 +5499,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4718048526337783775, guid: 00edc98f68e6add4e91255f6f9e72d1d, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5961034109050530384, guid: 00edc98f68e6add4e91255f6f9e72d1d, type: 3}
       propertyPath: spawnCount
