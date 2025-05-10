@@ -1,12 +1,8 @@
 using Assets.Scripts.Interfaces;
 using System;
 using UnityEngine;
-using UnityEngine.InputSystem.Processors;
 
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(PlayerModel))]
-[RequireComponent(typeof(PlayerView))]
-[RequireComponent(typeof(InputHandler))]
 public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IAttackRangeProvider
 {
     private Rigidbody rigidBody;
@@ -20,6 +16,7 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IAt
 
     private bool isGrounded;
     private bool isJumping = false;
+    private float fallingTime = 0f;
 
     private PlayerModel playerModel;
     private PlayerView playerView;
@@ -66,6 +63,7 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IAt
     {
         if (isGrounded)
         {
+            fallingTime = 0f;
             rigidBody.AddForce(Vector3.up * playerModel.jumpForce, ForceMode.Impulse);
             playerView.SetJumpAnimation();
         }
@@ -74,7 +72,8 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IAt
     private void Update()
     {
         if (!isJumping && !isGrounded) {
-            playerView.SetIsFallingAnimation(true);
+            fallingTime += Time.deltaTime;
+            playerView.SetIsFallingAnimation(true, fallingTime);
         }
 
         if(playerModel.isDead && !playerView.IsDying())
@@ -146,6 +145,7 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IAt
         playerView.SetAttackAnimation();
         foreach (IDamageable damageable in attackArea.DamageablesInRange)
         {
+            if (damageable.GetTag() == "DefendableObject") continue; // ignore wheelcart
             damageable.TakeDamage(playerModel.baseDamage);
             Debug.Log($"{playerModel.baseDamage} done to {damageable.GetTag()}");
         }

@@ -21,7 +21,7 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IAttackRa
 
     private void Start()
     {
-        splineAnimate.MaxSpeed = wheelcartModel.speed;
+        splineAnimate.Duration = wheelcartModel.duration;
         splineAnimate.Play();
     }
 

@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class EnemyModel : MonoBehaviour
 {
-    public float maxHealth { get; private set; } = 100f;
+    public float maxHealth = 100f;
     public float currentHealth { get; private set; }
-    public float baseDamage { get; private set; } = 10f;
-    public float attackCooldown { get; private set; } = 2f;
-    public float lastAttackTime { get; private set; } = 0f;
+    public float baseDamage = 10f;
+    public float attackCooldown = 2f;
+    public float lastAttackTime = 0f;
     public bool inPlayer { get; set; } = false;
 
     // enemy initialization

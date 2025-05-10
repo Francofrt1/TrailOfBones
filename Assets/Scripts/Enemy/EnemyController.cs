@@ -19,7 +19,6 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
     private NavMeshAgent agent;
     private EnemyModel model;
     private EnemyView view;
-
     
     [SerializeField] 
     private AttackArea attackArea;
@@ -79,12 +78,9 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
         view.SetMovingAnimation(isMoving);
 
         // check the distance to attack
-        if (targetObject != null && Vector3.Distance(transform.position, targetObject.transform.position) <= targetObject.GetComponent<IAttackRangeProvider>().RangeToBeAttacked())
+        if (targetObject != null && model.CanAttack(Time.time))
         {
-            if (model.CanAttack(Time.time))
-            {
-                OnAttack();
-            }
+            OnAttack();
         }
     }
     public void OnAttack()
@@ -97,7 +93,6 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
             damageable.TakeDamage(model.baseDamage);
             
             Debug.Log($"{model.baseDamage} done to {damageable.GetTag()}");
-            
         }
 
         model.Attack(); // record the attack time for the CD
@@ -124,10 +119,4 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
     {
         return gameObject.tag;
     }
-
-    
 }
-
-    
-
-

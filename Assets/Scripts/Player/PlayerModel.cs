@@ -4,26 +4,18 @@ using UnityEngine;
 
 public class PlayerModel : MonoBehaviour
 {
-    [SerializeField]
-    public float maxHealth { get; private set; } = 100f;
-    [SerializeField]
+    public float maxHealth = 100f;
     public float currentHealth { get; private set; }
-    public float baseAttackSpeed { get; private set; } = 1f;
-    [SerializeField]
-    public float baseDamage { get; private set; } = 10f;
-    public float currentAttackSpeed { get; private set; }
-    public float currentShield { get; private set; } = 0;
+    public float baseAttackSpeed = 1f;
+    public float baseDamage = 10f;
+    public float currentAttackSpeed;
+    public float currentShield = 0;
     //If moveSpeed default changed, walk and run animation transitions must be changed too
-    [SerializeField]
-    public float moveSpeed { get; private set; } = 5f;
-    [SerializeField]
-    public float jumpForce { get; private set; } = 7f;
-    [SerializeField]
-    public float acceleration { get; set; } = 1f;
+    public float moveSpeed = 5f;
+    public float jumpForce = 7f;
+    public float acceleration = 1f;
     public List<GameObject> enemies { get; set; }
     public bool isDead { get; set; } = false;
-
-    [SerializeField]
     public float distToBeAttacked { get; } = 2f;
 
     private void Awake()
