@@ -5,7 +5,7 @@ using UnityEngine.Splines;
 
 [RequireComponent(typeof(WheelcartModel))]
 [RequireComponent(typeof(SplineAnimate))]
-public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IAttackRangeProvider
+public class WheelcartController : MonoBehaviour, IDamageable, IDeath
 {
     private WheelcartModel wheelcartModel;
     public SplineAnimate splineAnimate;
@@ -25,19 +25,19 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IAttackRa
         splineAnimate.Play();
     }
 
-    public void TakeDamage(float damageAmout)
+    public void TakeDamage(float damageAmout, string killedById)
     {
         wheelcartModel.SetHealth(wheelcartModel.currentHealth - damageAmout);
 
         if (wheelcartModel.currentHealth <= 0)
         {
-            OnDeath();
+            OnDeath(killedById);
         }
         Debug.Log(wheelcartModel.currentHealth);
         OnWheelcartHealthVariation?.Invoke(wheelcartModel.currentHealth);
     }
 
-    public void OnDeath()
+    public void OnDeath(string killedById)
     {
         Destroy(splineAnimate);
         Destroy(wheelcartModel);
@@ -48,10 +48,5 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IAttackRa
     public string GetTag()
     {
         return gameObject.tag;
-    }
-
-    public float RangeToBeAttacked()
-    {
-        return wheelcartModel.distToBeAttacked;
     }
 }

@@ -4,8 +4,7 @@ public class WheelcartModel : MonoBehaviour
 {
     public float duration = 60f;
     public float maxHealth = 1000f;
-    public float currentHealth;
-    public float distToBeAttacked { get; } = 5f;
+    public float currentHealth { get; private set; }
     public void Start()
     {
         currentHealth = maxHealth;

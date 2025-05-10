@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerModel : MonoBehaviour
 {
+    public string ID { get; private set; }
     public float maxHealth = 100f;
     public float currentHealth { get; private set; }
     public float baseAttackSpeed = 1f;
@@ -14,13 +15,10 @@ public class PlayerModel : MonoBehaviour
     public float moveSpeed = 5f;
     public float jumpForce = 7f;
     public float acceleration = 1f;
-    public List<GameObject> enemies { get; set; }
     public bool isDead { get; set; } = false;
-    public float distToBeAttacked { get; } = 2f;
-
     private void Awake()
     {
-        enemies = new List<GameObject>();
+        ID = Guid.NewGuid().ToString();
     }
     private void Start()
     {
@@ -36,56 +34,11 @@ public class PlayerModel : MonoBehaviour
     }
     public void SetAttackSpeed(float multiplier, float duration)
     {
-        //StopCoroutine("ResetAttackSpeed");
         currentAttackSpeed = baseAttackSpeed * multiplier;
-        //StartCoroutine(ResetAttackSpeed(duration));
     }
 
     public void SetShield(int amount, float duration)
     {
-        //StopCoroutine("RemoveShield");
         currentShield = amount;
-        //StartCoroutine(RemoveShield(duration));
     }
-
-    //private IEnumerator ResetAttackSpeed(float delay)
-    //{
-    //    yield return new WaitForSeconds(delay);
-    //    currentAttackSpeed = baseAttackSpeed;
-    //    Debug.Log("Attack Speed reset to base value.");
-    //}
-
-
-    //private IEnumerator RemoveShield(float delay)
-    //{
-    //    yield return new WaitForSeconds(delay);
-    //    currentShield = 0;
-    //    Debug.Log("Shield expired.");
-    //}
-
-    // Optional: Method to absorb damage using shield
-    //public void TakeDamage(int damage)
-    //{
-    //    if (currentShield > 0)
-    //    {
-    //        int remainingDamage = damage - currentShield;
-    //        currentShield -= damage;
-
-    //        if (currentShield < 0)
-    //            currentShield = 0;
-
-    //        if (remainingDamage > 0)
-    //            currentHealth -= remainingDamage;
-    //    }
-    //    else
-    //    {
-    //        currentHealth -= damage;
-    //    }
-
-    //    if (currentHealth <= 0)
-    //    {
-    //        currentHealth = 0;
-    //        Debug.Log("Player died.");
-    //    }
-    //}
 }

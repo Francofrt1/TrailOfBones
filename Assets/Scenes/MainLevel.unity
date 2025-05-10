@@ -5298,6 +5298,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 803400956411200671, guid: 56e4dbbb21c3f874ba8ffe432a7a391f, type: 3}
+      propertyPath: duration
+      value: 120
+      objectReference: {fileID: 0}
     - target: {fileID: 2904887283493235098, guid: 56e4dbbb21c3f874ba8ffe432a7a391f, type: 3}
       propertyPath: m_Name
       value: Wheelcart
@@ -5511,15 +5515,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5961034109050530384, guid: 00edc98f68e6add4e91255f6f9e72d1d, type: 3}
       propertyPath: spawnCount
-      value: 5
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5961034109050530384, guid: 00edc98f68e6add4e91255f6f9e72d1d, type: 3}
       propertyPath: spawnRadius
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 5961034109050530384, guid: 00edc98f68e6add4e91255f6f9e72d1d, type: 3}
       propertyPath: spawnInterval
-      value: 5000
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

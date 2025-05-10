@@ -1,8 +1,8 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using System.Linq;
 using Assets.Scripts.Interfaces;
+using System.Collections;
+using System;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(EnemyModel))]
@@ -11,8 +11,7 @@ using Assets.Scripts.Interfaces;
 public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
 {
     // References to the current target, player list, and defendable object
-    public GameObject targetObject { get; private set; }
-    public List<PlayerController> players { get; private set; }
+    public GameObject targetObject;
     public GameObject defendableObject { get; private set; }
 
     // Component and logic references
@@ -20,54 +19,31 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
     private EnemyModel model;
     private EnemyView view;
     
-    [SerializeField] 
     private AttackArea attackArea;
-    private int maxAssignedEnemiesToPlayer = 4;
 
-    void Start()
+    public event Action<EnemyController, bool, string> OnEnemyKilled;
+
+    private void Awake()
     {
-        // finds players and target on the scene
-        players = GameObject.FindGameObjectsWithTag("Player").Select(x => x.GetComponent<PlayerController>()).ToList();
-        defendableObject = GameObject.Find("Wheelcart");
-
-        // gets navigation and view components
+        // gets model and view components
+        model = GetComponent<EnemyModel>();
+        view = GetComponent<EnemyView>();
+        attackArea = GetComponentInChildren<AttackArea>();
         agent = GetComponent<NavMeshAgent>();
+    }
+    void Start()
+    {        
+        // gets navigation and view components
         agent.updatePosition = true;
         agent.updateUpAxis = true;
         agent.updateRotation = true;
         agent.speed = 3;
 
-        view = GetComponent<EnemyView>();
-
-        // initializes combat logic model
-        model = GetComponent<EnemyModel>();
-
-        attackArea = GetComponentInChildren<AttackArea>();
+        StartCoroutine(AttackCheck());
     }
 
     void Update()
     {
-        if (players == null || players.Count == 0)
-            return;
-
-        // if there is still no target assigned to a player assign it
-        if (!model.inPlayer)
-        {
-            PlayerController player = players.FirstOrDefault(p => p.GetEnemyCount() < maxAssignedEnemiesToPlayer);
-
-            if (player != null)
-            {
-                player.AddEnemy(gameObject);
-                targetObject = player.gameObject;
-                model.inPlayer = true;
-            }
-            else
-            {
-                targetObject = defendableObject;
-            }
-        }
-
-        // if there is still no valid target, we do nothing more
         if (targetObject == null)
             return;
 
@@ -75,13 +51,7 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
         Vector3 target = targetObject.transform.position;
         agent.SetDestination(target);
         bool isMoving = agent.velocity.magnitude > 0.1f;
-        view.SetMovingAnimation(isMoving);
-
-        // check the distance to attack
-        if (targetObject != null && model.CanAttack(Time.time))
-        {
-            OnAttack();
-        }
+        view.SetMovingAnimation(isMoving);        
     }
     public void OnAttack()
     {
@@ -90,33 +60,53 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
         foreach (IDamageable damageable in attackArea.DamageablesInRange)
         {
             if (damageable.GetTag() == "Enemy") continue; // ignore other enemies
-            damageable.TakeDamage(model.baseDamage);
+            damageable.TakeDamage(model.baseDamage, model.ID);
             
             Debug.Log($"{model.baseDamage} done to {damageable.GetTag()}");
         }
-
-        model.Attack(); // record the attack time for the CD
     }
 
-    public void OnDeath()
+    private IEnumerator AttackCheck()
     {
+        while (true)
+        {
+            if (targetObject != null && attackArea.DamageablesInRange.Count > 0)
+            {
+                OnAttack();
+            }
+            yield return new WaitForSeconds(model.attackCooldown);
+        }
+    }
+
+    public void OnDeath(string killedById)
+    {
+        OnEnemyKilled?.Invoke(this, model.inPlayer, killedById);
         Debug.Log("Enemy died.");
         view.SetDieAnimation();
-        Destroy(gameObject);
     }
 
-    public void TakeDamage(float damageAmout)
+    public void TakeDamage(float damageAmout, string killedById)
     {
         model.SetHealth(model.currentHealth - damageAmout);
         view.SetTakeDamageAnimation();
         if (model.currentHealth <= 0)
         {
-            OnDeath();
+            OnDeath(killedById);
         }
     }
 
     public string GetTag()
     {
         return gameObject.tag;
+    }
+
+    public void SetIsEnemyOnPlayer(bool isEnemyOnPlayer)
+    {
+        model.inPlayer = isEnemyOnPlayer;
+    }
+
+    public bool GetIsEnemyOnPlayer()
+    {
+        return model.inPlayer;
     }
 }
