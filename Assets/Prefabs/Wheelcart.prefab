@@ -104,7 +104,7 @@ MonoBehaviour:
   m_Target: {fileID: 0}
   m_PlayOnAwake: 0
   m_LoopMode: 0
-  m_Method: 1
+  m_Method: 0
   m_Duration: 1219.3932
   m_MaxSpeed: 0.7
   m_EasingMode: 0
@@ -137,6 +137,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 507fce70c7a5c7541a74da8be5010ef6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  duration: 60
+  maxHealth: 1000
 --- !u!1001 &1732105405956584470
 PrefabInstance:
   m_ObjectHideFlags: 0

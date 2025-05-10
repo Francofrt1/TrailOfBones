@@ -1,6 +1,6 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
@@ -8,73 +8,37 @@ public class EnemySpawner : MonoBehaviour
     
     public int spawnCount = 1;
     public float spawnRadius = 5f;
-    public float spawnInterval = 0f;
+    public float spawnInterval = 10f;
     public GameObject enemyPrefab;
-    private float timer;
-     
+
+    public event Action<List<EnemyController>> OnEnemiesSpawned;
     void Start()
     {
-        InitializeTimer();
+        StartCoroutine(SpawnEnemies());
     }
-    void Update()
+
+    /// <summary>
+    /// Instantiates enemy objects around the current position within the given radius.
+    /// PRECONDITION:
+    ///     'enemyPrefab' must be assigned in the inspector.
+    ///     'spawnCount' should be 1 or greater.
+    /// </summary>
+    IEnumerator SpawnEnemies()
     {
-        SpawnInterval();
-    }
-
-
-
-    void InitializeTimer()
-    {   /*PURPOSE:
-            * Initializes the spawn timer based on the configured interval.
-            PRECONDITION:
-            * 'spawnInterval' must be set before this method is called.
-        */
-        timer = spawnInterval;
-
-        if (spawnInterval == 0f)
+        while (true)
         {
-            SpawnEnemies();
-            enabled = false; // Disables the script if it won't continue spawning
-        }
-    }
-
-    void SpawnEnemies()
-    {   /*PURPOSE:
-            * Instantiates enemy objects around the current position within the given radius.
-            PRECONDITION:
-            * 'enemyPrefab' must be assigned in the inspector.
-            * 'spawnCount' should be 1 or greater.
-        */
-        for (int i = 0; i < spawnCount; i++)
-        {
-            Vector3 randomPos = transform.position + Random.insideUnitSphere * spawnRadius;
-            randomPos.y = transform.position.y; //Keeps enemies on same Y axis
-
-            Instantiate(enemyPrefab, randomPos, Quaternion.identity);
-        }
-    }
-
-    void SpawnInterval()
-    {   /*PURPOSE:
-            * Controls timed spawning of enemies at regular intervals.
-            PRECONDITION:
-            * 'spawnInterval' must be greater than 0 for this to take effect.
-        */
-        if (spawnInterval > 0f)
-        {
-            timer -= Time.deltaTime;
-            if (timer <= 0f)
+            yield return new WaitForSeconds(spawnInterval);
+            List<EnemyController> spawnedEnemies = new List<EnemyController>();
+            for (int i = 0; i < spawnCount; i++)
             {
-                SpawnEnemies();
-                timer = spawnInterval;
-            }
-        }
+                Vector3 randomPos = transform.position + UnityEngine.Random.insideUnitSphere * spawnRadius;
+                randomPos.y = transform.position.y; //Keeps enemies on same Y axis
 
-        // test manual spawn (disabled)
-        //if (Input.GetKeyDown(KeyCode.E))
-        //{
-        //    SpawnEnemies();
-        //}
+                var enemy = Instantiate(enemyPrefab, randomPos, Quaternion.identity).GetComponent<EnemyController>();
+                spawnedEnemies.Add(enemy);
+            }
+            OnEnemiesSpawned?.Invoke(spawnedEnemies);
+        }
     }
 }
 

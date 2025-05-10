@@ -1,13 +1,9 @@
 using Assets.Scripts.Interfaces;
 using System;
 using UnityEngine;
-using UnityEngine.InputSystem.Processors;
 
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(PlayerModel))]
-[RequireComponent(typeof(PlayerView))]
-[RequireComponent(typeof(InputHandler))]
-public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IAttackRangeProvider
+public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath
 {
     private Rigidbody rigidBody;
     private Vector2 movementInput;
@@ -20,6 +16,7 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IAt
 
     private bool isGrounded;
     private bool isJumping = false;
+    private float fallingTime = 0f;
 
     private PlayerModel playerModel;
     private PlayerView playerView;
@@ -66,6 +63,7 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IAt
     {
         if (isGrounded)
         {
+            fallingTime = 0f;
             rigidBody.AddForce(Vector3.up * playerModel.jumpForce, ForceMode.Impulse);
             playerView.SetJumpAnimation();
         }
@@ -74,12 +72,8 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IAt
     private void Update()
     {
         if (!isJumping && !isGrounded) {
-            playerView.SetIsFallingAnimation(true);
-        }
-
-        if(playerModel.isDead && !playerView.IsDying())
-        {
-            OnDeath();
+            fallingTime += Time.deltaTime;
+            playerView.SetIsFallingAnimation(true, fallingTime);
         }
     }
 
@@ -130,23 +124,14 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IAt
         transform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
     }
 
-    public int GetEnemyCount()
-    {
-        return playerModel.enemies.Count;
-    }
-
-    public void AddEnemy(GameObject newEnemy)
-    {
-        playerModel.enemies.Add(newEnemy);
-    }
-
     public void OnAttack()
     {
         if(playerView.IsAttacking()) return;
         playerView.SetAttackAnimation();
         foreach (IDamageable damageable in attackArea.DamageablesInRange)
         {
-            damageable.TakeDamage(playerModel.baseDamage);
+            if (damageable.GetTag() == "DefendableObject") continue; // ignore wheelcart
+            damageable.TakeDamage(playerModel.baseDamage, playerModel.ID);
             Debug.Log($"{playerModel.baseDamage} done to {damageable.GetTag()}");
         }
     }
@@ -166,7 +151,7 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IAt
         inputHandler.OnSprint -= OnSprint;
     }
 
-    public void TakeDamage(float damageAmout)
+    public void TakeDamage(float damageAmout, string killedById)
     {
         playerModel.SetHealth(-damageAmout);
 
@@ -174,26 +159,24 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IAt
         {
             playerView.SetIsDeadAnimation();
             playerModel.isDead = true;
+            OnDeath(killedById);
         }
 
         OnPlayerHealthVariation?.Invoke(playerModel.currentHealth);
     }
 
-    public void OnDeath()
+    public void OnDeath(string killedById)
     {
         playerDie?.Invoke();
-        Destroy(playerModel);
-        Destroy(playerView);
-        Destroy(gameObject);
-
     }
 
     public string GetTag()
     {
         return gameObject.tag;
     }
-    public float RangeToBeAttacked()
+
+    public string GetID()
     {
-        return playerModel.distToBeAttacked;
+        return playerModel.ID;
     }
 }
