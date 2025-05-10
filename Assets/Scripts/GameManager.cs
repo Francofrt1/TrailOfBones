@@ -1,8 +1,5 @@
 using System;
-using System.Collections;
-using UnityEditor.SearchService;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.Splines;
 
 public class GameManager : MonoBehaviour
@@ -25,9 +22,6 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        // LOS COMENTARIOS DE AC� SON DEL EJEMPLO DEL PROFE
-        // Creamos la instancia unica.
-        // Si ya existe una instancia, destruye esta
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -35,19 +29,18 @@ public class GameManager : MonoBehaviour
         else
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
-            // Es un metodo que permite mantener la informacion de un objeto(GameManager) al cargar una nueva escena.
         }
     }
 
-    private void _suscribeToPlayerController()
+    private void _subscribeToPlayerController()
     {
         playerController = GameObject.Find("Player").GetComponent<PlayerController>();
         if (playerController == null) return;
         playerController.playerDie += GameOverScreen;
         playerController.OnPlayerHealthVariation += UpdatePlayerHealthbar;
     }
-    private void _suscribeToPlayerInputHandler()
+
+    private void _subscribeToPlayerInputHandler()
     {
         GameObject player = GameObject.Find("Player");
         if (player == null) return;
@@ -56,7 +49,7 @@ public class GameManager : MonoBehaviour
         playerInputHandler.OnPauseTogglePerformed += TogglePause;
     }
 
-    private void _suscribeToWheelcart()
+    private void _subscribeToWheelcart()
     {
         wheelcartSpline = GameObject.Find("Wheelcart").GetComponent<SplineAnimate>();
         wheelcart = GameObject.Find("Wheelcart").GetComponent<WheelcartController>();
@@ -65,98 +58,76 @@ public class GameManager : MonoBehaviour
         wheelcart.OnWheelcartHealthVariation += UpdateWheelcartHealthbar;
     }
 
-    void OnDisable()
+    private void OnEnable()
     {
-        if (playerInputHandler != null) { playerInputHandler.OnPauseTogglePerformed -= TogglePause; }
+        _subscribeToPlayerInputHandler();
+        _subscribeToWheelcart();
+        _subscribeToPlayerController();
     }
 
+    void OnDisable()
+    {
+        if (playerInputHandler != null)
+        {
+            playerInputHandler.OnPauseTogglePerformed -= TogglePause;
+        }
+        if (wheelcart != null)
+        {
+            wheelcart.OnWheelcartDestroyed -= GameOverScreen;
+            wheelcart.OnWheelcartHealthVariation -= UpdateWheelcartHealthbar;
+        }
+        if (wheelcartSpline != null)
+        {
+            wheelcartSpline.Completed -= WinScreen;
+        }
+    }
 
     void Start()
     {
         gameOver = false;
-        SetCursorState(gamePaused);
+        SetPausedState(false);
         Debug.Log("Game Started");
     }
 
     public void WinScreen()
     {
         winConditionReached = true;
-
-        Time.timeScale = 0f;
-
-        SetCursorState(true);
+        SetPausedState(true);
         OnWinScreen?.Invoke();
-
-        Debug.Log("Fin de la partida, ganaste");    // Ac� se mostrar�a la UI del fin del nivel
+        Debug.Log("Fin de la partida, ganaste");
     }
 
     public void GameOverScreen()
     {
         gameOver = true;
-
-        Time.timeScale = 0f;
-
-        SetCursorState(true);
+        SetPausedState(true);
         OnLoseScreen?.Invoke();
-
-        Debug.Log("Fin de la partida, perdiste");   // Y ac� la de volver al men� o reempezar?
+        Debug.Log("Fin de la partida, perdiste");
     }
 
     private void TogglePause()
     {
         gamePaused = !gamePaused;
-
-        if (gamePaused)
-        {
-            Time.timeScale = 0f;
-            Debug.Log("Juego pausado"); // Ac� se mostrar�a el men� de pausa
-        }
-        else
-        {
-            Time.timeScale = 1f;
-            Debug.Log("Juego resumido"); // Y ac� se cerrar�a
-        }
-
-        SetCursorState(gamePaused);
+        SetPausedState(gamePaused);
         OnGamePaused?.Invoke(gamePaused);
+        Debug.Log(gamePaused ? "Juego pausado" : "Juego resumido");
+    }
+
+    private void SetPausedState(bool paused)
+    {
+        Time.timeScale = paused ? 0f : 1f;
+        SetCursorState(paused);
     }
 
     public void SetPauseGame(bool value)
     {
-        if (gamePaused ^ value) {TogglePause();}
+        if (gamePaused != value) { TogglePause(); }
     }
 
-    public void StartGame()
+    private void SetCursorState(bool value)
     {
-        Time.timeScale = 1f;
-
-        SetCursorState(false);
-        SceneManager.LoadScene("MainLevel",LoadSceneMode.Single);
-        StartCoroutine("LoadListeners");
-        SetPauseGame(false);
-    }
-
-    IEnumerator LoadListeners()
-    {
-        yield return new WaitForSeconds(1f);
-        _suscribeToPlayerInputHandler();
-        _suscribeToWheelcart();
-        _suscribeToPlayerController();
-
-    }
-
-    public void SetCursorState(bool value)
-    {
-        if (value)
-        {
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-        }
-        else
-        {
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
-        }
+        Cursor.visible = value;
+        Cursor.lockState = value ? CursorLockMode.None : CursorLockMode.Locked;
     }
 
     public void UpdatePlayerHealthbar(float currentPlayerHealth)
@@ -168,5 +139,4 @@ public class GameManager : MonoBehaviour
     {
         OnWheelcartHealthUpdate?.Invoke(currentWheelcartHealth);
     }
-
 }
