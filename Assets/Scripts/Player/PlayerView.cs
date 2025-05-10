@@ -34,10 +34,11 @@ public class PlayerView : MonoBehaviour
         animator.SetTrigger("Attack");
     }
 
-    public void SetIsFallingAnimation(bool isFalling)
+    public void SetIsFallingAnimation(bool isFalling, float fallingTime = 0f)
     {
         if (IsDying()) return;
         animator.SetBool("IsFalling", isFalling);
+        animator.SetFloat("FallingTime", fallingTime);
     }
 
     public void SetIsDeadAnimation()

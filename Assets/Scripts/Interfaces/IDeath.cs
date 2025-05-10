@@ -3,6 +3,6 @@ namespace Assets.Scripts.Interfaces
 {
     public interface IDeath
     {
-        public void OnDeath();
+        public void OnDeath(string killedById);
     }
 }
