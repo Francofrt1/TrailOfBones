@@ -1,7 +1,13 @@
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class EnemyView : MonoBehaviour
 {
+    //sound
+    public AudioClip stepSound;
+    public AudioClip hitSound;
+    private AudioSource audioSource;
+    public AudioMixerGroup audioMixerGroup;
     // animation 
     public Animator Animator { get; private set; }
 
@@ -9,6 +15,7 @@ public class EnemyView : MonoBehaviour
     private void Start()
     {
         Animator = GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     // triggers movement animation based on whether the enemy is moving
@@ -16,6 +23,12 @@ public class EnemyView : MonoBehaviour
     {
         if (IsDying()) return;
         Animator.SetBool("isMoving", isMoving);
+        if (audioSource.clip != stepSound)
+        {
+            audioSource.clip = stepSound;
+            audioSource.outputAudioMixerGroup = null;
+            audioSource.Play();
+        }
     }
 
     // triggers attack animation
@@ -30,6 +43,14 @@ public class EnemyView : MonoBehaviour
     {
         if (IsDying()) return;
         Animator.SetTrigger("takeDamage");
+        
+        if (audioSource.clip != hitSound)
+        {
+            audioSource.Stop();
+            audioSource.clip = hitSound;
+            audioSource.outputAudioMixerGroup = null;
+            audioSource.Play();
+        }
     }
 
     // triggers death animation
