@@ -15,12 +15,14 @@ public class HUD : MonoBehaviour
 
     private void Start()
     {
+        GameManager.Instance.onWheelcartTrailDuration += SetProgressBarMaxLimit;
         StartCoroutine("UpdateProgressBar");
     }
     private void OnEnable()
     {
         GameManager.Instance.OnWheelcartHealthUpdate += UpdateWheelcartHealthbar;
         GameManager.Instance.OnPlayerHealthUpdate += UpdatePlayerHealthbar;
+        
     }
 
     private void OnDisable()
@@ -47,5 +49,10 @@ public class HUD : MonoBehaviour
             yield return new WaitForSeconds(1f);
             progressBar.value = progressBar.value+1f;
         }
+    }
+
+    private void SetProgressBarMaxLimit(float limit)
+    {
+        progressBar.maxValue = limit;
     }
 }
