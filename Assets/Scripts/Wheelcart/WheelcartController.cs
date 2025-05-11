@@ -11,7 +11,7 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath
     public SplineAnimate splineAnimate;
 
     public event Action OnWheelcartDestroyed;
-    public event Action<float> OnWheelcartHealthVariation;
+    public event Action<float, float> OnWheelcartHealthVariation;
     public event Action<float> OnWheelcartDuration;
 
     private void Awake()
@@ -25,26 +25,24 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath
         splineAnimate.Duration = wheelcartModel.duration;
         OnWheelcartDuration?.Invoke(wheelcartModel.duration);
         splineAnimate.Play();
+        OnWheelcartHealthVariation?.Invoke(wheelcartModel.currentHealth, wheelcartModel.maxHealth);
     }
 
-    public void TakeDamage(float damageAmout, string killedById)
+    public void TakeDamage(float damageAmout, string hittedById)
     {
         wheelcartModel.SetHealth(wheelcartModel.currentHealth - damageAmout);
 
         if (wheelcartModel.currentHealth <= 0)
         {
-            OnDeath(killedById);
+            OnDeath(hittedById);
         }
         Debug.Log(wheelcartModel.currentHealth);
-        OnWheelcartHealthVariation?.Invoke(wheelcartModel.currentHealth);
+        OnWheelcartHealthVariation?.Invoke(wheelcartModel.currentHealth, wheelcartModel.maxHealth);
     }
 
     public void OnDeath(string killedById)
     {
-        Destroy(splineAnimate);
-        Destroy(wheelcartModel);
         OnWheelcartDestroyed?.Invoke();
-        Destroy(gameObject);
     }
 
     public string GetTag()

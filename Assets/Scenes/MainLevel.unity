@@ -3182,6 +3182,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 306587720496374957, guid: d71b9f608ba320b4eb11e1e7a2e55347, type: 3}
+      propertyPath: m_text
+      value: 'Wheelcart HP: 0'
+      objectReference: {fileID: 0}
     - target: {fileID: 473906902077775186, guid: d71b9f608ba320b4eb11e1e7a2e55347, type: 3}
       propertyPath: m_Name
       value: HUD
@@ -3280,6 +3284,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5365924775463109167, guid: d71b9f608ba320b4eb11e1e7a2e55347, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5963888981399041295, guid: d71b9f608ba320b4eb11e1e7a2e55347, type: 3}
+      propertyPath: m_text
+      value: 'HP: 0'
+      objectReference: {fileID: 0}
+    - target: {fileID: 6599997671529706189, guid: d71b9f608ba320b4eb11e1e7a2e55347, type: 3}
+      propertyPath: m_Value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6599997671529706189, guid: d71b9f608ba320b4eb11e1e7a2e55347, type: 3}
+      propertyPath: m_MaxValue
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7751544043320502114, guid: d71b9f608ba320b4eb11e1e7a2e55347, type: 3}
+      propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -5300,7 +5320,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 803400956411200671, guid: 56e4dbbb21c3f874ba8ffe432a7a391f, type: 3}
       propertyPath: duration
-      value: 120
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 803400956411200671, guid: 56e4dbbb21c3f874ba8ffe432a7a391f, type: 3}
+      propertyPath: maxHealth
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 1628262084044185611, guid: 56e4dbbb21c3f874ba8ffe432a7a391f, type: 3}
       propertyPath: m_IsActive

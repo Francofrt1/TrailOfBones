@@ -13,31 +13,39 @@ public class HUD : MonoBehaviour
     public TextMeshProUGUI wheelcartHealthText = null;
     public Slider progressBar = null;
 
-    private void Start()
+    private void Awake()
     {
-        GameManager.Instance.onWheelcartTrailDuration += SetProgressBarMaxLimit;
-        StartCoroutine("UpdateProgressBar");
-    }
-    private void OnEnable()
-    {
-        GameManager.Instance.OnWheelcartHealthUpdate += UpdateWheelcartHealthbar;
-        GameManager.Instance.OnPlayerHealthUpdate += UpdatePlayerHealthbar;
-        
+        _subscribeToEvents();
     }
 
-    private void OnDisable()
+    private void Start()
+    {
+        StartCoroutine("UpdateProgressBar");
+    }
+
+    public void _subscribeToEvents()
+    {
+        GameManager.Instance.onWheelcartTrailDuration += SetProgressBarMaxLimit;
+        GameManager.Instance.OnWheelcartHealthUpdate += UpdateWheelcartHealthbar;
+        GameManager.Instance.OnPlayerHealthUpdate += UpdatePlayerHealthbar;
+    }
+
+    public void _unsubscribeFromEvents()
     {
         GameManager.Instance.OnWheelcartHealthUpdate -= UpdateWheelcartHealthbar;
         GameManager.Instance.OnPlayerHealthUpdate -= UpdatePlayerHealthbar;
+        GameManager.Instance.onWheelcartTrailDuration -= SetProgressBarMaxLimit;
     }
-    public void UpdatePlayerHealthbar(float playerHealthAmount)
+
+    public void UpdatePlayerHealthbar(float playerHealthAmount, float maxHealth)
     {
         playerHealthBar.value = playerHealthAmount;
         playerHealthText.text = "HP: " + playerHealthAmount.ToString(); 
     }
 
-    public void UpdateWheelcartHealthbar(float wheelcartHealthAmount)
+    public void UpdateWheelcartHealthbar(float wheelcartHealthAmount, float maxHealth)
     {
+        wheelcartHealthBar.maxValue = maxHealth;
         wheelcartHealthBar.value = wheelcartHealthAmount;
         wheelcartHealthText.text = "Wheelcart HP: " + wheelcartHealthAmount.ToString();
     }
@@ -54,5 +62,10 @@ public class HUD : MonoBehaviour
     private void SetProgressBarMaxLimit(float limit)
     {
         progressBar.maxValue = limit;
+    }
+
+    private void OnDestroy()
+    {
+        _unsubscribeFromEvents();
     }
 }
