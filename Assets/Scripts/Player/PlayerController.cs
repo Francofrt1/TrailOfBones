@@ -1,5 +1,6 @@
 using Assets.Scripts.Interfaces;
 using System;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -23,7 +24,7 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath
     private AttackArea attackArea;
 
     public event Action playerDie;
-    public event Action<float> OnPlayerHealthVariation;
+    public event Action<float, float> OnPlayerHealthVariation;
 
     private void Awake()
     {
@@ -37,6 +38,11 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath
         attackArea = GetComponentInChildren<AttackArea>();
 
         AssignEvents();
+    }
+
+    private void Start()
+    {
+        OnPlayerHealthVariation?.Invoke(playerModel.currentHealth, playerModel.maxHealth);
     }
 
     private void AssignEvents()
@@ -128,11 +134,14 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath
     {
         if(playerView.IsAttacking()) return;
         playerView.SetAttackAnimation();
-        foreach (IDamageable damageable in attackArea.DamageablesInRange)
+
+        var damageables = attackArea.DamageablesInRange.Where(x => x.GetTag() != "DefendableObject");
+        if (!damageables.Any()) return;
+        foreach (IDamageable damageable in damageables)
         {
             if (damageable.GetTag() == "DefendableObject") continue; // ignore wheelcart
             damageable.TakeDamage(playerModel.baseDamage, playerModel.ID);
-            Debug.Log($"{playerModel.baseDamage} done to {damageable.GetTag()}");
+            Debug.Log($"Player did {playerModel.baseDamage} damage to {damageable.GetTag()}");
         }
     }
 
@@ -151,7 +160,7 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath
         inputHandler.OnSprint -= OnSprint;
     }
 
-    public void TakeDamage(float damageAmout, string killedById)
+    public void TakeDamage(float damageAmout, string hittedById)
     {
         playerModel.SetHealth(-damageAmout);
 
@@ -159,10 +168,10 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath
         {
             playerView.SetIsDeadAnimation();
             playerModel.isDead = true;
-            OnDeath(killedById);
+            OnDeath(hittedById);
         }
 
-        OnPlayerHealthVariation?.Invoke(playerModel.currentHealth);
+        OnPlayerHealthVariation?.Invoke(playerModel.currentHealth, playerModel.maxHealth);
     }
 
     public void OnDeath(string killedById)

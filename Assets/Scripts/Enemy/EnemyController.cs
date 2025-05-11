@@ -3,6 +3,7 @@ using UnityEngine.AI;
 using Assets.Scripts.Interfaces;
 using System.Collections;
 using System;
+using System.Linq;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(EnemyModel))]
@@ -10,10 +11,16 @@ using System;
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
 {
+    private enum State
+    {
+        Attack,
+        Hit,
+        Move,
+        Idle,
+        Death
+    }
     // References to the current target, player list, and defendable object
     public GameObject targetObject;
-    public GameObject defendableObject { get; private set; }
-
     // Component and logic references
     private NavMeshAgent agent;
     private EnemyModel model;
@@ -23,6 +30,8 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
 
     public event Action<EnemyController, bool, string> OnEnemyKilled;
 
+    private State currentState = State.Idle;
+
     private void Awake()
     {
         // gets model and view components
@@ -31,6 +40,7 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
         attackArea = GetComponentInChildren<AttackArea>();
         agent = GetComponent<NavMeshAgent>();
     }
+
     void Start()
     {
         if (!agent.isOnNavMesh)
@@ -45,37 +55,60 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
         agent.speed = 3;
 
         StartCoroutine(AttackCheck());
+        if (targetObject == null) return;
+        Vector3 target = targetObject.transform.position;
+        agent.SetDestination(target);
     }
 
     void Update()
     {
-        if (targetObject == null)
-            return;
+        HandleMovement();
+    }
+
+    public void HandleMovement()
+    {
+        State[] cantMoveStates = { State.Attack, State.Hit, State.Death };
+        if (targetObject == null || cantMoveStates.Contains(currentState)) return;
 
         // move to target 
+        if (agent.remainingDistance <= agent.stoppingDistance)
+        {
+            agent.isStopped = true;
+            currentState = State.Idle;
+        }
+        else
+        {
+            agent.isStopped = false;
+            currentState = State.Move;
+        }
+
         Vector3 target = targetObject.transform.position;
         agent.SetDestination(target);
-        bool isMoving = agent.velocity.magnitude > 0.1f;
-        view.SetMovingAnimation(isMoving);
+
+        view.SetMovingAnimation(currentState == State.Move);
     }
+
     public void OnAttack()
     {
+        // ignore other enemies
+        var damageables = attackArea.DamageablesInRange.Where(x => x.GetTag() != "Enemy");
+        if (!damageables.Any()) return;
+        currentState = State.Attack;
         view.SetAttackAnimation();
-
-        foreach (IDamageable damageable in attackArea.DamageablesInRange)
+        foreach (IDamageable damageable in damageables)
         {
-            if (damageable.GetTag() == "Enemy") continue; // ignore other enemies
             damageable.TakeDamage(model.baseDamage, model.ID);
 
-            Debug.Log($"{model.baseDamage} done to {damageable.GetTag()}");
+            Debug.Log($"Enemy did {model.baseDamage} damage to {damageable.GetTag()}");
         }
+        currentState = State.Idle;
     }
 
     private IEnumerator AttackCheck()
     {
         while (true)
         {
-            if (targetObject != null && attackArea.DamageablesInRange.Count > 0)
+            if (targetObject != null)
             {
                 OnAttack();
             }
@@ -85,18 +118,21 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
 
     public void OnDeath(string killedById)
     {
+        currentState = State.Death;
         OnEnemyKilled?.Invoke(this, model.inPlayer, killedById);
         Debug.Log("Enemy died.");
         view.SetDieAnimation();
     }
 
-    public void TakeDamage(float damageAmout, string killedById)
+    public void TakeDamage(float damageAmout, string hittedById)
     {
         model.SetHealth(model.currentHealth - damageAmout);
+        currentState = State.Hit;
         view.SetTakeDamageAnimation();
+        currentState = State.Idle;
         if (model.currentHealth <= 0)
         {
-            OnDeath(killedById);
+            OnDeath(hittedById);
         }
     }
 

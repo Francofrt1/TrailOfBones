@@ -12,8 +12,8 @@ public class GameManager : MonoBehaviour
     public event Action<bool> OnGamePaused;
     public event Action OnWinScreen;
     public event Action OnLoseScreen;
-    public event Action<float> OnPlayerHealthUpdate;
-    public event Action<float> OnWheelcartHealthUpdate;
+    public event Action<float, float> OnPlayerHealthUpdate;
+    public event Action<float, float> OnWheelcartHealthUpdate;
     public event Action<float> onWheelcartTrailDuration;
 
     private SplineAnimate wheelcartSpline;
@@ -132,14 +132,14 @@ public class GameManager : MonoBehaviour
         Cursor.lockState = value ? CursorLockMode.None : CursorLockMode.Locked;
     }
 
-    public void UpdatePlayerHealthbar(float currentPlayerHealth)
+    public void UpdatePlayerHealthbar(float currentPlayerHealth, float maxHealth)
     {
-        OnPlayerHealthUpdate?.Invoke(currentPlayerHealth);
+        OnPlayerHealthUpdate?.Invoke(currentPlayerHealth, maxHealth);
     }
 
-    public void UpdateWheelcartHealthbar(float currentWheelcartHealth)
+    public void UpdateWheelcartHealthbar(float currentWheelcartHealth, float maxHealth)
     {
-        OnWheelcartHealthUpdate?.Invoke(currentWheelcartHealth);
+        OnWheelcartHealthUpdate?.Invoke(currentWheelcartHealth, maxHealth);
     }
 
     public void SetUIGameDuration(float duration)
