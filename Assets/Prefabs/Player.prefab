@@ -292,6 +292,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df4b9555a6a3d284688f929f64dcb218, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHealth: 100
+  baseAttackSpeed: 1
+  baseDamage: 10
+  currentAttackSpeed: 0
+  currentShield: 0
+  moveSpeed: 5
+  jumpForce: 7
+  acceleration: 1
 --- !u!114 &7548197618182579444
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -40,18 +40,32 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
         agent.speed = 3;
 
         StartCoroutine(AttackCheck());
+        if (targetObject == null) return;
+        Vector3 target = targetObject.transform.position;
+        agent.SetDestination(target);
     }
 
     void Update()
     {
-        if (targetObject == null)
-            return;
+        if (targetObject == null) return;
 
+        bool isMoving = false;
         // move to target 
-        Vector3 target = targetObject.transform.position;
-        agent.SetDestination(target);
-        bool isMoving = agent.velocity.magnitude > 0.1f;
-        view.SetMovingAnimation(isMoving);        
+        Debug.Log($"Distance to target: {agent.remainingDistance}");
+        if (agent.remainingDistance >= agent.stoppingDistance)
+        {
+            agent.isStopped = false;
+            Vector3 target = targetObject.transform.position;
+            agent.SetDestination(target);
+
+            isMoving = agent.velocity.magnitude > 0.1f;
+        }
+        else
+        {
+            isMoving = false;
+        }
+
+        view.SetMovingAnimation(isMoving);
     }
     public void OnAttack()
     {
