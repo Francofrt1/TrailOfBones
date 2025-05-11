@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     public event Action OnLoseScreen;
     public event Action<float> OnPlayerHealthUpdate;
     public event Action<float> OnWheelcartHealthUpdate;
+    public event Action<float> onWheelcartTrailDuration;
 
     private SplineAnimate wheelcartSpline;
     private WheelcartController wheelcart;
@@ -56,6 +57,7 @@ public class GameManager : MonoBehaviour
         wheelcart.OnWheelcartDestroyed += GameOverScreen;
         wheelcartSpline.Completed += WinScreen;
         wheelcart.OnWheelcartHealthVariation += UpdateWheelcartHealthbar;
+        wheelcart.OnWheelcartDuration += SetUIGameDuration;
     }
 
     private void OnEnable()
@@ -138,5 +140,10 @@ public class GameManager : MonoBehaviour
     public void UpdateWheelcartHealthbar(float currentWheelcartHealth)
     {
         OnWheelcartHealthUpdate?.Invoke(currentWheelcartHealth);
+    }
+
+    public void SetUIGameDuration(float duration)
+    {
+        onWheelcartTrailDuration?.Invoke(duration);
     }
 }

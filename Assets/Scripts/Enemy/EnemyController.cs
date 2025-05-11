@@ -18,7 +18,7 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
     private NavMeshAgent agent;
     private EnemyModel model;
     private EnemyView view;
-    
+
     private AttackArea attackArea;
 
     public event Action<EnemyController, bool, string> OnEnemyKilled;
@@ -32,8 +32,13 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
         agent = GetComponent<NavMeshAgent>();
     }
     void Start()
-    {        
-        // gets navigation and view components
+    {
+        if (!agent.isOnNavMesh)
+        {
+            Debug.Log("No NavMesh found, destroyed.");
+            Destroy(gameObject);
+        }
+
         agent.updatePosition = true;
         agent.updateUpAxis = true;
         agent.updateRotation = true;
@@ -75,7 +80,7 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
         {
             if (damageable.GetTag() == "Enemy") continue; // ignore other enemies
             damageable.TakeDamage(model.baseDamage, model.ID);
-            
+
             Debug.Log($"{model.baseDamage} done to {damageable.GetTag()}");
         }
     }
