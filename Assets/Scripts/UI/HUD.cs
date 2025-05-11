@@ -13,18 +13,19 @@ public class HUD : MonoBehaviour
     public TextMeshProUGUI wheelcartHealthText = null;
     public Slider progressBar = null;
 
-    private void Awake()
-    {
-        _subscribeToEvents();
-    }
-
     private void Start()
     {
         StartCoroutine("UpdateProgressBar");
     }
 
+    private void OnEnable()
+    {
+        _subscribeToEvents();
+    }
+
     public void _subscribeToEvents()
     {
+        if(GameManager.Instance == null) return;
         GameManager.Instance.onWheelcartTrailDuration += SetProgressBarMaxLimit;
         GameManager.Instance.OnWheelcartHealthUpdate += UpdateWheelcartHealthbar;
         GameManager.Instance.OnPlayerHealthUpdate += UpdatePlayerHealthbar;
