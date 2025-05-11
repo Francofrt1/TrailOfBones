@@ -4,6 +4,9 @@ using UnityEngine;
 public class PlayerView : MonoBehaviour
 {
     private Animator animator;
+    public AudioClip stepSound;
+    public AudioClip attackSound;
+    public AudioClip hitSound;
     // Start is called before the first frame update
     void Start()
     {
@@ -32,6 +35,8 @@ public class PlayerView : MonoBehaviour
     {
         if (IsDying()) return;
         animator.SetTrigger("Attack");
+        if (attackSound != null)
+            AudioSource.PlayClipAtPoint(attackSound, this.transform.position);
     }
 
     public void SetIsFallingAnimation(bool isFalling, float fallingTime = 0f)
@@ -55,6 +60,20 @@ public class PlayerView : MonoBehaviour
     public bool IsDying()
     {
         return animator.GetCurrentAnimatorStateInfo(0).IsName("Death");
+    }
+
+    public void PlayHitSound()
+    {
+        if (IsDying()) return;
+        if (hitSound != null)
+            AudioSource.PlayClipAtPoint(hitSound, this.transform.position);
+    }
+
+    public void PlayStepSound()
+    {
+        if (IsDying()) return;
+        if (stepSound != null)
+            AudioSource.PlayClipAtPoint(stepSound, this.transform.position);
     }
 
     private void OnDestroy()

@@ -162,6 +162,7 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath
 
     public void TakeDamage(float damageAmout, string hittedById)
     {
+        playerView.PlayHitSound();
         playerModel.SetHealth(-damageAmout);
 
         if (playerModel.currentHealth <= 0)
