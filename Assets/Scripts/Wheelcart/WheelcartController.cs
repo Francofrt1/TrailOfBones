@@ -12,6 +12,7 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath
 
     public event Action OnWheelcartDestroyed;
     public event Action<float> OnWheelcartHealthVariation;
+    public event Action<float> OnWheelcartDuration;
 
     private void Awake()
     {
@@ -22,6 +23,7 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath
     private void Start()
     {
         splineAnimate.Duration = wheelcartModel.duration;
+        OnWheelcartDuration?.Invoke(wheelcartModel.duration);
         splineAnimate.Play();
     }
 
