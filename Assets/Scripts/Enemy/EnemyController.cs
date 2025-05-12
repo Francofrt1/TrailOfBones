@@ -108,7 +108,7 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
     {
         while (true)
         {
-            if (targetObject != null)
+            if (targetObject != null && currentState != State.Death)
             {
                 OnAttack();
             }
@@ -122,10 +122,12 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
         OnEnemyKilled?.Invoke(this, model.inPlayer, killedById);
         Debug.Log("Enemy died.");
         view.SetDieAnimation();
+        Destroy(gameObject, 5f);
     }
 
     public void TakeDamage(float damageAmout, string hittedById)
     {
+        if (currentState == State.Death) return;
         model.SetHealth(model.currentHealth - damageAmout);
         currentState = State.Hit;
         view.SetTakeDamageAnimation();
