@@ -84,12 +84,13 @@ public class EnemyManager : MonoBehaviour
 
         if (currentEnemies < maxEnemiesToPlayer)
         {
-            enemies.Where(e => !e.GetIsEnemyOnPlayer()).Take(maxEnemiesToPlayer - currentEnemies).ToList().ForEach(e =>
+            var enemiesToAssign = enemies.Where(e => !e.GetIsEnemyOnPlayer()).Take(maxEnemiesToPlayer - currentEnemies).ToList();
+            foreach (var enemy in enemiesToAssign)
             {
-                e.targetObject = player.gameObject;
-                e.SetIsEnemyOnPlayer(true);
+                enemy.targetObject = player.gameObject;
+                enemy.SetIsEnemyOnPlayer(true);
                 playerEnemies[playerId] += 1;
-            });
+            }
         }
     }
 }
