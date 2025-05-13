@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.UI;
 
 public class EnemyView : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class EnemyView : MonoBehaviour
     public AudioClip hitSound;
     private AudioSource audioSource;
     public AudioMixerGroup audioMixerGroup;
+    public Slider healthBar;
     // animation 
     public Animator Animator { get; private set; }
 
@@ -63,5 +65,17 @@ public class EnemyView : MonoBehaviour
     public bool IsDying()
     {
         return Animator.GetCurrentAnimatorStateInfo(0).IsName("Death");
+    }
+
+    public void SetMaxHealthBar(float maxHealth)
+    {
+        healthBar.maxValue = maxHealth;
+        healthBar.GetComponent<CanvasGroup>().alpha = 0f;
+    }
+
+    public void SetCurrentHealthBar(float currentHealth)
+    {
+        if(healthBar.GetComponent<CanvasGroup>().alpha == 0f) healthBar.GetComponent<CanvasGroup>().alpha = 1f;
+        healthBar.value = currentHealth;
     }
 }
