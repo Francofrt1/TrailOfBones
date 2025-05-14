@@ -48,7 +48,7 @@ public class HUD : MonoBehaviour
     {
         wheelcartHealthBar.maxValue = maxHealth;
         wheelcartHealthBar.value = wheelcartHealthAmount;
-        wheelcartHealthText.text = "Wheelcart HP: " + wheelcartHealthAmount.ToString();
+        wheelcartHealthText.text = "HP: " + wheelcartHealthAmount.ToString();
     }
 
     IEnumerator UpdateProgressBar()
