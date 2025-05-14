@@ -120,6 +120,7 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
     public void OnDeath(string killedById)
     {
         currentState = State.Death;
+        agent.isStopped = true;
         OnEnemyKilled?.Invoke(this, model.inPlayer, killedById);
         Debug.Log("Enemy died.");
         view.SetDieAnimation();
