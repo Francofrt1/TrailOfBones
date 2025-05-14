@@ -29,6 +29,7 @@ public class EnemyView : MonoBehaviour
         {
             audioSource.clip = stepSound;
             audioSource.outputAudioMixerGroup = null;
+            audioSource.loop = true;
             audioSource.Play();
         }
     }
@@ -51,6 +52,7 @@ public class EnemyView : MonoBehaviour
             audioSource.Stop();
             audioSource.clip = hitSound;
             audioSource.outputAudioMixerGroup = null;
+            audioSource.loop = false;
             audioSource.Play();
         }
     }
