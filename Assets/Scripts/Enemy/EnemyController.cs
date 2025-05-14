@@ -58,6 +58,7 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
         if (targetObject == null) return;
         Vector3 target = targetObject.transform.position;
         agent.SetDestination(target);
+        view.SetMaxHealthBar(model.maxHealth);
     }
 
     void Update()
@@ -132,6 +133,7 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
         currentState = State.Hit;
         view.SetTakeDamageAnimation();
         currentState = State.Idle;
+        view.SetCurrentHealthBar(model.currentHealth);
         if (model.currentHealth <= 0)
         {
             OnDeath(hittedById);
