@@ -3184,11 +3184,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 306587720496374957, guid: d71b9f608ba320b4eb11e1e7a2e55347, type: 3}
       propertyPath: m_text
-      value: 'Wheelcart HP: 0'
+      value: 'HP: 0'
       objectReference: {fileID: 0}
     - target: {fileID: 473906902077775186, guid: d71b9f608ba320b4eb11e1e7a2e55347, type: 3}
       propertyPath: m_Name
       value: HUD
+      objectReference: {fileID: 0}
+    - target: {fileID: 1395360837644393256, guid: d71b9f608ba320b4eb11e1e7a2e55347, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1670701401415166082, guid: d71b9f608ba320b4eb11e1e7a2e55347, type: 3}
       propertyPath: m_AnchorMax.x
@@ -3196,6 +3200,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1670701401415166082, guid: d71b9f608ba320b4eb11e1e7a2e55347, type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2893099586342851347, guid: d71b9f608ba320b4eb11e1e7a2e55347, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2893099586342851347, guid: d71b9f608ba320b4eb11e1e7a2e55347, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2893099586342851347, guid: d71b9f608ba320b4eb11e1e7a2e55347, type: 3}
+      propertyPath: m_AnchorMin.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3672078915220460310, guid: d71b9f608ba320b4eb11e1e7a2e55347, type: 3}
@@ -3300,6 +3316,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7751544043320502114, guid: d71b9f608ba320b4eb11e1e7a2e55347, type: 3}
       propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7751544043320502114, guid: d71b9f608ba320b4eb11e1e7a2e55347, type: 3}
+      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
