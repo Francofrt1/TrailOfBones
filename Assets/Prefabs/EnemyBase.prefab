@@ -152,6 +152,7 @@ MonoBehaviour:
   maxHealth: 100
   baseDamage: 10
   attackCooldown: 2
+  attackDurationAdjustment: -0.2
 --- !u!195 &7546450163983781143
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -220,7 +221,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 126
   m_CollisionDetection: 0
 --- !u!82 &1262155240710521705
 AudioSource:

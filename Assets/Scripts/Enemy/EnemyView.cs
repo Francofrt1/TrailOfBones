@@ -46,7 +46,7 @@ public class EnemyView : MonoBehaviour
     {
         if (IsDying()) return;
         Animator.SetTrigger("takeDamage");
-        
+
         if (audioSource.clip != hitSound)
         {
             audioSource.Stop();
@@ -69,6 +69,12 @@ public class EnemyView : MonoBehaviour
         return Animator.GetCurrentAnimatorStateInfo(0).IsName("Death");
     }
 
+    public float GetCurrentAnimationClipLength()
+    {
+        AnimatorClipInfo[] clipInfo = Animator.GetCurrentAnimatorClipInfo(0);
+        return clipInfo.Length > 0 ? clipInfo[0].clip.length : 0f;
+    }
+
     public void SetMaxHealthBar(float maxHealth)
     {
         healthBar.maxValue = maxHealth;
@@ -77,7 +83,7 @@ public class EnemyView : MonoBehaviour
 
     public void SetCurrentHealthBar(float currentHealth)
     {
-        if(healthBar.GetComponent<CanvasGroup>().alpha == 0f) healthBar.GetComponent<CanvasGroup>().alpha = 1f;
+        if (healthBar.GetComponent<CanvasGroup>().alpha == 0f) healthBar.GetComponent<CanvasGroup>().alpha = 1f;
         healthBar.value = currentHealth;
     }
 }
