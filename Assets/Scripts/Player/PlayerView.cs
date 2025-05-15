@@ -4,24 +4,32 @@ using UnityEngine;
 public class PlayerView : MonoBehaviour
 {
     private Animator animator;
-    public AudioClip stepSound;
+    public AudioClip stepSound1;
+    public AudioClip stepSound2;
+    public AudioClip stepSound3;
+    public AudioClip stepSound4;
+    public AudioClip stepSound5;
+
     public AudioClip attackSound;
     public AudioClip hitSound;
-    // Start is called before the first frame update
+
+    private AudioClip[] stepSoundsArray;
+
     void Start()
     {
         animator = GetComponent<Animator>();
+        stepSoundsArray = new AudioClip[] { stepSound1, stepSound2, stepSound3, stepSound4, stepSound5};
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void SetMovementAnimation(float speed)
     {
-        if(IsDying()) return;
+        if (IsDying()) return;
         animator.SetFloat("Speed", speed);
     }
 
@@ -72,8 +80,15 @@ public class PlayerView : MonoBehaviour
     public void PlayStepSound()
     {
         if (IsDying()) return;
-        if (stepSound != null)
-            AudioSource.PlayClipAtPoint(stepSound, this.transform.position);
+
+        if (stepSoundsArray != null && stepSoundsArray.Length > 0)
+        {
+            int index = Random.Range(0, stepSoundsArray.Length);
+            AudioClip selectedStep = stepSoundsArray[index];
+
+            if (selectedStep != null)
+                AudioSource.PlayClipAtPoint(selectedStep, this.transform.position);
+        }
     }
 
     private void OnDestroy()
