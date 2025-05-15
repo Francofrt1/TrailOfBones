@@ -91,18 +91,25 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
 
     public void OnAttack()
     {
-        // ignore other enemies
         var damageables = attackArea.DamageablesInRange.Where(x => x.GetTag() != "Enemy");
         if (!damageables.Any()) return;
+
         currentState = State.Attack;
         view.SetAttackAnimation();
+
         foreach (IDamageable damageable in damageables)
         {
             damageable.TakeDamage(model.baseDamage, model.ID);
-
             Debug.Log($"Enemy did {model.baseDamage} damage to {damageable.GetTag()}");
         }
-        currentState = State.Idle;
+
+        StartCoroutine(ReturnToIdleAfter(model.attackDuration));
+    }
+
+    private IEnumerator ReturnToIdleAfter(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        if (currentState == State.Attack) {currentState = State.Idle;}
     }
 
     private IEnumerator AttackCheck()

@@ -7,6 +7,7 @@ public class EnemyModel : MonoBehaviour
     public float currentHealth { get; private set; }
     public float baseDamage = 10f;
     public float attackCooldown = 2f;
+    public float attackDuration = 1f;
     public bool inPlayer { get; set; } = false;
 
     // enemy initialization
