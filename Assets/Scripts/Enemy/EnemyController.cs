@@ -103,7 +103,8 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
             Debug.Log($"Enemy did {model.baseDamage} damage to {damageable.GetTag()}");
         }
 
-        StartCoroutine(ReturnToIdleAfter(model.attackDuration));
+        float attackDuration = view.GetCurrentAnimationClipLength() + model.attackDurationAdjustment;
+        StartCoroutine(ReturnToIdleAfter(attackDuration));
     }
 
     private IEnumerator ReturnToIdleAfter(float seconds)

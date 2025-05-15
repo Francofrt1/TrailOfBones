@@ -4,21 +4,15 @@ using UnityEngine;
 public class PlayerView : MonoBehaviour
 {
     private Animator animator;
-    public AudioClip stepSound1;
-    public AudioClip stepSound2;
-    public AudioClip stepSound3;
-    public AudioClip stepSound4;
-    public AudioClip stepSound5;
 
     public AudioClip attackSound;
     public AudioClip hitSound;
 
-    private AudioClip[] stepSoundsArray;
+    public AudioClip[] stepSoundsArray;
 
     void Start()
     {
         animator = GetComponent<Animator>();
-        stepSoundsArray = new AudioClip[] { stepSound1, stepSound2, stepSound3, stepSound4, stepSound5};
     }
 
     // Update is called once per frame

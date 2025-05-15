@@ -152,7 +152,7 @@ MonoBehaviour:
   maxHealth: 100
   baseDamage: 10
   attackCooldown: 2
-  attackDuration: 1
+  attackDurationAdjustment: -0.2
 --- !u!195 &7546450163983781143
 NavMeshAgent:
   m_ObjectHideFlags: 0
