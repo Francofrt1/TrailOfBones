@@ -71,6 +71,6 @@ public class UIManager : MonoBehaviour
 
     private void ToMainMenu()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("MainMenu");
     }
 }
