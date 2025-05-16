@@ -40,6 +40,7 @@ public class HUD : MonoBehaviour
 
     public void UpdatePlayerHealthbar(float playerHealthAmount, float maxHealth)
     {
+        playerHealthBar.maxValue = maxHealth;
         playerHealthBar.value = playerHealthAmount;
         playerHealthText.text = "HP: " + playerHealthAmount.ToString(); 
     }

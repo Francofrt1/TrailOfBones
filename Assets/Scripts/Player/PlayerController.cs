@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath
+public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IHealthVariation
 {
     private Rigidbody rigidBody;
     private Vector2 movementInput;
@@ -23,8 +23,8 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath
     private PlayerView playerView;
     private AttackArea attackArea;
 
-    public event Action playerDie;
-    public event Action<float, float> OnPlayerHealthVariation;
+    public event Action OnDie;
+    public event Action<float, float> OnHealthVariation;
 
     private void Awake()
     {
@@ -42,7 +42,7 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath
 
     private void Start()
     {
-        OnPlayerHealthVariation?.Invoke(playerModel.currentHealth, playerModel.maxHealth);
+        OnHealthVariation?.Invoke(playerModel.currentHealth, playerModel.maxHealth);
     }
 
     private void AssignEvents()
@@ -172,12 +172,12 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath
             OnDeath(hittedById);
         }
 
-        OnPlayerHealthVariation?.Invoke(playerModel.currentHealth, playerModel.maxHealth);
+        OnHealthVariation?.Invoke(playerModel.currentHealth, playerModel.maxHealth);
     }
 
     public void OnDeath(string killedById)
     {
-        playerDie?.Invoke();
+        OnDie?.Invoke();
     }
 
     public string GetTag()
