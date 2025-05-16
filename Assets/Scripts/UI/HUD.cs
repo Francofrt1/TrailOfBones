@@ -15,6 +15,8 @@ public class HUD : MonoBehaviour
     public Slider progressBar = null;
 
     private IHealthVariation playerHealthEvents;
+    private IHealthVariation wheelcartHealthEvents;
+    private IWheelcartDuration wheelcartDurationEvents;
 
     private void Start()
     {
@@ -23,22 +25,6 @@ public class HUD : MonoBehaviour
 
     private void OnEnable()
     {
-        _subscribeToEvents();
-    }
-
-    public void _subscribeToEvents()
-    {
-        if(GameManager.Instance == null) return;
-        GameManager.Instance.onWheelcartTrailDuration += SetProgressBarMaxLimit;
-        GameManager.Instance.OnWheelcartHealthUpdate += UpdateWheelcartHealthbar;
-        GameManager.Instance.OnPlayerHealthUpdate += UpdatePlayerHealthbar;
-    }
-
-    public void _unsubscribeFromEvents()
-    {
-        GameManager.Instance.OnWheelcartHealthUpdate -= UpdateWheelcartHealthbar;
-        GameManager.Instance.OnPlayerHealthUpdate -= UpdatePlayerHealthbar;
-        GameManager.Instance.onWheelcartTrailDuration -= SetProgressBarMaxLimit;
     }
 
     public void UpdatePlayerHealthbar(float playerHealthAmount, float maxHealth)
@@ -75,8 +61,19 @@ public class HUD : MonoBehaviour
         playerHealthEvents.OnHealthVariation += UpdatePlayerHealthbar;
     }
 
+    public void SetWheelcartHealthEvent(IHealthVariation wheelcartHealthVariation)
+    {
+        wheelcartHealthEvents = wheelcartHealthVariation;
+        wheelcartHealthEvents.OnHealthVariation += UpdateWheelcartHealthbar;
+    }
+
+    public void SetWheelcartDuration(IWheelcartDuration wheelcartDuration)
+    {
+        wheelcartDurationEvents = wheelcartDuration;
+        wheelcartDurationEvents.OnWheelcartDuration += SetProgressBarMaxLimit;
+    }
+
     private void OnDestroy()
     {
-        _unsubscribeFromEvents();
     }
 }

@@ -19,12 +19,13 @@ public class PlayerModel : MonoBehaviour
     private void Awake()
     {
         ID = Guid.NewGuid().ToString();
-    }
-    private void Start()
-    {
         currentHealth = maxHealth;
         isDead = false;
         currentAttackSpeed = baseAttackSpeed;
+    }
+    private void Start()
+    {
+
     }
     public void SetHealth(float amount)
     {
