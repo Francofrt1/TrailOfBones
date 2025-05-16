@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Assets.Scripts.Interfaces;
 
 public class HUD : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class HUD : MonoBehaviour
     public TextMeshProUGUI playerHealthText = null;
     public TextMeshProUGUI wheelcartHealthText = null;
     public Slider progressBar = null;
+
+    private IHealthVariation playerHealthEvents;
 
     private void Start()
     {
@@ -64,6 +67,12 @@ public class HUD : MonoBehaviour
     private void SetProgressBarMaxLimit(float limit)
     {
         progressBar.maxValue = limit;
+    }
+
+    public void SetPlayerHealthEvent(IHealthVariation playerHealthVariation)
+    {
+        playerHealthEvents = playerHealthVariation;
+        playerHealthEvents.OnHealthVariation += UpdatePlayerHealthbar;
     }
 
     private void OnDestroy()

@@ -21,7 +21,6 @@ public class GameManager : MonoBehaviour
     private IWheelcartDuration wheelcartDurationEvent;
     private IHealthVariation wheelcartEvents;
     private InputHandler playerInputHandler;
-    private IHealthVariation playerController;
 
     private void Awake()
     {
@@ -37,10 +36,10 @@ public class GameManager : MonoBehaviour
 
     private void _subscribeToPlayerController()
     {
-        playerController = GameObject.Find("Player").GetComponent<IHealthVariation>();
-        if (playerController == null) return;
-        playerController.OnDie += GameOverScreen;
-        playerController.OnHealthVariation += UpdatePlayerHealthbar;
+        IHealthVariation playerHealthEvents = GameObject.Find("Player").GetComponent<IHealthVariation>();
+        if (playerHealthEvents == null) return;
+        GameObject.Find("HUD").GetComponent<HUD>().SetPlayerHealthEvent(playerHealthEvents);
+        playerHealthEvents.OnDie += GameOverScreen;
     }
 
     private void _subscribeToPlayerInputHandler()
