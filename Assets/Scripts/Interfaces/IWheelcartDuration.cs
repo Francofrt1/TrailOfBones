@@ -3,7 +3,7 @@ using System;
 
 namespace Assets.Scripts.Interfaces
 {
-    interface IWheelcartDuration
+    public interface IWheelcartDuration
     {
         event Action<float> OnWheelcartDuration;
     }
