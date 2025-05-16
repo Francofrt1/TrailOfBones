@@ -1,3 +1,4 @@
+using Assets.Scripts.Interfaces;
 using System;
 using UnityEngine;
 using UnityEngine.Splines;
@@ -17,9 +18,10 @@ public class GameManager : MonoBehaviour
     public event Action<float> onWheelcartTrailDuration;
 
     private SplineAnimate wheelcartSpline;
-    private WheelcartController wheelcart;
+    private IWheelcartDuration wheelcartDurationEvent;
+    private IHealthVariation wheelcartEvents;
     private InputHandler playerInputHandler;
-    private PlayerController playerController;
+    private IHealthVariation playerController;
 
     private void Awake()
     {
@@ -35,10 +37,10 @@ public class GameManager : MonoBehaviour
 
     private void _subscribeToPlayerController()
     {
-        playerController = GameObject.Find("Player").GetComponent<PlayerController>();
+        playerController = GameObject.Find("Player").GetComponent<IHealthVariation>();
         if (playerController == null) return;
-        playerController.playerDie += GameOverScreen;
-        playerController.OnPlayerHealthVariation += UpdatePlayerHealthbar;
+        playerController.OnDie += GameOverScreen;
+        playerController.OnHealthVariation += UpdatePlayerHealthbar;
     }
 
     private void _subscribeToPlayerInputHandler()
@@ -53,11 +55,13 @@ public class GameManager : MonoBehaviour
     private void _subscribeToWheelcart()
     {
         wheelcartSpline = GameObject.Find("Wheelcart").GetComponent<SplineAnimate>();
-        wheelcart = GameObject.Find("Wheelcart").GetComponent<WheelcartController>();
-        wheelcart.OnWheelcartDestroyed += GameOverScreen;
+        wheelcartDurationEvent = GameObject.Find("Wheelcart").GetComponent<IWheelcartDuration>();
+        wheelcartEvents = GameObject.Find("Wheelcart").GetComponent<IHealthVariation>();
+        wheelcartEvents.OnDie += GameOverScreen;
         wheelcartSpline.Completed += WinScreen;
-        wheelcart.OnWheelcartHealthVariation += UpdateWheelcartHealthbar;
-        wheelcart.OnWheelcartDuration += SetUIGameDuration;
+        wheelcartEvents.OnHealthVariation += UpdateWheelcartHealthbar;
+        //change here later
+        wheelcartDurationEvent.OnWheelcartDuration += SetUIGameDuration;
     }
 
     private void OnEnable()
@@ -73,10 +77,14 @@ public class GameManager : MonoBehaviour
         {
             playerInputHandler.OnPauseTogglePerformed -= TogglePause;
         }
-        if (wheelcart != null)
+        if (wheelcartSpline != null )
         {
-            wheelcart.OnWheelcartDestroyed -= GameOverScreen;
-            wheelcart.OnWheelcartHealthVariation -= UpdateWheelcartHealthbar;
+            wheelcartDurationEvent.OnWheelcartDuration -= SetUIGameDuration;
+        }
+        if(wheelcartEvents != null)
+        {
+            wheelcartEvents.OnDie -= GameOverScreen;
+            wheelcartEvents.OnHealthVariation -= UpdateWheelcartHealthbar;
         }
         if (wheelcartSpline != null)
         {
