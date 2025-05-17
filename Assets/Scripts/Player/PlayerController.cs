@@ -1,10 +1,11 @@
 using Assets.Scripts.Interfaces;
+using FishNet.Object;
 using System;
 using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IHealthVariation
+public class PlayerController : NetworkBehaviour, IDamageable, IAttack, IDeath, IHealthVariation
 {
     private Rigidbody rigidBody;
     private Vector2 movementInput;
@@ -12,7 +13,6 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IHe
 
     [SerializeField] private LayerMask groundLayer;
 
-    private Transform cameraPivot;
     private float currentYRotation = 0f;
 
     private bool isGrounded;
@@ -29,15 +29,24 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IHe
     private void Awake()
     {
         rigidBody = GetComponent<Rigidbody>();
-        GameObject camera = GameObject.Find("CameraPivot");
-        cameraPivot = camera != null ? camera.transform : this.transform;
-        
+        var cameraPivot = GetComponentInChildren<CameraPivot>();
         inputHandler = GetComponent<InputHandler>();
         playerModel = GetComponent<PlayerModel>();
         playerView = GetComponent<PlayerView>();
         attackArea = GetComponentInChildren<AttackArea>();
 
+        cameraPivot.SetInputHandler(inputHandler);
+        groundLayer = LayerMask.GetMask("groundLayer");
         AssignEvents();
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        if (!base.IsOwner)
+        {
+            this.enabled = false;
+        }
     }
 
     private void Start()

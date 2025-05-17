@@ -1,4 +1,6 @@
 using Assets.Scripts.Interfaces;
+using FishNet.Component.Spawning;
+using FishNet.Managing;
 using System;
 using UnityEngine;
 using UnityEngine.Splines;
@@ -30,17 +32,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void _subscribeToPlayerController()
+    private void _subscribeToPlayerController(IHealthVariation playerHealthEvents)
     {
-        IHealthVariation playerHealthEvents = GameObject.Find("Player").GetComponent<IHealthVariation>();
+        //IHealthVariation playerHealthEvents = GameObject.Find("Player").GetComponent<IHealthVariation>();
         if (playerHealthEvents == null) return;
         HUD.SetPlayerHealthEvent(playerHealthEvents);
         playerHealthEvents.OnDie += GameOverScreen;
     }
 
-    private void _subscribeToPlayerInputHandler()
+    private void _subscribeToPlayerInputHandler(GameObject player)
     {
-        GameObject player = GameObject.Find("Player");
         if (player == null) return;
         playerInputHandler = player.GetComponent<InputHandler>();
         if (playerInputHandler == null) return;
@@ -49,9 +50,10 @@ public class GameManager : MonoBehaviour
 
     private void _subscribeToWheelcart()
     {
-        wheelcartSpline = GameObject.Find("Wheelcart").GetComponent<SplineAnimate>();
-        var wheelcartDurationEvent = GameObject.Find("Wheelcart").GetComponent<IWheelcartDuration>();
-        var wheelcartEvents = GameObject.Find("Wheelcart").GetComponent<IHealthVariation>();
+        var wheelCartGameObject = GameObject.FindGameObjectWithTag("DefendableObject");
+        wheelcartSpline = wheelCartGameObject.GetComponent<SplineAnimate>();
+        var wheelcartDurationEvent = wheelCartGameObject.GetComponent<IWheelcartDuration>();
+        var wheelcartEvents = wheelCartGameObject.GetComponent<IHealthVariation>();
         wheelcartEvents.OnDie += GameOverScreen;
         wheelcartSpline.Completed += WinScreen;
         HUD.SetWheelcartHealthEvent(wheelcartEvents);
@@ -60,10 +62,14 @@ public class GameManager : MonoBehaviour
 
     private void OnEnable()
     {
+        var playerSpawner = GameObject.Find("NetworkManager").GetComponent<PlayerSpawner>();
+        playerSpawner.OnSpawned += (player) =>
+        {
+            _subscribeToPlayerController(player.GetComponent<IHealthVariation>());
+            _subscribeToPlayerInputHandler(player.gameObject);
+        };
         HUD = GameObject.Find("HUD").GetComponent<HUD>();
-        _subscribeToPlayerInputHandler();
         _subscribeToWheelcart();
-        _subscribeToPlayerController();
     }
 
     void OnDisable()
