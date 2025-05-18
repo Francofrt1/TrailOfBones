@@ -1,23 +1,23 @@
-﻿using Assets.Scripts.Interfaces.Multiplayer;
-using Multiplayer.PlayerSystem;
+﻿using Multiplayer.PlayerSystem;
+using Multiplayer.Utils;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Multiplayer
 {
-    public class ReadyUpButton : MonoBehaviour, IRegisterEvents
+    public class ReadyUpButton : BaseMonoBehaviour
     {
         [SerializeField] private Image _readyImage;
         [SerializeField] private Color _readyColor;
         [SerializeField] private Color _notReadyColor;
         [SerializeField] private TMP_Text _readyText;
 
-        public void RegisterEvents()
+        protected override void RegisterEvents()
         {
             PlayerClient.OnIsReady += ToggleReadyButton;
         }
-        public void UnregisterEvents()
+        protected override void UnregisterEvents()
         {
             PlayerClient.OnIsReady -= ToggleReadyButton;
         }

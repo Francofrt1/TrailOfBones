@@ -4,12 +4,13 @@ using Assets.Scripts.Interfaces;
 using System.Collections;
 using System;
 using System.Linq;
+using FishNet.Object;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(EnemyModel))]
 [RequireComponent(typeof(EnemyView))]
 [RequireComponent(typeof(NavMeshAgent))]
-public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
+public class EnemyController : NetworkBehaviour, IDamageable, IAttack, IDeath
 {
     private enum State
     {

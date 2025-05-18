@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Assets.Scripts.Interfaces.Multiplayer;
 using FishNet;
 using FishNet.Connection;
 using FishNet.Managing.Server;
 using FishNet.Transporting;
 using Multiplayer.PlayerSystem;
+using Multiplayer.Utils;
 using UnityEngine;
 
 namespace Multiplayer
@@ -15,7 +15,7 @@ namespace Multiplayer
         MainMenu, InGame
     }
 
-    public class PlayerConnectionManager : MonoBehaviour, IRegisterEvents
+    public class PlayerConnectionManager : BaseMonoBehaviour
     {
         public static PlayerConnectionManager Instance;
         
@@ -25,8 +25,8 @@ namespace Multiplayer
         public List<PlayerClient> AllClients = new List<PlayerClient>();
         
         private ServerManager _serverManager;
-        
-        public void RegisterEvents()
+
+        protected override void RegisterEvents()
         {
             Instance = this;
             
@@ -35,8 +35,8 @@ namespace Multiplayer
             if (_serverManager != null)
                 _serverManager.OnRemoteConnectionState += OnRemoteConnectionState;
         }
-        
-        public void UnregisterEvents()
+
+        protected override void UnregisterEvents()
         {
             if (_serverManager != null)
                 _serverManager.OnRemoteConnectionState -= OnRemoteConnectionState;        

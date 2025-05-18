@@ -1,19 +1,16 @@
-﻿using FishNet.Object;
+﻿using UnityEngine;
 
 namespace Multiplayer.Utils
 {
-    public abstract class BaseNetworkBehaviour : NetworkBehaviour
+    public abstract class BaseMonoBehaviour : MonoBehaviour
     {
-
-        public override void OnStartClient()
+        public void Awake()
         {
-            base.OnStartClient();
             RegisterEvents();
         }
         
-        public override void OnStopClient()
+        public void OnDestroy()
         {
-            base.OnStopClient();
             UnregisterEvents();
         }
 

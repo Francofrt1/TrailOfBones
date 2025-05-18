@@ -123,6 +123,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e6d9d5121e408e4e9835e154b20af9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 2805681668901245417}
+  _networkObjectCache: {fileID: 0}
   targetObject: {fileID: 0}
 --- !u!114 &7060287863962404621
 MonoBehaviour:
@@ -411,7 +414,7 @@ MonoBehaviour:
   _componentIndexCache: 255
   _addedNetworkObject: {fileID: 2805681668901245417}
   _networkObjectCache: {fileID: 0}
-  _componentConfiguration: 0
+  _componentConfiguration: 2
   _synchronizeParent: 0
   _packing:
     Position: 1

@@ -1,5 +1,7 @@
 ﻿using Multiplayer.Utils;
 using Steamworks;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Multiplayer.FriendSystem
@@ -14,12 +16,21 @@ namespace Multiplayer.FriendSystem
         }
 
         public async void ReloadFriendsListAsync()
-        { 
-            foreach ( var friend in SteamFriends.GetFriends())
+        {
+            try
             {
-                GameObject friendItem = Instantiate(_friendListItem, _friendListContainer);
-                var image = await SteamFriends.GetLargeAvatarAsync(friend.Id);
-                friendItem.GetComponent<FriendListItem>().Setup(friend, SteamExtension.GetTextureFromImage(image.Value));
+                IEnumerable<Friend> friends = SteamFriends.GetFriends();
+                foreach (Friend friend in friends.OrderByDescending(x => x.IsOnline))
+                {
+                    GameObject friendItem = Instantiate(_friendListItem, _friendListContainer);
+                    var image = await SteamFriends.GetLargeAvatarAsync(friend.Id);
+                    var imageTexture = SteamExtension.GetTextureFromImage(image.Value);
+                    friendItem.GetComponent<FriendListItem>().Setup(friend, imageTexture);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogException(ex);
             }
         }
     }

@@ -120,6 +120,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e6d9d5121e408e4e9835e154b20af9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 0
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   targetObject: {fileID: 0}
 --- !u!114 &7060287863962404621
 MonoBehaviour:

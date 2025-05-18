@@ -1,5 +1,4 @@
 ﻿using System;
-using Assets.Scripts.Interfaces.Multiplayer;
 using FishNet.Connection;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
@@ -24,7 +23,7 @@ namespace Multiplayer.PlayerSystem
         }
     }
 
-    public class PlayerClient : BaseNetworkBehaviour, IRegisterEvents
+    public class PlayerClient : BaseNetworkBehaviour
     {
         public static Action<PlayerClient> OnStartClient;
         public static Action<bool> OnIsReady;
@@ -46,7 +45,7 @@ namespace Multiplayer.PlayerSystem
 
         private PlayerController _characterController;
         
-        public override void RegisterEvents()
+        protected override void RegisterEvents()
         {
             PlayerConnectionManager.Instance.AllClients.Add(this);
             PlayerInfo.OnChange += OnPlayerDataChange;
@@ -64,7 +63,7 @@ namespace Multiplayer.PlayerSystem
             Cmd_UpdatePlayerInfo(SteamClient.SteamId, SteamClient.Name);
         }
         
-        public override void UnregisterEvents()
+        protected override void UnregisterEvents()
         {
             PlayerConnectionManager.Instance.AllClients.Remove(this);
             
@@ -116,7 +115,14 @@ namespace Multiplayer.PlayerSystem
 
         private void OnPlayerDataChange(PlayerInfoData prev, PlayerInfoData currentData, bool asserver)
         {
-            _usernameText.text = currentData.Username;
+            try
+            {
+                _usernameText.text = currentData.Username;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+            }
         }
 
         //Trusting client with this data since its a coop game
