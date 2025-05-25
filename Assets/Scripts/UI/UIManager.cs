@@ -1,3 +1,4 @@
+using Multiplayer;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -71,6 +72,6 @@ public class UIManager : MonoBehaviour
 
     private void ToMainMenu()
     {
-        SceneManager.LoadScene("MainMenu");
+        ScenesManager.ChangeScene("MainMenu");
     }
 }

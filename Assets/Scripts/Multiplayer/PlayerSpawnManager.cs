@@ -36,7 +36,6 @@ namespace Multiplayer
             
             NetworkObject nob = InstanceFinder.NetworkManager.GetPooledInstantiated(_playerPrefab, spawnPoint.position, spawnPoint.rotation, true);
             InstanceFinder.ServerManager.Spawn(nob, conn);
-            
         }
 
         //spawn players in each scene load
@@ -51,19 +50,16 @@ namespace Multiplayer
             }
         }
         
-        private void OnSceneLoaded(SceneLoadEndEventArgs obj)
+        public void OnSceneLoaded(SceneLoadEndEventArgs obj)
         {
             if(obj.LoadedScenes.Length == 0) return;
             
-            if (obj.LoadedScenes[0].name == EScenes.Game.ToString())
+            int index = 0;
+            foreach (var client in PlayerConnectionManager.Instance.AllClients)
             {
-                int index = 0;
-                foreach (var client in PlayerConnectionManager.Instance.AllClients)
-                {
-                    SpawnPlayer(client.ObjectId, index);
-                    index++;
-                }
-            }        
+                SpawnPlayer(client.ObjectId, index);
+                index++;
+            }    
         }
     }
 }

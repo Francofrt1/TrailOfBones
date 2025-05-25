@@ -33,11 +33,11 @@ namespace Multiplayer.PlayerSystem
         public readonly SyncVar<PlayerInfoData> PlayerInfo = new SyncVar<PlayerInfoData>();
         public readonly SyncVar<bool> IsReady = new SyncVar<bool>();
 
-        [FormerlySerializedAs("mesh")]
         //[Header("Controller")] 
         //[SerializeField] private GameObject contoller;
         [SerializeField] private Behaviour[] componentsToEnable;
-        
+        [SerializeField] private Behaviour[] componentsToDisable;
+
         //got lazy so decided to have the UI in the party a worldspace Canvas
         [Header("Party NameTag")] 
         [SerializeField] private TMP_Text _usernameText;
@@ -78,13 +78,18 @@ namespace Multiplayer.PlayerSystem
             
             if(!IsOwner) return;
 
-            Cursor.lockState = CursorLockMode.Locked;
+            //Cursor.lockState = CursorLockMode.Locked;
             
             //contoller.SetActive(value);
 
             foreach (var component in componentsToEnable)
             {
                 component.enabled = value;
+            }
+
+            foreach (var component in componentsToDisable) 
+            {
+                component.enabled = !value;
             }
         }
 
@@ -148,8 +153,6 @@ namespace Multiplayer.PlayerSystem
         {
             IsReady.Value = !IsReady.Value;
         }
-
-#endregion
-   
+        #endregion
     }
 }

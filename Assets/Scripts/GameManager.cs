@@ -1,12 +1,27 @@
 using Assets.Scripts.Interfaces;
+using FishNet;
 using FishNet.Component.Spawning;
 using FishNet.Managing;
+using FishNet.Managing.Scened;
+using FishNet.Object;
+using Multiplayer;
+using Multiplayer.Utils;
 using System;
 using UnityEngine;
 using UnityEngine.Splines;
 
-public class GameManager : MonoBehaviour
+public class GameManager : BaseNetworkBehaviour
 {
+    public enum GameState
+    {
+        None,
+        InMenu,
+        InLobby,
+        Loading,
+        Pause,
+        Playing,
+        End
+    }
     public static GameManager Instance { get; private set; }
     public bool gameOver = false;
     public bool gamePaused = false;
@@ -19,6 +34,8 @@ public class GameManager : MonoBehaviour
     private HUD HUD;
     private SplineAnimate wheelcartSpline;
     private InputHandler playerInputHandler;
+    [SerializeField]
+    private GameState currentGameState = GameState.None;
 
     private void Awake()
     {
@@ -30,6 +47,8 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
         }
+
+        SetCurrentGameState(GameState.InMenu);
     }
 
     private void _subscribeToPlayerController(IHealthVariation playerHealthEvents)
@@ -62,14 +81,7 @@ public class GameManager : MonoBehaviour
 
     private void OnEnable()
     {
-        var playerSpawner = GameObject.Find("NetworkManager").GetComponent<PlayerSpawner>();
-        playerSpawner.OnSpawned += (player) =>
-        {
-            _subscribeToPlayerController(player.GetComponent<IHealthVariation>());
-            _subscribeToPlayerInputHandler(player.gameObject);
-        };
-        HUD = GameObject.Find("HUD").GetComponent<HUD>();
-        _subscribeToWheelcart();
+        
     }
 
     void OnDisable()
@@ -86,8 +98,6 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        gameOver = false;
-        SetPausedState(false);
         Debug.Log("Game Started");
     }
 
@@ -117,7 +127,7 @@ public class GameManager : MonoBehaviour
 
     private void SetPausedState(bool paused)
     {
-        Time.timeScale = paused ? 0f : 1f;
+        //Time.timeScale = paused ? 0f : 1f;
         SetCursorState(paused);
     }
 
@@ -130,5 +140,84 @@ public class GameManager : MonoBehaviour
     {
         Cursor.visible = value;
         Cursor.lockState = value ? CursorLockMode.None : CursorLockMode.Locked;
+    }
+
+    protected override void RegisterEvents()
+    {
+    }
+
+    protected override void UnregisterEvents()
+    {
+    }
+
+    public void SetCurrentGameState(GameState newState)
+    {
+        currentGameState = newState;
+
+        switch (currentGameState)
+        {
+            case GameState.InMenu:
+                // Handle menu state
+                break;
+            case GameState.InLobby:
+                // Handle lobby state
+                break;
+            case GameState.Loading:
+                // Handle loading state
+                break;
+            case GameState.Pause:
+                SetPausedState(true);
+                break;
+            case GameState.Playing:
+                StartMatch();
+                break;
+            case GameState.End:
+                // Handle end state
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void StartMatch()
+    {
+        try
+        {
+            InstanceFinder.SceneManager.OnLoadEnd += InitializeMatch;
+            ScenesManager.ChangeScene("MainLevelMultiplayer", true);
+            // Additional logic to start the match, like spawning players, etc.
+            Debug.Log("Match started.");
+        }
+        catch (Exception ex)
+        {
+            Debug.Log($"Start match failed: {ex.Message}");
+        }
+    }
+
+    private void InitializeMatch(SceneLoadEndEventArgs obj) {
+        try
+        {
+            if (obj.LoadedScenes[0].name != "MainLevelMultiplayer") return;
+            var playerSpawner = GameObject.Find("NetworkManager").GetComponent<PlayerSpawner>();
+            playerSpawner.OnSpawned += (player) =>
+            {
+                _subscribeToPlayerController(player.GetComponent<IHealthVariation>());
+                _subscribeToPlayerInputHandler(player.gameObject);
+            };
+            var hudObj = GameObject.Find("HUD");
+            HUD = hudObj.GetComponent<HUD>();
+            _subscribeToWheelcart();
+            var audios = GetComponents<AudioSource>();
+            foreach (var audio in audios)
+            {
+                audio.Play();
+            }
+
+            InstanceFinder.SceneManager.OnLoadEnd -= InitializeMatch;
+        }
+        catch (Exception ex)
+        {
+            Debug.Log($"InitializeMatch failed: {ex.Message}");
+        }
     }
 }

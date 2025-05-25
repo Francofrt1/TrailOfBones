@@ -33,8 +33,8 @@ namespace Multiplayer.Steam
 
         private void OnApplicationQuit()
         {
-          //  SteamClient.Shutdown();
-          LeaveLobby();
+            //  SteamClient.Shutdown();
+            LeaveLobby();
         }
         
         public async void CreateLobbyAsync()
@@ -53,8 +53,6 @@ namespace Multiplayer.Steam
             {
                 PopupManager.Popup_Show(new PopupContent("Failed to join", $"Reason: {roomEnter}", true));
             }
-
-
         }
 
         public async void FindLobby()
@@ -112,7 +110,7 @@ namespace Multiplayer.Steam
             
             if(InstanceFinder.NetworkManager.IsClientStarted) return;
 
-            Debug.Log(InstanceFinder.NetworkManager.IsClientStarted);
+            Debug.Log("SteamLobby - OnLobbyEntered: " + InstanceFinder.NetworkManager.IsClientStarted);
             InstanceFinder.ClientManager.StartConnection(address);
         }
 

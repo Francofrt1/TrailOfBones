@@ -9,6 +9,7 @@ using Multiplayer.Utils;
 using Multiplayer.Steam;
 using Multiplayer;
 using Multiplayer.PopupSystem;
+using static GameManager;
 
 public class MultiplayerMenu : BaseMonoBehaviour
 {
@@ -58,6 +59,7 @@ public class MultiplayerMenu : BaseMonoBehaviour
     public void CreateParty()
     {
         ChangeCamera();
+        GameManager.Instance.SetCurrentGameState(GameState.InLobby);
         InstanceFinder.TransportManager.GetTransport<Multipass>().SetClientTransport<FishyFacepunch.FishyFacepunch>();
         SteamLobby.Singleton.CreateLobbyAsync();
     }
@@ -65,6 +67,7 @@ public class MultiplayerMenu : BaseMonoBehaviour
     public void JoinParty()
     {
         ChangeCamera();
+        GameManager.Instance.SetCurrentGameState(GameState.InLobby);
         InstanceFinder.TransportManager.GetTransport<Multipass>().SetClientTransport<FishyFacepunch.FishyFacepunch>();
         SteamLobby.Singleton.FindLobby();
     }
@@ -101,7 +104,7 @@ public class MultiplayerMenu : BaseMonoBehaviour
             return;
         }
 
-        ScenesManager.ChangeScene("MainLevelMultiplayer", true);
+        GameManager.Instance.SetCurrentGameState(GameState.Playing);
     }
 
     public static bool IsAllPlayersReady()

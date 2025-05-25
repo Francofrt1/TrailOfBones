@@ -1,16 +1,21 @@
-using Assets.Scripts.Interfaces;
+using FishNet.CodeGenerating;
 using FishNet.Component.Spawning;
 using FishNet.Demo.AdditiveScenes;
 using FishNet.Example.Scened;
+using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class EnemyManager : MonoBehaviour
+public class EnemyManager : NetworkBehaviour
 {
-    private List<EnemyController> enemies = new List<EnemyController>();
-    private List<PlayerController> playerControllers = new List<PlayerController>();
-    private Dictionary<string, int> playerEnemies = new Dictionary<string, int>();
+    [AllowMutableSyncType]
+    private SyncList<EnemyController> enemies = new SyncList<EnemyController>();
+    [AllowMutableSyncType]
+    private SyncList<PlayerController> playerControllers = new SyncList<PlayerController>();
+    [AllowMutableSyncType]
+    private SyncDictionary<string, int> playerEnemies = new SyncDictionary<string, int>();
     private GameObject wheelcart;
     [SerializeField]
     private int maxEnemiesToPlayer = 4;

@@ -1,3 +1,4 @@
+using Multiplayer;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,6 @@ public class LoadSceneButton : MonoBehaviour
     public void LoadScene(string sceneName)
     {
         // Load the scene with the specified name
-        SceneManager.LoadScene(sceneName);
+        ScenesManager.ChangeScene(sceneName);
     }
 }
