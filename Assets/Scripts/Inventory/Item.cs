@@ -2,17 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Splines;
 
 public class Item : MonoBehaviour
 {
     [SerializeField]
-    private ItemType itemType;
-    [SerializeField]
-    private int quantity;
-    [SerializeField]
-    private Sprite sprite;
-
-
+    private ItemObject item;
     private InventoryController inventoryController;
 
     private void Start()
@@ -29,7 +24,8 @@ public class Item : MonoBehaviour
         }
     }
 
-    public ItemType GetItemType() { return itemType; }
-    public int GetQuantity() { return quantity; }
-    public Sprite GetSprite() { return sprite; }
+    public ItemType GetItemType() { return item.type; }
+    public Sprite GetSprite() { return item.sprite; }
+    public int GetQuantity() { return item.quantity; }
+    public ItemObject GetItem() { return item; }
 }

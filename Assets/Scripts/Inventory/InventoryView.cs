@@ -12,26 +12,11 @@ public class InventoryView : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        try
-        {
-            GameObject menu = transform.GetChild(0).gameObject;
-            ItemType[] itemType = ((ItemType[])System.Enum.GetValues(typeof(ItemType)));
+        GameObject menu = transform.GetChild(0).gameObject;
 
-            for (int i = 0; i < menu.transform.childCount; i++)
-            {
-                slots.Add(menu.transform.GetChild(i).gameObject);
-            }
-            /*
-            if(slots.Count < itemType.Length) { throw new Exception("Need more slots for new objects"); }
-
-            for (int i = 0; i < itemType.Length; i++)
-            {
-                slots[i].gameObject.name = itemType[i].ToString();
-            }*/
-        }
-        catch (Exception e)
+        for (int i = 0; i < menu.transform.childCount; i++)
         {
-            Debug.LogException(e);
+            slots.Add(menu.transform.GetChild(i).gameObject);
         }
         
     }
@@ -39,9 +24,11 @@ public class InventoryView : MonoBehaviour
 
     public void UpdateSlot(int quantity, Sprite sprite)
     {
-        GameObject slot = slots.FirstOrDefault(obj => obj.GetComponentInChildren<Image>() == sprite);
-        if (slot == null) { 
-            if(slots.Any(slot => slot.GetComponentInChildren<Image>().sprite == null)){
+        //find a space that has the same sprite
+        GameObject slot = slots.FirstOrDefault(obj => obj.GetComponentInChildren<Image>().sprite == sprite);
+        if (slot == null) {
+            //If it doesn't find a space containing the sprite, it looks for an empty one. If there aren't any empty spaces, it exits the method without doing anything.
+            if (slots.Any(slot => slot.GetComponentInChildren<Image>().sprite == null)){
                 slot = slots.FirstOrDefault(obj => obj.GetComponentInChildren<Image>().sprite == null);
             }
             else
@@ -50,7 +37,18 @@ public class InventoryView : MonoBehaviour
             } 
         }
 
+        //finds the children that have the text and image components and gives them the new values.
         slot.GetComponentInChildren<Text>().text = quantity.ToString();
         slot.GetComponentInChildren<Image>().sprite = sprite;
+    }
+
+    public void FreeUpSlot(Sprite sprite)
+    {
+        if(slots.Any(slot => slot.GetComponentInChildren<Image>().sprite == sprite)){
+            GameObject slot = slots.FirstOrDefault(obj => obj.GetComponentInChildren<Image>().sprite == sprite);
+            //finds the children that have the text and image components and gives them the new values.
+            slot.GetComponentInChildren<Text>().text = "0";
+            slot.GetComponentInChildren<Image>().sprite = null;
+        }
     }
 }

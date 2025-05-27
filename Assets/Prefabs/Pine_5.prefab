@@ -53,8 +53,12 @@ PrefabInstance:
       value: Pine_5
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 0036e2bc598be30429d673f5b0a0b4a4, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 0036e2bc598be30429d673f5b0a0b4a4, type: 3}
       propertyPath: m_TagString
-      value: Untagged
+      value: Enemy
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -63,6 +67,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0036e2bc598be30429d673f5b0a0b4a4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3661304346599185597}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0036e2bc598be30429d673f5b0a0b4a4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4717310129807032455}
   m_SourcePrefab: {fileID: 100100000, guid: 0036e2bc598be30429d673f5b0a0b4a4, type: 3}
 --- !u!1 &4467082189516647247 stripped
 GameObject:
@@ -90,3 +97,16 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.6622314, y: 13.085711, z: 1.3413086}
   m_Center: {x: -0.033203125, y: 6.1902227, z: -0.10064697}
+--- !u!114 &4717310129807032455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4467082189516647247}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10df809c3ce89c44a98e7ef465bddc5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  item: {fileID: 3421859495812559835, guid: 0de53df5b8d4ad54b950eb2130c08bb3, type: 3}

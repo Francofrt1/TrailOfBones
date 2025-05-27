@@ -12,6 +12,7 @@ public class InventoryController : MonoBehaviour
 
     private void Awake()
     {
+        //TODO: change to make an inventory for each player.
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -34,18 +35,23 @@ public class InventoryController : MonoBehaviour
         View.UpdateSlot(quantity, sprite);
     }
 
-    public void HandleUseItem(Item item, int amountToUse) 
+    public void HandleUseItem(ItemType itemType, int amountToUse) 
     {
-        if (!model.checkItemAmount(item, amountToUse)) return;
+        if (!model.checkItemAmount(itemType, amountToUse)) return;
 
         //TODO: logic to complete the event
 
-        model.reduceItem(item,amountToUse);
+        model.reduceItem(itemType, amountToUse);
 
-        var (quantity,sprite) = model.GetInventory()[item.GetItemType()];
+        var (quantity,sprite) = model.GetInventory()[itemType];
 
         View.UpdateSlot(quantity, sprite);
 
-        
+        if (quantity <= 0) View.FreeUpSlot(sprite);
+    }
+
+    public bool CanUse(ItemType itemType, int amountToUse)
+    {
+        return model.checkItemAmount(itemType, amountToUse);
     }
 }

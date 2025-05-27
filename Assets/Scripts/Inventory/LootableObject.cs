@@ -7,7 +7,7 @@ public class LootableObject : MonoBehaviour, IDamageable, IDeath
 {
     private float health = 30f;
     [SerializeField]
-    private Item item;
+    private GameObject item;
 
     public void TakeDamage(float damageAmout, string hittedById)
     {
@@ -20,9 +20,9 @@ public class LootableObject : MonoBehaviour, IDamageable, IDeath
 
     public void OnDeath(string killedById)
     {
-        var position = transform;
+
+        Instantiate(item,transform.position,transform.rotation);
         Destroy(gameObject);
-        Instantiate(item, position);
     }
 
     public string GetTag() { return gameObject.tag; }
