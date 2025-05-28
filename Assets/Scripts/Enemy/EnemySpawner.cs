@@ -3,7 +3,6 @@ using FishNet.Object;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -36,25 +35,15 @@ public class EnemySpawner : NetworkBehaviour
             yield return new WaitForSeconds(spawnInterval);
             try
             {
-                List<EnemyController> spawnedEnemies = new List<EnemyController>();
+                
                 for (int i = 0; i < spawnCount; i++)
                 {
                     Vector3 randomPos = transform.position + UnityEngine.Random.insideUnitSphere * spawnRadius;
                     randomPos.y = transform.position.y; //Keeps enemies on same Y axis
 
-                    NavMeshHit hit;
-                    // Compensates for terrain elevation by snapping the spawn position to the nearest point on the NavMesh:
-                    if (NavMesh.SamplePosition(randomPos, out hit, 2.0f, NavMesh.AllAreas))
-                    {
-                        GameObject enemy = Instantiate(enemyPrefab, hit.position, Quaternion.identity);
-                        if(enemy.IsPrefabInstance())
-                        {
-                            SpawnEnemyOnServer(enemy);
-                        }
-                        spawnedEnemies.Add(enemy.GetComponent<EnemyController>());
-                    }
+                    SpawnEnemyOnServer(randomPos);
                 }
-                OnEnemiesSpawned?.Invoke(spawnedEnemies);
+                
             }
             catch (Exception ex)
             {
@@ -64,11 +53,21 @@ public class EnemySpawner : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void SpawnEnemyOnServer(GameObject enemy)
+    public void SpawnEnemyOnServer(Vector3 randomPos)
     {
         try
         {
-            ServerManager.Spawn(enemy);
+            List<EnemyController> spawnedEnemies = new List<EnemyController>();
+            NavMeshHit hit;
+            // Compensates for terrain elevation by snapping the spawn position to the nearest point on the NavMesh:
+            if (NavMesh.SamplePosition(randomPos, out hit, 2.0f, NavMesh.AllAreas))
+            {
+                GameObject enemy = Instantiate(enemyPrefab, hit.position, Quaternion.identity);
+
+                ServerManager.Spawn(enemy);
+                spawnedEnemies.Add(enemy.GetComponent<EnemyController>());
+            }
+            OnEnemiesSpawned?.Invoke(spawnedEnemies);
         }
         catch (Exception ex)
         {
