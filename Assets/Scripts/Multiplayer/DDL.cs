@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Game
+namespace Multiplayer
 {
     public class DDL : MonoBehaviour
     {

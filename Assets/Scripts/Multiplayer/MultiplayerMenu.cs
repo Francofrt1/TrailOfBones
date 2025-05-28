@@ -53,7 +53,15 @@ public class MultiplayerMenu : BaseMonoBehaviour
 
     public void ReadyUp()
     {
-        NetworkExtensions.GetLocalPlayer().Cmd_ReadyUp();
+        var player = NetworkExtensions.GetLocalPlayer();
+        if (player == null)
+        {
+            Debug.LogError("Player is null");
+            return;
+        } else
+        {
+            player.Cmd_ReadyUp();
+        }
     }
 
     public void CreateParty()
@@ -109,7 +117,7 @@ public class MultiplayerMenu : BaseMonoBehaviour
 
     public static bool IsAllPlayersReady()
     {
-        foreach (PlayerClient client in PlayerConnectionManager.Instance.AllClients)
+        foreach (PlayerClient client in PlayerConnectionManager.AllClients)
         {
             if (!client.IsReady.Value)
                 return false;

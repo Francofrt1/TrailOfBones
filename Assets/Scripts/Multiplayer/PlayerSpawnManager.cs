@@ -30,7 +30,7 @@ namespace Multiplayer
         
         private void S_OnConnect(NetworkConnection conn)
         {
-            int index = PlayerConnectionManager.Instance.AllClients.Count;
+            int index = PlayerConnectionManager.AllClients.Count;
 
             Transform spawnPoint = SpawnCache.Instance.SpawnPoints[index].transform;
             
@@ -55,7 +55,7 @@ namespace Multiplayer
             if(obj.LoadedScenes.Length == 0) return;
             
             int index = 0;
-            foreach (var client in PlayerConnectionManager.Instance.AllClients)
+            foreach (var client in PlayerConnectionManager.AllClients)
             {
                 SpawnPlayer(client.ObjectId, index);
                 index++;

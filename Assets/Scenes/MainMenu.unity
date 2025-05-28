@@ -1540,7 +1540,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6925303888939187629, guid: 4719ced393551154ca1b317eed449d2d, type: 3}
       propertyPath: <SceneId>k__BackingField
-      value: 876478106
+      value: 2537548543
       objectReference: {fileID: 0}
     - target: {fileID: 7410298507989510586, guid: 4719ced393551154ca1b317eed449d2d, type: 3}
       propertyPath: m_Name
@@ -2305,8 +2305,7 @@ PrefabInstance:
       propertyPath: m_Name
       value: NetworkManager
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 6021761327565425878, guid: 99107a39f16cfda488b36cab7140a0c9, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using FishNet;
 using FishNet.Connection;
 using FishNet.Managing.Server;
 using FishNet.Transporting;
 using Multiplayer.PlayerSystem;
 using Multiplayer.Utils;
+using Steamworks;
 using UnityEngine;
 
 namespace Multiplayer
@@ -22,7 +24,8 @@ namespace Multiplayer
         public static Action<NetworkConnection> S_OnConnect;
         public static Action<NetworkConnection> S_OnDisconnect;
 
-        public List<PlayerClient> AllClients = new List<PlayerClient>();
+        public static List<ulong> PlayerSteamIds = new List<ulong>();
+        public static List<PlayerClient> AllClients = new List<PlayerClient>();
         
         private ServerManager _serverManager;
 
@@ -44,10 +47,23 @@ namespace Multiplayer
 
         private void OnRemoteConnectionState(NetworkConnection connection, RemoteConnectionStateArgs remoteConnectionStateArgs)
         {
-            if(remoteConnectionStateArgs.ConnectionState == RemoteConnectionState.Started)
-                S_OnConnect?.Invoke(connection);
+            ulong id = SteamClient.SteamId.Value;
+            if (remoteConnectionStateArgs.ConnectionState == RemoteConnectionState.Started)
+            {
+                
+                
+                bool alreadyClient = PlayerSteamIds.Any(x => x == id);
+                if (!alreadyClient)
+                {
+                    PlayerSteamIds.Add(id);
+                    S_OnConnect?.Invoke(connection);
+                }
+            }
             else
             {
+                PlayerSteamIds.Remove(id);
+                var clientToRemove = AllClients.SingleOrDefault(x => x.PlayerInfo.Value.SteamID == id);
+                AllClients.Remove(clientToRemove);
                 S_OnDisconnect?.Invoke(connection);
             }
         }

@@ -548,6 +548,7 @@ GameObject:
   - component: {fileID: 6107497518530646852}
   - component: {fileID: 8079371558363624386}
   - component: {fileID: 8245138744477312263}
+  - component: {fileID: 5327098453695331160}
   m_Layer: 6
   m_Name: PlayerMultiplayer
   m_TagString: Player
@@ -737,12 +738,24 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 3875465447857652874}
   _networkObjectCache: {fileID: 0}
   componentsToEnable:
-  - {fileID: 493730807177584159}
+  - {fileID: 7943082474106197344}
   componentsToDisable:
-  - {fileID: 2559524005320811361}
-  - {fileID: 3093741991114736810}
+  - {fileID: 449649918093781624}
+  - {fileID: 8594224384008717418}
   _usernameText: {fileID: 4071943088537988343}
   _isReadyText: {fileID: 2559524005320811361}
+--- !u!114 &5327098453695331160
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8704417068896596986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10aab48568125484cbb9fe01599c951a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &9008371906803502572
 GameObject:
   m_ObjectHideFlags: 0
@@ -975,6 +988,14 @@ PrefabInstance:
     - target: {fileID: 4851881745205336105, guid: f5ee25b78a80b85408719ce2634f821e, type: 3}
       propertyPath: mouseSensitivity
       value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5938285384088495788, guid: f5ee25b78a80b85408719ce2634f821e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.278
+      objectReference: {fileID: 0}
+    - target: {fileID: 5938285384088495788, guid: f5ee25b78a80b85408719ce2634f821e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.985
       objectReference: {fileID: 0}
     - target: {fileID: 7460652364491278129, guid: f5ee25b78a80b85408719ce2634f821e, type: 3}
       propertyPath: m_Name
@@ -1365,11 +1386,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 5121633334363005473}
   m_SourcePrefab: {fileID: 100100000, guid: ae8eec9a059108b40a251135881d7897, type: 3}
---- !u!95 &3093741991114736810 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: ae8eec9a059108b40a251135881d7897, type: 3}
-  m_PrefabInstance: {fileID: 8900722939227945275}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &8594224384008717418 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: ae8eec9a059108b40a251135881d7897, type: 3}

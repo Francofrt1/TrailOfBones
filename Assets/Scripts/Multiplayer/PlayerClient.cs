@@ -35,38 +35,42 @@ namespace Multiplayer.PlayerSystem
 
         //[Header("Controller")] 
         //[SerializeField] private GameObject contoller;
-        [SerializeField] private Behaviour[] componentsToEnable;
-        [SerializeField] private Behaviour[] componentsToDisable;
+        [SerializeField] private GameObject[] componentsToEnable;
+        [SerializeField] private GameObject[] componentsToDisable;
 
         //got lazy so decided to have the UI in the party a worldspace Canvas
         [Header("Party NameTag")] 
         [SerializeField] private TMP_Text _usernameText;
         [SerializeField] private TMP_Text _isReadyText;
-
-        private PlayerController _characterController;
         
         protected override void RegisterEvents()
         {
-            PlayerConnectionManager.Instance.AllClients.Add(this);
-            PlayerInfo.OnChange += OnPlayerDataChange;
-            IsReady.OnChange += OnIsReadyChange;
-
-            _characterController = GetComponent<PlayerController>();
-            
-            //if owned by/is local player
-            if (IsOwner)
+            try
             {
-                OnStartClient?.Invoke(this);
-                PopupManager.Popup_Close();
+                PlayerConnectionManager.AllClients.Add(this);
+                PlayerInfo.OnChange += OnPlayerDataChange;
+                IsReady.OnChange += OnIsReadyChange;
+
+                //if owned by/is local player
+                if (IsOwner)
+                {
+                    OnStartClient?.Invoke(this);
+                    PopupManager.Popup_Close();
+                }
+
+                Cmd_UpdatePlayerInfo(SteamClient.SteamId, SteamClient.Name);
             }
-            
-            Cmd_UpdatePlayerInfo(SteamClient.SteamId, SteamClient.Name);
+            catch (Exception ex)
+            {
+                Debug.LogError(ex);
+            }
         }
         
         protected override void UnregisterEvents()
         {
-            PlayerConnectionManager.Instance.AllClients.Remove(this);
-            
+            //PlayerConnectionManager.AllClients.Remove(this);
+            //PlayerConnectionManager.PlayerSteamIds.Remove(PlayerInfo.Value.SteamID);
+
             OnStartClient?.Invoke(null);
             PlayerInfo.OnChange -= OnPlayerDataChange;
             IsReady.OnChange -= OnIsReadyChange;
@@ -80,16 +84,14 @@ namespace Multiplayer.PlayerSystem
 
             //Cursor.lockState = CursorLockMode.Locked;
             
-            //contoller.SetActive(value);
-
             foreach (var component in componentsToEnable)
             {
-                component.enabled = value;
+                component.SetActive(value);
             }
 
             foreach (var component in componentsToDisable) 
             {
-                component.enabled = !value;
+                component.SetActive(!value);
             }
         }
 
@@ -105,14 +107,10 @@ namespace Multiplayer.PlayerSystem
 
         [TargetRpc]
         private void TRpc_SetPosition(NetworkConnection conn, Vector3 pos, Quaternion rot)
-        {
-            _characterController.enabled = false;
-            
+        {            
             transform.position = pos;
             transform.rotation = rot;
             
-            _characterController.enabled = true;
-
             C_OnSetPosition?.Invoke(this);
         }
 
