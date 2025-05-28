@@ -31,7 +31,7 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IHe
         rigidBody = GetComponent<Rigidbody>();
         GameObject camera = GameObject.Find("CameraPivot");
         cameraPivot = camera != null ? camera.transform : this.transform;
-        
+
         inputHandler = GetComponent<InputHandler>();
         playerModel = GetComponent<PlayerModel>();
         playerView = GetComponent<PlayerView>();
@@ -77,7 +77,8 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IHe
 
     private void Update()
     {
-        if (!isJumping && !isGrounded) {
+        if (!isJumping && !isGrounded)
+        {
             fallingTime += Time.deltaTime;
             playerView.SetIsFallingAnimation(true, fallingTime);
         }
@@ -96,9 +97,11 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IHe
 
         move.y = rigidBody.velocity.y;
 
-        rigidBody.velocity = move;
+        Vector3 nextPosition = rigidBody.position + move * Time.fixedDeltaTime;
+        rigidBody.MovePosition(nextPosition);
 
-        float horizontalVelocity = Math.Abs(Vector2.Dot(rigidBody.velocity, Vector2.right));
+        Vector3 flatMove = new Vector3(move.x, 0f, move.z);
+        float horizontalVelocity = flatMove.magnitude;
         playerView.SetMovementAnimation(horizontalVelocity);
     }
 
@@ -132,7 +135,7 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IHe
 
     public void OnAttack()
     {
-        if(playerView.IsAttacking()) return;
+        if (playerView.IsAttacking()) return;
         playerView.SetAttackAnimation();
 
         var damageables = attackArea.DamageablesInRange.Where(x => x.GetTag() != "DefendableObject");

@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
     public event Action OnLoseScreen;
 
     private HUD HUD;
-    private SplineAnimate wheelcartSpline;
+    private WheelcartMovement wheelcartMovement;
     private InputHandler playerInputHandler;
 
     private void Awake()
@@ -49,11 +49,11 @@ public class GameManager : MonoBehaviour
 
     private void _subscribeToWheelcart()
     {
-        wheelcartSpline = GameObject.Find("Wheelcart").GetComponent<SplineAnimate>();
+        wheelcartMovement = GameObject.Find("Wheelcart").GetComponent<WheelcartMovement>();
         var wheelcartDurationEvent = GameObject.Find("Wheelcart").GetComponent<IWheelcartDuration>();
         var wheelcartEvents = GameObject.Find("Wheelcart").GetComponent<IHealthVariation>();
         wheelcartEvents.OnDie += GameOverScreen;
-        wheelcartSpline.Completed += WinScreen;
+        wheelcartMovement.Completed += WinScreen;
         HUD.SetWheelcartHealthEvent(wheelcartEvents);
         HUD.SetWheelcartDuration(wheelcartDurationEvent);
     }
@@ -72,9 +72,9 @@ public class GameManager : MonoBehaviour
         {
             playerInputHandler.OnPauseTogglePerformed -= TogglePause;
         }
-        if (wheelcartSpline != null)
+        if (wheelcartMovement != null)
         {
-            wheelcartSpline.Completed -= WinScreen;
+            wheelcartMovement.Completed -= WinScreen;
         }
     }
 

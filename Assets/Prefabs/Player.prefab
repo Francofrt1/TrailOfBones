@@ -258,7 +258,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   groundLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
 --- !u!95 &5805692069481226813
 Animator:
   serializedVersion: 5
