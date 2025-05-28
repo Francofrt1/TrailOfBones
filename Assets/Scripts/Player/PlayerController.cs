@@ -135,6 +135,7 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IHe
         if(playerView.IsAttacking()) return;
         playerView.SetAttackAnimation();
 
+        attackArea.DamageablesInRange.RemoveAll(x => x == null || (x as MonoBehaviour) == null);
         var damageables = attackArea.DamageablesInRange.Where(x => x.GetTag() != "DefendableObject");
         if (!damageables.Any()) return;
         foreach (IDamageable damageable in damageables)

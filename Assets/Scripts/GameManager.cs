@@ -40,14 +40,14 @@ public class GameManager : MonoBehaviour
         Terrain terrain = Terrain.activeTerrain;
         int grassIndex = 0;
         float minDistanceTrees = 3f;
-
+        GameObject treeContainer = GameObject.Find("TreeContainer");
         while (i < 3800)
         {
             Vector3 randomPos = GetRandomPositionOnTerrain(terrain);
             if (IsOnGrass(randomPos, terrain, grassIndex) && IsPositionFarEnough(randomPos, minDistanceTrees))
             {
                 int randomTree = UnityEngine.Random.Range(0, treePrefab.Count);
-                Instantiate(treePrefab[randomTree], randomPos, Quaternion.identity);
+                Instantiate(treePrefab[randomTree], randomPos, Quaternion.identity,treeContainer.transform);
                 i++;
             }
         }
