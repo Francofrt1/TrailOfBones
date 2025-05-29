@@ -1,13 +1,12 @@
-﻿using System;
-using FishNet.Connection;
+﻿using FishNet.Connection;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using Multiplayer.PopupSystem;
 using Multiplayer.Utils;
 using Steamworks;
+using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Multiplayer.PlayerSystem
 {
@@ -33,12 +32,9 @@ namespace Multiplayer.PlayerSystem
         public readonly SyncVar<PlayerInfoData> PlayerInfo = new SyncVar<PlayerInfoData>();
         public readonly SyncVar<bool> IsReady = new SyncVar<bool>();
 
-        //[Header("Controller")] 
-        //[SerializeField] private GameObject contoller;
         [SerializeField] private GameObject[] componentsToEnable;
         [SerializeField] private GameObject[] componentsToDisable;
 
-        //got lazy so decided to have the UI in the party a worldspace Canvas
         [Header("Party NameTag")] 
         [SerializeField] private TMP_Text _usernameText;
         [SerializeField] private TMP_Text _isReadyText;
