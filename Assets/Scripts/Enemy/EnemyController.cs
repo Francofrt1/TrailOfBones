@@ -4,6 +4,7 @@ using Assets.Scripts.Interfaces;
 using System.Collections;
 using System;
 using System.Linq;
+using static UnityEditor.Progress;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(EnemyModel))]
@@ -143,6 +144,7 @@ public class EnemyController : MonoBehaviour, IDamageable, IAttack, IDeath
         OnEnemyKilled?.Invoke(this, model.inPlayer, killedById);
         Debug.Log("Enemy died.");
         view.SetDieAnimation();
+        Instantiate(model.getDrop(), transform.position, transform.rotation);
         Destroy(gameObject, 5f);
     }
 

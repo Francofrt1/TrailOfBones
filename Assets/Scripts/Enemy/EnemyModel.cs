@@ -11,6 +11,9 @@ public class EnemyModel : MonoBehaviour
     public float movementSpeed = 3.5f;
     public bool inPlayer { get; set; } = false;
 
+    [SerializeField]
+    private GameObject drop;
+
     // enemy initialization
     private void Awake()
     {
@@ -25,4 +28,6 @@ public class EnemyModel : MonoBehaviour
     {
         currentHealth = amount;
     }
+
+    public GameObject getDrop() { return drop; }
 }

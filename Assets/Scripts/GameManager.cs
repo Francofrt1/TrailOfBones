@@ -1,5 +1,6 @@
 using Assets.Scripts.Interfaces;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Splines;
 
@@ -17,6 +18,8 @@ public class GameManager : MonoBehaviour
     private HUD HUD;
     private WheelcartMovement wheelcartMovement;
     private InputHandler playerInputHandler;
+    public List<GameObject> treePrefab;
+    
 
     private void Awake()
     {
@@ -28,6 +31,78 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
         }
+        GenerateForest();
+    }
+
+    private void GenerateForest()
+    {
+        int i = 0;
+        Terrain terrain = Terrain.activeTerrain;
+        int grassIndex = 0;
+        float minDistanceTrees = 3f;
+        GameObject treeContainer = GameObject.Find("TreeContainer");
+        while (i < 3800)
+        {
+            Vector3 randomPos = GetRandomPositionOnTerrain(terrain);
+            if (IsOnGrass(randomPos, terrain, grassIndex) && IsPositionFarEnough(randomPos, minDistanceTrees))
+            {
+                int randomTree = UnityEngine.Random.Range(0, treePrefab.Count);
+                Instantiate(treePrefab[randomTree], randomPos, Quaternion.identity,treeContainer.transform);
+                i++;
+            }
+        }
+    }
+
+    Vector3 GetRandomPositionOnTerrain(Terrain terrain)
+    {
+        // Obtiene las dimensiones del terreno
+        Vector3 terrainSize = terrain.terrainData.size;
+
+        // Genera coordenadas X y Z aleatorias dentro del terreno
+        float randomX = UnityEngine.Random.Range(0, terrainSize.x);
+        float randomZ = UnityEngine.Random.Range(0, terrainSize.z);
+
+        // Calcula la altura (Y) en ese punto del terreno
+        float height = terrain.SampleHeight(new Vector3(randomX, 0, randomZ));
+
+        // Retorna la posición en coordenadas mundiales (ajustando al centro del terreno)
+        return new Vector3(randomX, height, randomZ) + terrain.transform.position;
+    }
+
+    bool IsOnGrass(Vector3 worldPosition, Terrain terrain, int grassTextureIndex)
+    {
+        // Convierte la posición mundial a coordenadas locales del terreno
+        Vector3 terrainLocalPos = worldPosition - terrain.transform.position;
+
+        // Normaliza las coordenadas (0-1)
+        Vector2 normalizedPos = new Vector2(
+            terrainLocalPos.x / terrain.terrainData.size.x,
+            terrainLocalPos.z / terrain.terrainData.size.z
+        );
+
+        // Obtén el alphamap en esa posición
+        int alphaX = (int)(normalizedPos.x * terrain.terrainData.alphamapWidth);
+        int alphaY = (int)(normalizedPos.y * terrain.terrainData.alphamapHeight);
+
+        float[,,] alphaMap = terrain.terrainData.GetAlphamaps(alphaX, alphaY, 1, 1);
+
+        // Si el valor de la textura de pasto es mayor a un umbral (ej. 0.5), está en pasto
+        return alphaMap[0, 0, grassTextureIndex] > 0.5f;
+    }
+
+    bool IsPositionFarEnough(Vector3 position, float minDistance)
+    {
+        Vector3 halfExtents = new Vector3(minDistance / 2f, minDistance / 2f, minDistance / 2f);
+
+        // Usa OverlapBox para detectar colliders en un área cúbica
+        Collider[] nearbyColliders = Physics.OverlapBox(
+            position,          // Centro del Box
+            halfExtents,       // Mitad del tamaño del Box
+            Quaternion.identity, // Rotación (ninguna en este caso)
+            LayerMask.GetMask("TerrainElements") // Layer a filtrar
+        );
+
+        return nearbyColliders.Length == 0;
     }
 
     private void _subscribeToPlayerController()
