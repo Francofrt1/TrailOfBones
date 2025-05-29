@@ -1,10 +1,12 @@
+using FishNet;
+using FishNet.Object;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemySpawner : MonoBehaviour
+public class EnemySpawner : NetworkBehaviour
 {
 
     public int spawnCount = 1;
@@ -15,7 +17,8 @@ public class EnemySpawner : MonoBehaviour
     public event Action<List<EnemyController>> OnEnemiesSpawned;
     void Start()
     {
-        StartCoroutine(SpawnEnemies());
+        if(InstanceFinder.IsHostStarted)
+            StartCoroutine(SpawnEnemies());
     }
 
     /// <summary>
@@ -24,26 +27,51 @@ public class EnemySpawner : MonoBehaviour
     ///     'enemyPrefab' must be assigned in the inspector.
     ///     'spawnCount' should be 1 or greater.
     /// </summary>
-    IEnumerator SpawnEnemies()
+    /// 
+    private IEnumerator SpawnEnemies()
     {
         while (true)
         {
             yield return new WaitForSeconds(spawnInterval);
-            List<EnemyController> spawnedEnemies = new List<EnemyController>();
-            for (int i = 0; i < spawnCount; i++)
+            try
             {
-                Vector3 randomPos = transform.position + UnityEngine.Random.insideUnitSphere * spawnRadius;
-                randomPos.y = transform.position.y; //Keeps enemies on same Y axis
-
-                NavMeshHit hit;
-                // Compensates for terrain elevation by snapping the spawn position to the nearest point on the NavMesh:
-                if (NavMesh.SamplePosition(randomPos, out hit, 2.0f, NavMesh.AllAreas))
+                
+                for (int i = 0; i < spawnCount; i++)
                 {
-                    var enemy = Instantiate(enemyPrefab, hit.position, Quaternion.identity).GetComponent<EnemyController>();
-                    spawnedEnemies.Add(enemy);
+                    Vector3 randomPos = transform.position + UnityEngine.Random.insideUnitSphere * spawnRadius;
+                    randomPos.y = transform.position.y; //Keeps enemies on same Y axis
+
+                    SpawnEnemyOnServer(randomPos);
                 }
+                
+            }
+            catch (Exception ex)
+            {
+                Debug.Log($"SpawnEnemies failed: {ex.Message}");
+            }
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SpawnEnemyOnServer(Vector3 randomPos)
+    {
+        try
+        {
+            List<EnemyController> spawnedEnemies = new List<EnemyController>();
+            NavMeshHit hit;
+            // Compensates for terrain elevation by snapping the spawn position to the nearest point on the NavMesh:
+            if (NavMesh.SamplePosition(randomPos, out hit, 2.0f, NavMesh.AllAreas))
+            {
+                GameObject enemy = Instantiate(enemyPrefab, hit.position, Quaternion.identity);
+
+                ServerManager.Spawn(enemy);
+                spawnedEnemies.Add(enemy.GetComponent<EnemyController>());
             }
             OnEnemiesSpawned?.Invoke(spawnedEnemies);
+        }
+        catch (Exception ex)
+        {
+            Debug.Log($"SpawnEnemyOnServer failed: {ex.Message}");
         }
     }
 }

@@ -52,6 +52,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pine_1
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 6aa88a556aeef364e9022d12a5d86178, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 6aa88a556aeef364e9022d12a5d86178, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 6aa88a556aeef364e9022d12a5d86178, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -59,6 +71,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6aa88a556aeef364e9022d12a5d86178, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2153590049026332462}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6aa88a556aeef364e9022d12a5d86178, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6061906995189062720}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6aa88a556aeef364e9022d12a5d86178, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6984334402775360438}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6aa88a556aeef364e9022d12a5d86178, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -118095971593012244}
   m_SourcePrefab: {fileID: 100100000, guid: 6aa88a556aeef364e9022d12a5d86178, type: 3}
 --- !u!1 &4982689587325829285 stripped
 GameObject:
@@ -86,3 +107,84 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.8369751, y: 3.2658591, z: 0.9160156}
   m_Center: {x: 0.009124756, y: 1.280297, z: -0.03665161}
+--- !u!114 &6061906995189062720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4982689587325829285}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10df809c3ce89c44a98e7ef465bddc5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  item: {fileID: 3421859495812559835, guid: 0de53df5b8d4ad54b950eb2130c08bb3, type: 3}
+--- !u!114 &6984334402775360438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4982689587325829285}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <IsNested>k__BackingField: 0
+  WasActiveDuringEdit: 0
+  WasActiveDuringEdit_Set1: 1
+  <ComponentIndex>k__BackingField: 0
+  <PredictedSpawn>k__BackingField: {fileID: 0}
+  <PredictedOwner>k__BackingField: {fileID: 0}
+  NetworkBehaviours:
+  - {fileID: -118095971593012244}
+  InitializedParentNetworkBehaviour: {fileID: 0}
+  InitializedNestedNetworkObjects: []
+  RuntimeParentNetworkBehaviour: {fileID: 0}
+  RuntimeChildNetworkBehaviours: []
+  _isNetworked: 1
+  _isSpawnable: 1
+  _isGlobal: 0
+  _initializeOrder: 0
+  _preventDespawnOnDisconnect: 0
+  _defaultDespawnType: 0
+  NetworkObserver: {fileID: 0}
+  _enablePrediction: 0
+  _predictionType: 0
+  _graphicalObject: {fileID: 0}
+  _detachGraphicalObject: 0
+  _enableStateForwarding: 1
+  _networkTransform: {fileID: 0}
+  _ownerInterpolation: 1
+  _ownerSmoothedProperties: 255
+  _adaptiveInterpolation: 3
+  _spectatorSmoothedProperties: 255
+  _spectatorInterpolation: 2
+  _enableTeleport: 0
+  _teleportThreshold: 1
+  <PrefabId>k__BackingField: 4
+  <SpawnableCollectionId>k__BackingField: 0
+  <AssetPathHash>k__BackingField: 1324972675771795223
+  <SceneId>k__BackingField: 0
+  SerializedTransformProperties:
+    Position: {x: 741.9525, y: 4.511174, z: 322.6082}
+    Rotation: {x: 0, y: -0, z: -0, w: 1}
+    Scale: {x: 1, y: 1, z: 1}
+    IsValid: 1
+--- !u!114 &-118095971593012244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4982689587325829285}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a6a39c46bf52104ba8efe3100bce3f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 0
+  _addedNetworkObject: {fileID: 6984334402775360438}
+  _networkObjectCache: {fileID: 6984334402775360438}

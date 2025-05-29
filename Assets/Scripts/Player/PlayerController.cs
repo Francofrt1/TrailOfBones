@@ -1,10 +1,11 @@
 using Assets.Scripts.Interfaces;
+using FishNet.Object;
 using System;
 using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IHealthVariation
+public class PlayerController : NetworkBehaviour, IDamageable, IAttack, IDeath, IHealthVariation
 {
     private Rigidbody rigidBody;
     private Vector2 movementInput;
@@ -12,7 +13,6 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IHe
 
     [SerializeField] private LayerMask groundLayer;
 
-    private Transform cameraPivot;
     private float currentYRotation = 0f;
 
     private bool isGrounded;
@@ -29,15 +29,24 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IHe
     private void Awake()
     {
         rigidBody = GetComponent<Rigidbody>();
-        GameObject camera = GameObject.Find("CameraPivot");
-        cameraPivot = camera != null ? camera.transform : this.transform;
-        
+        var cameraPivot = GetComponentInChildren<CameraPivot>();
         inputHandler = GetComponent<InputHandler>();
         playerModel = GetComponent<PlayerModel>();
         playerView = GetComponent<PlayerView>();
         attackArea = GetComponentInChildren<AttackArea>();
 
+        cameraPivot.SetInputHandler(inputHandler);
+        groundLayer = LayerMask.GetMask("groundLayer");
         AssignEvents();
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        if (!base.IsOwner)
+        {
+            this.enabled = false;
+        }
     }
 
     private void Start()
@@ -77,7 +86,8 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IHe
 
     private void Update()
     {
-        if (!isJumping && !isGrounded) {
+        if (!isJumping && !isGrounded)
+        {
             fallingTime += Time.deltaTime;
             playerView.SetIsFallingAnimation(true, fallingTime);
         }
@@ -96,9 +106,11 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IHe
 
         move.y = rigidBody.velocity.y;
 
-        rigidBody.velocity = move;
+        Vector3 nextPosition = rigidBody.position + move * Time.fixedDeltaTime;
+        rigidBody.MovePosition(nextPosition);
 
-        float horizontalVelocity = Math.Abs(Vector2.Dot(rigidBody.velocity, Vector2.right));
+        Vector3 flatMove = new Vector3(move.x, 0f, move.z);
+        float horizontalVelocity = flatMove.magnitude;
         playerView.SetMovementAnimation(horizontalVelocity);
     }
 
@@ -132,9 +144,10 @@ public class PlayerController : MonoBehaviour, IDamageable, IAttack, IDeath, IHe
 
     public void OnAttack()
     {
-        if(playerView.IsAttacking()) return;
+        if (playerView.IsAttacking()) return;
         playerView.SetAttackAnimation();
 
+        attackArea.DamageablesInRange.RemoveAll(x => x == null || (x as MonoBehaviour) == null);
         var damageables = attackArea.DamageablesInRange.Where(x => x.GetTag() != "DefendableObject");
         if (!damageables.Any()) return;
         foreach (IDamageable damageable in damageables)

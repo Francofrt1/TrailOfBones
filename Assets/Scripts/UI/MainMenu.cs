@@ -1,5 +1,5 @@
+using Multiplayer;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
@@ -14,11 +14,16 @@ public class MainMenu : MonoBehaviour
     
     public void Play()
     {
-        SceneManager.LoadScene("MainLevel");
+        ScenesManager.ChangeScene("MainLevel");
     }
 
     public void Quit()
     {
         Application.Quit();
+    }
+
+    public void Multiplayer()
+    {
+        ScenesManager.ChangeScene("MultiplayerSelector");
     }
 }

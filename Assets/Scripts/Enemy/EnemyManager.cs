@@ -1,31 +1,44 @@
+using FishNet.CodeGenerating;
+using FishNet.Component.Spawning;
+using FishNet.Demo.AdditiveScenes;
+using FishNet.Example.Scened;
+using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class EnemyManager : MonoBehaviour
+public class EnemyManager : NetworkBehaviour
 {
-    private List<EnemyController> enemies = new List<EnemyController>();
-    private List<PlayerController> playerControllers = new List<PlayerController>();
-    private Dictionary<string, int> playerEnemies = new Dictionary<string, int>();
+    [AllowMutableSyncType]
+    private SyncList<EnemyController> enemies = new SyncList<EnemyController>();
+    [AllowMutableSyncType]
+    private SyncList<PlayerController> playerControllers = new SyncList<PlayerController>();
+    [AllowMutableSyncType]
+    private SyncDictionary<string, int> playerEnemies = new SyncDictionary<string, int>();
     private GameObject wheelcart;
+    [SerializeField]
     private int maxEnemiesToPlayer = 4;
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
-        wheelcart = GameObject.Find("Wheelcart");
-        var spawners = new List<EnemySpawner>(FindObjectsOfType<EnemySpawner>());
-        spawners.ForEach(spawner => spawner.OnEnemiesSpawned += HandleEnemySpawned);
-        playerControllers = new List<PlayerController>(FindObjectsOfType<PlayerController>());
-        foreach (var player in playerControllers)
+        var playerSpawner = GameObject.Find("NetworkManager").GetComponent<PlayerSpawner>();
+        playerSpawner.OnSpawned += (nob) =>
         {
-            playerEnemies.Add(player.GetID(), 0);
-        }
+            SetPlayerSpawned(nob.GetComponent<PlayerController>());
+        };
     }
 
-    // Update is called once per frame
-    void Update()
+    void Start()
     {
+        wheelcart = GameObject.FindGameObjectWithTag("DefendableObject");
+        var spawners = new List<EnemySpawner>(FindObjectsOfType<EnemySpawner>());
+        spawners.ForEach(spawner => spawner.OnEnemiesSpawned += HandleEnemySpawned);
+    }
 
+    public void SetPlayerSpawned(PlayerController newPlayer)
+    {
+        playerControllers.Add(newPlayer);
+        playerEnemies.Add(newPlayer.GetID(), 0);
     }
 
     public void HandleEnemySpawned(List<EnemyController> spawnedEnemies)

@@ -1,10 +1,28 @@
 using Assets.Scripts.Interfaces;
+using FishNet;
+using FishNet.Component.Spawning;
+using FishNet.Managing;
+using FishNet.Managing.Scened;
+using FishNet.Object;
+using Multiplayer;
+using Multiplayer.Utils;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Splines;
 
-public class GameManager : MonoBehaviour
+public class GameManager : BaseNetworkBehaviour
 {
+    public enum GameState
+    {
+        None,
+        InMenu,
+        InLobby,
+        Loading,
+        Pause,
+        Playing,
+        End
+    }
     public static GameManager Instance { get; private set; }
     public bool gameOver = false;
     public bool gamePaused = false;
@@ -15,8 +33,13 @@ public class GameManager : MonoBehaviour
     public event Action OnLoseScreen;
 
     private HUD HUD;
-    private SplineAnimate wheelcartSpline;
+    private WheelcartMovement wheelcartMovement;
     private InputHandler playerInputHandler;
+    public List<GameObject> treePrefab;
+    
+
+    [SerializeField]
+    private GameState currentGameState = GameState.None;
 
     private void Awake()
     {
@@ -28,19 +51,93 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
         }
+
+        SetCurrentGameState(GameState.InMenu);
     }
 
-    private void _subscribeToPlayerController()
+    //TODO fix trees not spawning
+    public void GenerateForest()
     {
-        IHealthVariation playerHealthEvents = GameObject.Find("Player").GetComponent<IHealthVariation>();
+        int i = 0;
+        Terrain terrain = Terrain.activeTerrain;
+        int grassIndex = 0;
+        float minDistanceTrees = 3f;
+        GameObject treeContainer = GameObject.Find("TreeContainer");
+        while (i < 3800)
+        {
+            Vector3 randomPos = GetRandomPositionOnTerrain(terrain);
+            if (IsOnGrass(randomPos, terrain, grassIndex) && IsPositionFarEnough(randomPos, minDistanceTrees))
+            {
+                int randomTree = UnityEngine.Random.Range(0, treePrefab.Count - 1);
+                var tree = Instantiate(treePrefab[randomTree], randomPos, Quaternion.identity, terrain.transform);
+                //ServerManager.Spawn(tree);
+                i++;
+            }
+        }
+    }
+
+    Vector3 GetRandomPositionOnTerrain(Terrain terrain)
+    {
+        // Obtiene las dimensiones del terreno
+        Vector3 terrainSize = terrain.terrainData.size;
+
+        // Genera coordenadas X y Z aleatorias dentro del terreno
+        float randomX = UnityEngine.Random.Range(0, terrainSize.x);
+        float randomZ = UnityEngine.Random.Range(0, terrainSize.z);
+
+        // Calcula la altura (Y) en ese punto del terreno
+        float height = terrain.SampleHeight(new Vector3(randomX, 0, randomZ));
+
+        // Retorna la posición en coordenadas mundiales (ajustando al centro del terreno)
+        return new Vector3(randomX, height, randomZ) + terrain.transform.position;
+    }
+
+    bool IsOnGrass(Vector3 worldPosition, Terrain terrain, int grassTextureIndex)
+    {
+        // Convierte la posición mundial a coordenadas locales del terreno
+        Vector3 terrainLocalPos = worldPosition - terrain.transform.position;
+
+        // Normaliza las coordenadas (0-1)
+        Vector2 normalizedPos = new Vector2(
+            terrainLocalPos.x / terrain.terrainData.size.x,
+            terrainLocalPos.z / terrain.terrainData.size.z
+        );
+
+        // Obtén el alphamap en esa posición
+        int alphaX = (int)(normalizedPos.x * terrain.terrainData.alphamapWidth);
+        int alphaY = (int)(normalizedPos.y * terrain.terrainData.alphamapHeight);
+
+        float[,,] alphaMap = terrain.terrainData.GetAlphamaps(alphaX, alphaY, 1, 1);
+
+        // Si el valor de la textura de pasto es mayor a un umbral (ej. 0.5), está en pasto
+        return alphaMap[0, 0, grassTextureIndex] > 0.5f;
+    }
+
+    bool IsPositionFarEnough(Vector3 position, float minDistance)
+    {
+        Vector3 halfExtents = new Vector3(minDistance / 2f, minDistance / 2f, minDistance / 2f);
+
+        // Usa OverlapBox para detectar colliders en un área cúbica
+        Collider[] nearbyColliders = Physics.OverlapBox(
+            position,          // Centro del Box
+            halfExtents,       // Mitad del tamaño del Box
+            Quaternion.identity, // Rotación (ninguna en este caso)
+            LayerMask.GetMask("TerrainElements") // Layer a filtrar
+        );
+
+        return nearbyColliders.Length == 0;
+    }
+
+    private void _subscribeToPlayerController(IHealthVariation playerHealthEvents)
+    {
+        //IHealthVariation playerHealthEvents = GameObject.Find("Player").GetComponent<IHealthVariation>();
         if (playerHealthEvents == null) return;
         HUD.SetPlayerHealthEvent(playerHealthEvents);
         playerHealthEvents.OnDie += GameOverScreen;
     }
 
-    private void _subscribeToPlayerInputHandler()
+    private void _subscribeToPlayerInputHandler(GameObject player)
     {
-        GameObject player = GameObject.Find("Player");
         if (player == null) return;
         playerInputHandler = player.GetComponent<InputHandler>();
         if (playerInputHandler == null) return;
@@ -49,21 +146,25 @@ public class GameManager : MonoBehaviour
 
     private void _subscribeToWheelcart()
     {
-        wheelcartSpline = GameObject.Find("Wheelcart").GetComponent<SplineAnimate>();
-        var wheelcartDurationEvent = GameObject.Find("Wheelcart").GetComponent<IWheelcartDuration>();
-        var wheelcartEvents = GameObject.Find("Wheelcart").GetComponent<IHealthVariation>();
-        wheelcartEvents.OnDie += GameOverScreen;
-        wheelcartSpline.Completed += WinScreen;
-        HUD.SetWheelcartHealthEvent(wheelcartEvents);
-        HUD.SetWheelcartDuration(wheelcartDurationEvent);
+        try
+        {
+            wheelcartMovement = GameObject.Find("Wheelcart").GetComponent<WheelcartMovement>();
+            var wheelcartDurationEvent = GameObject.Find("Wheelcart").GetComponent<IWheelcartDuration>();
+            var wheelcartEvents = GameObject.Find("Wheelcart").GetComponent<IHealthVariation>();
+            wheelcartEvents.OnDie += GameOverScreen;
+            wheelcartMovement.Completed += WinScreen;
+            HUD.SetWheelcartHealthEvent(wheelcartEvents);
+            HUD.SetWheelcartDuration(wheelcartDurationEvent);
+        }
+        catch (Exception ex)
+        {
+            Debug.Log($"_subscribeToWheelcart error {ex.Message}");
+        }
     }
 
     private void OnEnable()
     {
-        HUD = GameObject.Find("HUD").GetComponent<HUD>();
-        _subscribeToPlayerInputHandler();
-        _subscribeToWheelcart();
-        _subscribeToPlayerController();
+        
     }
 
     void OnDisable()
@@ -72,16 +173,14 @@ public class GameManager : MonoBehaviour
         {
             playerInputHandler.OnPauseTogglePerformed -= TogglePause;
         }
-        if (wheelcartSpline != null)
+        if (wheelcartMovement != null)
         {
-            wheelcartSpline.Completed -= WinScreen;
+            wheelcartMovement.Completed -= WinScreen;
         }
     }
 
     void Start()
     {
-        gameOver = false;
-        SetPausedState(false);
         Debug.Log("Game Started");
     }
 
@@ -111,7 +210,7 @@ public class GameManager : MonoBehaviour
 
     private void SetPausedState(bool paused)
     {
-        Time.timeScale = paused ? 0f : 1f;
+        //Time.timeScale = paused ? 0f : 1f;
         SetCursorState(paused);
     }
 
@@ -124,5 +223,89 @@ public class GameManager : MonoBehaviour
     {
         Cursor.visible = value;
         Cursor.lockState = value ? CursorLockMode.None : CursorLockMode.Locked;
+    }
+
+    protected override void RegisterEvents()
+    {
+    }
+
+    protected override void UnregisterEvents()
+    {
+    }
+
+    public void SetCurrentGameState(GameState newState)
+    {
+        currentGameState = newState;
+
+        switch (currentGameState)
+        {
+            case GameState.InMenu:
+                // Handle menu state
+                break;
+            case GameState.InLobby:
+                // Handle lobby state
+                break;
+            case GameState.Loading:
+                // Handle loading state
+                break;
+            case GameState.Pause:
+                SetPausedState(true);
+                break;
+            case GameState.Playing:
+                StartMatch();
+                break;
+            case GameState.End:
+                // Handle end state
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void StartMatch()
+    {
+        try
+        {
+            InstanceFinder.SceneManager.OnLoadEnd += InitializeMatch;
+            ScenesManager.ChangeScene("MainLevelMultiplayer", true);
+            // Additional logic to start the match, like spawning players, etc.
+            Debug.Log("Match started.");
+        }
+        catch (Exception ex)
+        {
+            Debug.Log($"Start match failed: {ex.Message}");
+        }
+    }
+
+    private void InitializeMatch(SceneLoadEndEventArgs obj) {
+        try
+        {
+            if (obj.LoadedScenes[0].name != "MainLevelMultiplayer") return;
+            InstanceFinder.SceneManager.OnLoadEnd -= InitializeMatch;
+            GenerateForest();
+
+            var playerSpawner = GameObject.Find("NetworkManager").GetComponent<PlayerSpawner>();
+            playerSpawner.OnSpawned += (player) =>
+            {
+                _subscribeToPlayerController(player.GetComponent<IHealthVariation>());
+                _subscribeToPlayerInputHandler(player.gameObject);
+            };
+
+            
+
+            var hudObj = GameObject.Find("HUD");
+            HUD = hudObj.GetComponent<HUD>();
+            _subscribeToWheelcart();
+            var audios = GetComponents<AudioSource>();
+            
+            foreach (var audio in audios)
+            {
+                audio.Play();
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.Log($"InitializeMatch failed: {ex.Message}");
+        }
     }
 }
