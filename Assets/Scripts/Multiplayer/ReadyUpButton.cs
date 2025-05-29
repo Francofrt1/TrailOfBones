@@ -25,7 +25,7 @@ namespace Multiplayer
         private void ToggleReadyButton(bool value)
         {
             _readyImage.color = value ? _readyColor : _notReadyColor;
-            _readyText.text = value ? "Ready" : "Not Ready";
+            _readyText.text = !value ? "Ready" : "Not Ready";
         }
     }
 }

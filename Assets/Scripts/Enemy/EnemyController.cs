@@ -4,7 +4,6 @@ using Assets.Scripts.Interfaces;
 using System.Collections;
 using System;
 using System.Linq;
-using static UnityEditor.Progress;
 using FishNet.Object;
 
 [RequireComponent(typeof(Rigidbody))]

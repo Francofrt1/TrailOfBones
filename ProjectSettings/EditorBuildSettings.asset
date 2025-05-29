@@ -9,18 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 1
-    path: Assets/Scenes/MainLevel.unity
-    guid: 39f056d833aaa5942b403e1c9e25fc58
-  - enabled: 1
     path: Assets/Scenes/MainLevelMultiplayer.unity
     guid: d8f2a56592ef71f41b66c86e6381c8aa
   - enabled: 1
-    path: Assets/Scenes/MultiplayerMenuScenes/MultiplayerSelector.unity
+    path: Assets/Scenes/MultiplayerSelector.unity
     guid: f2edb53f4bad53d47b0e6572c8b5da44
-  - enabled: 1
-    path: Assets/Scenes/MultiplayerMenuScenes/JoinScene.unity
-    guid: 9edc3f67e5953364fb98912cafa877c3
-  - enabled: 1
-    path: Assets/Scenes/MultiplayerMenuScenes/HostScene.unity
-    guid: 2d5ee595eb9fafb47803b545d35310fc
   m_configObjects: {}
