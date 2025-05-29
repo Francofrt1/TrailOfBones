@@ -77,3 +77,6 @@ MMD4Mecanim/
 .vscode/extensions.json
 .vscode/launch.json
 .vscode/settings.json
+/Assets/FishNet
+/Assets/ParrelSync
+/Assets/Plugins
