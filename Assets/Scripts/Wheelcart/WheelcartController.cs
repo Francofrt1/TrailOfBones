@@ -40,7 +40,7 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
         {
             OnDeath(hittedById);
         }
-        Debug.Log(wheelcartModel.currentHealth);
+        //Debug.Log(wheelcartModel.currentHealth);
         OnHealthVariation?.Invoke(wheelcartModel.currentHealth, wheelcartModel.maxHealth);
     }
 

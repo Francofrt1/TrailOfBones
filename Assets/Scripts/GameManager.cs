@@ -51,12 +51,12 @@ public class GameManager : BaseNetworkBehaviour
         {
             Instance = this;
         }
-        GenerateForest();
 
         SetCurrentGameState(GameState.InMenu);
     }
 
-    private void GenerateForest()
+    //TODO fix trees not spawning
+    public void GenerateForest()
     {
         int i = 0;
         Terrain terrain = Terrain.activeTerrain;
@@ -68,8 +68,9 @@ public class GameManager : BaseNetworkBehaviour
             Vector3 randomPos = GetRandomPositionOnTerrain(terrain);
             if (IsOnGrass(randomPos, terrain, grassIndex) && IsPositionFarEnough(randomPos, minDistanceTrees))
             {
-                int randomTree = UnityEngine.Random.Range(0, treePrefab.Count);
-                Instantiate(treePrefab[randomTree], randomPos, Quaternion.identity,treeContainer.transform);
+                int randomTree = UnityEngine.Random.Range(0, treePrefab.Count - 1);
+                var tree = Instantiate(treePrefab[randomTree], randomPos, Quaternion.identity, terrain.transform);
+                //ServerManager.Spawn(tree);
                 i++;
             }
         }
@@ -145,13 +146,20 @@ public class GameManager : BaseNetworkBehaviour
 
     private void _subscribeToWheelcart()
     {
-        wheelcartMovement = GameObject.Find("Wheelcart").GetComponent<WheelcartMovement>();
-        var wheelcartDurationEvent = GameObject.Find("Wheelcart").GetComponent<IWheelcartDuration>();
-        var wheelcartEvents = GameObject.Find("Wheelcart").GetComponent<IHealthVariation>();
-        wheelcartEvents.OnDie += GameOverScreen;
-        wheelcartMovement.Completed += WinScreen;
-        HUD.SetWheelcartHealthEvent(wheelcartEvents);
-        HUD.SetWheelcartDuration(wheelcartDurationEvent);
+        try
+        {
+            wheelcartMovement = GameObject.Find("Wheelcart").GetComponent<WheelcartMovement>();
+            var wheelcartDurationEvent = GameObject.Find("Wheelcart").GetComponent<IWheelcartDuration>();
+            var wheelcartEvents = GameObject.Find("Wheelcart").GetComponent<IHealthVariation>();
+            wheelcartEvents.OnDie += GameOverScreen;
+            wheelcartMovement.Completed += WinScreen;
+            HUD.SetWheelcartHealthEvent(wheelcartEvents);
+            HUD.SetWheelcartDuration(wheelcartDurationEvent);
+        }
+        catch (Exception ex)
+        {
+            Debug.Log($"_subscribeToWheelcart error {ex.Message}");
+        }
     }
 
     private void OnEnable()
@@ -273,22 +281,27 @@ public class GameManager : BaseNetworkBehaviour
         try
         {
             if (obj.LoadedScenes[0].name != "MainLevelMultiplayer") return;
+            InstanceFinder.SceneManager.OnLoadEnd -= InitializeMatch;
+            GenerateForest();
+
             var playerSpawner = GameObject.Find("NetworkManager").GetComponent<PlayerSpawner>();
             playerSpawner.OnSpawned += (player) =>
             {
                 _subscribeToPlayerController(player.GetComponent<IHealthVariation>());
                 _subscribeToPlayerInputHandler(player.gameObject);
             };
+
+            
+
             var hudObj = GameObject.Find("HUD");
             HUD = hudObj.GetComponent<HUD>();
             _subscribeToWheelcart();
             var audios = GetComponents<AudioSource>();
+            
             foreach (var audio in audios)
             {
                 audio.Play();
             }
-
-            InstanceFinder.SceneManager.OnLoadEnd -= InitializeMatch;
         }
         catch (Exception ex)
         {
