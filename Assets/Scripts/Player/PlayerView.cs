@@ -1,7 +1,8 @@
+using FishNet.Object;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
-public class PlayerView : MonoBehaviour
+public class PlayerView : NetworkBehaviour
 {
     private Animator animator;
 

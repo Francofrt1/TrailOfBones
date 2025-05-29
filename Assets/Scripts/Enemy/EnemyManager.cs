@@ -4,6 +4,7 @@ using FishNet.Demo.AdditiveScenes;
 using FishNet.Example.Scened;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
+using Multiplayer;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -21,11 +22,7 @@ public class EnemyManager : NetworkBehaviour
     private int maxEnemiesToPlayer = 4;
     private void Awake()
     {
-        var playerSpawner = GameObject.Find("NetworkManager").GetComponent<PlayerSpawner>();
-        playerSpawner.OnSpawned += (nob) =>
-        {
-            SetPlayerSpawned(nob.GetComponent<PlayerController>());
-        };
+        PlayerController.OnPlayerSpawned += SetPlayerSpawned;
     }
 
     void Start()

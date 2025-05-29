@@ -4,6 +4,7 @@ using FishNet.Managing.Scened;
 using FishNet.Object;
 using Multiplayer.PlayerSystem;
 using Multiplayer.Utils;
+using System;
 using UnityEngine;
 
 namespace Multiplayer
@@ -11,9 +12,18 @@ namespace Multiplayer
     public class PlayerSpawnManager : BaseMonoBehaviour
     {
         [SerializeField] private GameObject _playerPrefab;
-
+        public static PlayerSpawnManager Instance;
         protected override void RegisterEvents()
         {
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                Instance = this;
+            }
+
             PlayerConnectionManager.S_OnConnect += S_OnConnect;
             
             if(InstanceFinder.SceneManager != null)

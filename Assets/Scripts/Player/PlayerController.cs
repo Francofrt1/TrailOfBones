@@ -25,6 +25,7 @@ public class PlayerController : NetworkBehaviour, IDamageable, IAttack, IDeath, 
 
     public event Action OnDie;
     public event Action<float, float> OnHealthVariation;
+    public static Action<PlayerController> OnPlayerSpawned;
 
     private void Awake()
     {
@@ -38,6 +39,7 @@ public class PlayerController : NetworkBehaviour, IDamageable, IAttack, IDeath, 
         cameraPivot.SetInputHandler(inputHandler);
         groundLayer = LayerMask.GetMask("groundLayer");
         AssignEvents();
+        OnPlayerSpawned?.Invoke(this);
     }
 
     public override void OnStartClient()

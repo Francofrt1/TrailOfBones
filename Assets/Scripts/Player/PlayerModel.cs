@@ -1,8 +1,9 @@
+using FishNet.Object;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerModel : MonoBehaviour
+public class PlayerModel : NetworkBehaviour
 {
     public string ID { get; private set; }
     public float maxHealth = 100f;
