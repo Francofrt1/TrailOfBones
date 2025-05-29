@@ -65,9 +65,6 @@ namespace Multiplayer.PlayerSystem
         
         protected override void UnregisterEvents()
         {
-            //PlayerConnectionManager.AllClients.Remove(this);
-            //PlayerConnectionManager.PlayerSteamIds.Remove(PlayerInfo.Value.SteamID);
-
             OnStartClient?.Invoke(null);
             PlayerInfo.OnChange -= OnPlayerDataChange;
             IsReady.OnChange -= OnIsReadyChange;
@@ -79,7 +76,7 @@ namespace Multiplayer.PlayerSystem
             
             if(!IsOwner) return;
 
-            //Cursor.lockState = CursorLockMode.Locked;
+            Cursor.lockState = CursorLockMode.Locked;
             
             foreach (var component in componentsToEnable)
             {
