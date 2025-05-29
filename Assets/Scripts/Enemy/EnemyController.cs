@@ -4,6 +4,7 @@ using Assets.Scripts.Interfaces;
 using System.Collections;
 using System;
 using System.Linq;
+using static UnityEditor.Progress;
 using FishNet.Object;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -27,6 +28,8 @@ public class EnemyController : NetworkBehaviour, IDamageable, IAttack, IDeath
     private EnemyModel model;
     private EnemyView view;
 
+    private Rigidbody rigidBody;
+
     private AttackArea attackArea;
 
     public event Action<EnemyController, bool, string> OnEnemyKilled;
@@ -38,6 +41,7 @@ public class EnemyController : NetworkBehaviour, IDamageable, IAttack, IDeath
         // gets model and view components
         model = GetComponent<EnemyModel>();
         view = GetComponent<EnemyView>();
+        rigidBody = GetComponent<Rigidbody>();
         attackArea = GetComponentInChildren<AttackArea>();
         agent = GetComponent<NavMeshAgent>();
     }
@@ -50,7 +54,7 @@ public class EnemyController : NetworkBehaviour, IDamageable, IAttack, IDeath
             Destroy(gameObject);
         }
 
-        agent.updatePosition = true;
+        agent.updatePosition = false;
         agent.updateUpAxis = true;
         agent.updateRotation = true;
         agent.speed = 3;
@@ -88,6 +92,14 @@ public class EnemyController : NetworkBehaviour, IDamageable, IAttack, IDeath
         agent.SetDestination(target);
 
         view.SetMovingAnimation(currentState == State.Move);
+
+        Vector3 direction = agent.desiredVelocity.normalized;
+        Vector3 velocity = direction * model.movementSpeed;
+
+        Vector3 nextPosition = rigidBody.position + velocity * Time.fixedDeltaTime;
+        rigidBody.MovePosition(nextPosition);
+
+        agent.nextPosition = rigidBody.position;
     }
 
     public void OnAttack()
@@ -133,6 +145,7 @@ public class EnemyController : NetworkBehaviour, IDamageable, IAttack, IDeath
         OnEnemyKilled?.Invoke(this, model.inPlayer, killedById);
         Debug.Log("Enemy died.");
         view.SetDieAnimation();
+        Instantiate(model.getDrop(), transform.position, transform.rotation);
         Destroy(gameObject, 5f);
     }
 

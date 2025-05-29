@@ -13,4 +13,9 @@ public class WheelcartModel : MonoBehaviour
     {
         currentHealth = health;
     }
+
+    public float StopWheelcartPercent()
+    {
+        return maxHealth * 0.3f;
+    }
 }

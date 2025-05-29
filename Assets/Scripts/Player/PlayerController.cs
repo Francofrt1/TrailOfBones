@@ -86,7 +86,8 @@ public class PlayerController : NetworkBehaviour, IDamageable, IAttack, IDeath, 
 
     private void Update()
     {
-        if (!isJumping && !isGrounded) {
+        if (!isJumping && !isGrounded)
+        {
             fallingTime += Time.deltaTime;
             playerView.SetIsFallingAnimation(true, fallingTime);
         }
@@ -105,9 +106,11 @@ public class PlayerController : NetworkBehaviour, IDamageable, IAttack, IDeath, 
 
         move.y = rigidBody.velocity.y;
 
-        rigidBody.velocity = move;
+        Vector3 nextPosition = rigidBody.position + move * Time.fixedDeltaTime;
+        rigidBody.MovePosition(nextPosition);
 
-        float horizontalVelocity = Math.Abs(Vector2.Dot(rigidBody.velocity, Vector2.right));
+        Vector3 flatMove = new Vector3(move.x, 0f, move.z);
+        float horizontalVelocity = flatMove.magnitude;
         playerView.SetMovementAnimation(horizontalVelocity);
     }
 
@@ -141,9 +144,10 @@ public class PlayerController : NetworkBehaviour, IDamageable, IAttack, IDeath, 
 
     public void OnAttack()
     {
-        if(playerView.IsAttacking()) return;
+        if (playerView.IsAttacking()) return;
         playerView.SetAttackAnimation();
 
+        attackArea.DamageablesInRange.RemoveAll(x => x == null || (x as MonoBehaviour) == null);
         var damageables = attackArea.DamageablesInRange.Where(x => x.GetTag() != "DefendableObject");
         if (!damageables.Any()) return;
         foreach (IDamageable damageable in damageables)

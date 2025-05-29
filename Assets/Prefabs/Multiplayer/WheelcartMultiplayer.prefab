@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6446893627495301333}
   - component: {fileID: 8265042872293393990}
   - component: {fileID: 3369224567984262657}
-  - component: {fileID: 3442523187453108497}
+  - component: {fileID: 2455978798947039812}
   - component: {fileID: 2760474369087301278}
   - component: {fileID: 803400956411200671}
   - component: {fileID: 8554795777103640508}
@@ -50,7 +50,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2904887283493235098}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 40
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -90,7 +90,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 3.53, y: 4.15, z: 5.24}
   m_Center: {x: 0.06, y: -0.77, z: 0.01}
---- !u!114 &3442523187453108497
+--- !u!114 &2455978798947039812
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -99,20 +99,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 2904887283493235098}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29a074d529cf945029ef7cf40540c9df, type: 3}
+  m_Script: {fileID: 11500000, guid: 5106c424c05359843af629a1c48dd847, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Target: {fileID: 0}
-  m_PlayOnAwake: 0
-  m_LoopMode: 0
-  m_Method: 0
-  m_Duration: 1219.3932
-  m_MaxSpeed: 0.7
-  m_EasingMode: 0
-  m_AlignmentMode: 1
-  m_ObjectForwardAxis: 2
-  m_ObjectUpAxis: 1
-  m_StartOffset: 0
+  spline: {fileID: 0}
+  speed: 5
+  rb: {fileID: 8265042872293393990}
 --- !u!114 &2760474369087301278
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -125,7 +117,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f63e751d566813b4ba17e0e082391de7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  splineAnimate: {fileID: 0}
 --- !u!114 &803400956411200671
 MonoBehaviour:
   m_ObjectHideFlags: 0
