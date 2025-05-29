@@ -33,7 +33,7 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
 
         if(wheelcartModel.currentHealth <= wheelcartModel.StopWheelcartPercent())
         {
-            splineAnimate.Pause();
+            //splineAnimate.Pause();
         }
 
         if (wheelcartModel.currentHealth <= 0)
@@ -54,16 +54,16 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
         return gameObject.tag;
     }
 
-    private void Update()
-    {
-        if (!splineAnimate.isPlaying)
-        {
-            if (Input.GetKeyDown(KeyCode.T) && InventoryController.Instance.CanUse(ItemType.WoodLog, 2))
-            {
-                InventoryController.Instance.HandleUseItem(ItemType.WoodLog,2);
-                wheelcartModel.SetHealth((int)wheelcartModel.maxHealth);
-                splineAnimate.Play();
-            }
-        }
-    }
+    //private void Update()
+    //{
+    //    if (!splineAnimate.isPlaying)
+    //    {
+    //        if (Input.GetKeyDown(KeyCode.T) && InventoryController.Instance.CanUse(ItemType.WoodLog, 2))
+    //        {
+    //            InventoryController.Instance.HandleUseItem(ItemType.WoodLog,2);
+    //            wheelcartModel.SetHealth((int)wheelcartModel.maxHealth);
+    //            splineAnimate.Play();
+    //        }
+    //    }
+    //}
 }
