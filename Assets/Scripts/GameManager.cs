@@ -130,16 +130,13 @@ public class GameManager : BaseNetworkBehaviour
 
     private void _subscribeToPlayerController(IHealthVariation playerHealthEvents)
     {
-        //IHealthVariation playerHealthEvents = GameObject.Find("Player").GetComponent<IHealthVariation>();
         if (playerHealthEvents == null) return;
         HUD.SetPlayerHealthEvent(playerHealthEvents);
         playerHealthEvents.OnDie += GameOverScreen;
     }
 
-    private void _subscribeToPlayerInputHandler(GameObject player)
+    private void _subscribeToPlayerInputHandler(InputHandler playerInputHandler)
     {
-        if (player == null) return;
-        playerInputHandler = player.GetComponent<InputHandler>();
         if (playerInputHandler == null) return;
         playerInputHandler.OnPauseTogglePerformed += TogglePause;
     }
@@ -284,14 +281,11 @@ public class GameManager : BaseNetworkBehaviour
             InstanceFinder.SceneManager.OnLoadEnd -= InitializeMatch;
             GenerateForest();
 
-            var playerSpawner = GameObject.Find("NetworkManager").GetComponent<PlayerSpawner>();
-            playerSpawner.OnSpawned += (player) =>
+            PlayerController.OnPlayerSpawned += (PlayerController) =>
             {
-                _subscribeToPlayerController(player.GetComponent<IHealthVariation>());
-                _subscribeToPlayerInputHandler(player.gameObject);
+                _subscribeToPlayerController(PlayerController.gameObject.GetComponent<IHealthVariation>());
+                _subscribeToPlayerInputHandler(PlayerController.gameObject.GetComponent<InputHandler>());
             };
-
-            
 
             var hudObj = GameObject.Find("HUD");
             HUD = hudObj.GetComponent<HUD>();

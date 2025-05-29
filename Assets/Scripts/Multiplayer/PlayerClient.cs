@@ -37,6 +37,7 @@ namespace Multiplayer.PlayerSystem
 
         [Header("Party NameTag")] 
         [SerializeField] private TMP_Text _usernameText;
+        [SerializeField] private TMP_Text _usernameTextInGame;
         [SerializeField] private TMP_Text _isReadyText;
         
         protected override void RegisterEvents()
@@ -117,6 +118,7 @@ namespace Multiplayer.PlayerSystem
             try
             {
                 _usernameText.text = currentData.Username;
+                _usernameTextInGame.text = currentData.Username;
             }
             catch (Exception ex)
             {
