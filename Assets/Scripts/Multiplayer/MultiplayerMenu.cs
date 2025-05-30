@@ -15,6 +15,8 @@ public class MultiplayerMenu : BaseMonoBehaviour
 {
     [SerializeField] private GameObject _selectorMenu;
     [SerializeField] private GameObject _partyMenu;
+    [SerializeField] private GameObject _lobbyFinder;
+    [SerializeField] private GameObject _buttonsContainer;
 
     private bool steamworksInitialized = false;
     protected override void RegisterEvents()
@@ -72,12 +74,10 @@ public class MultiplayerMenu : BaseMonoBehaviour
         SteamLobby.Singleton.CreateLobbyAsync();
     }
 
-    public void JoinParty()
+    public void FindParty()
     {
-        ChangeCamera();
-        GameManager.Instance.SetCurrentGameState(GameState.InLobby);
-        InstanceFinder.TransportManager.GetTransport<Multipass>().SetClientTransport<FishyFacepunch.FishyFacepunch>();
-        SteamLobby.Singleton.FindLobby();
+        _buttonsContainer.SetActive(false);
+        _lobbyFinder.SetActive(true);
     }
 
     public void CreatePartyLocal()
@@ -126,7 +126,7 @@ public class MultiplayerMenu : BaseMonoBehaviour
         return true;
     }
 
-    private void ChangeCamera()
+    public static void ChangeCamera()
     {
         var mainCamera = GameObject.Find("MainCamera");
         var partyCamera = GameObject.Find("PartyCamera");
