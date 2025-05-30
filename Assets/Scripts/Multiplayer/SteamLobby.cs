@@ -62,7 +62,7 @@ namespace Multiplayer.Steam
             
             for (int i = 0; i < maxAttempts; i++)
             {
-                foreach (var lobby in await SteamExtension.GetLobbies())
+                foreach (Lobby lobby in await SteamExtension.GetLobbies())
                 {
                     if(lobby.MemberCount >= 4 || foundLobby) continue;
 
