@@ -428,7 +428,7 @@ GameObject:
   - component: {fileID: 1601677295327338856}
   m_Layer: 0
   m_Name: InGame
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -615,6 +615,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df4b9555a6a3d284688f929f64dcb218, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 3875465447857652874}
+  _networkObjectCache: {fileID: 0}
   maxHealth: 100
   baseAttackSpeed: 1
   baseDamage: 10
@@ -635,6 +638,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6434c6105b57e741a6858763c962ddd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 3875465447857652874}
+  _networkObjectCache: {fileID: 0}
   attackSound: {fileID: 8300000, guid: 2096c823eafa90940bed233b53e670ce, type: 3}
   hitSound: {fileID: 8300000, guid: aa48101fd9bd24b82af88afb182a9bf5, type: 3}
   stepSoundsArray:
