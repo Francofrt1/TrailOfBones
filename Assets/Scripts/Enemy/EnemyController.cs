@@ -144,8 +144,15 @@ public class EnemyController : NetworkBehaviour, IDamageable, IAttack, IDeath
         OnEnemyKilled?.Invoke(this, model.inPlayer, killedById);
         Debug.Log("Enemy died.");
         view.SetDieAnimation();
-        Instantiate(model.getDrop(), transform.position, transform.rotation);
+        SpawnDrop();
         Destroy(gameObject, 5f);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SpawnDrop()
+    {
+        var drop = Instantiate(model.getDrop(), transform.position, transform.rotation);
+        ServerManager.Spawn(drop);
     }
 
     public void TakeDamage(float damageAmout, string hittedById)
