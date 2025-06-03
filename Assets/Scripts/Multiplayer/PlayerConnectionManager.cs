@@ -8,7 +8,6 @@ using FishNet.Transporting;
 using Multiplayer.PlayerSystem;
 using Multiplayer.Utils;
 using Steamworks;
-using UnityEngine;
 
 namespace Multiplayer
 {
