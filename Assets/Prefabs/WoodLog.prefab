@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3603112812403096430}
   - component: {fileID: 1978401069597958036}
   - component: {fileID: 8412306589285422451}
+  - component: {fileID: 1018871094485073300}
   m_Layer: 0
   m_Name: WoodLog
   m_TagString: Untagged
@@ -115,7 +116,8 @@ MonoBehaviour:
   <ComponentIndex>k__BackingField: 0
   <PredictedSpawn>k__BackingField: {fileID: 0}
   <PredictedOwner>k__BackingField: {fileID: 0}
-  NetworkBehaviours: []
+  NetworkBehaviours:
+  - {fileID: 1018871094485073300}
   InitializedParentNetworkBehaviour: {fileID: 0}
   InitializedNestedNetworkObjects: []
   RuntimeParentNetworkBehaviour: {fileID: 0}
@@ -140,15 +142,30 @@ MonoBehaviour:
   _spectatorInterpolation: 2
   _enableTeleport: 0
   _teleportThreshold: 1
-  <PrefabId>k__BackingField: 65535
+  <PrefabId>k__BackingField: 19
   <SpawnableCollectionId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 16153189904123671423
   <SceneId>k__BackingField: 0
   SerializedTransformProperties:
-    Position: {x: 0, y: 0, z: 0}
-    Rotation: {x: 0, y: 0, z: 0, w: 0}
-    Scale: {x: 0, y: 0, z: 0}
-    IsValid: 0
+    Position: {x: 200.07855, y: 3.3192334, z: 797.9061}
+    Rotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+    Scale: {x: 140, y: 140, z: 140}
+    IsValid: 1
+--- !u!114 &1018871094485073300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3421859495812559835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a6a39c46bf52104ba8efe3100bce3f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 0
+  _addedNetworkObject: {fileID: 8412306589285422451}
+  _networkObjectCache: {fileID: 8412306589285422451}
 --- !u!1 &6466788560391326779
 GameObject:
   m_ObjectHideFlags: 0
