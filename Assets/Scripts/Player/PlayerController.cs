@@ -2,10 +2,11 @@ using Assets.Scripts.Interfaces;
 using FishNet.Object;
 using System;
 using System.Linq;
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class PlayerController : NetworkBehaviour, IDamageable, IAttack, IDeath, IHealthVariation
+public class PlayerController : NetworkBehaviour, IDamageable, IAttack, IDeath, IHealthVariation, IPowerUpApplicable
 {
     private Rigidbody rigidBody;
     private Vector2 movementInput;
@@ -204,4 +205,49 @@ public class PlayerController : NetworkBehaviour, IDamageable, IAttack, IDeath, 
     {
         return playerModel.ID;
     }
+
+    // Propósito: Aplica un aumento temporal al daño de ataque.
+    // Precondición: multiplier > 0, duration > 0
+    public void ApplyAttackBoost(float multiplier, float duration)
+    {
+        playerModel.SetAttackSpeed(multiplier, duration);
+        StartCoroutine(ResetAttackAfter(duration));
+    }
+
+    // Propósito: Restaura una cantidad de salud al jugador.
+    // Precondición: amount > 0
+    public void ApplyHealing(float amount)
+    {
+        playerModel.SetHealth(amount);
+        OnHealthVariation?.Invoke(playerModel.currentHealth, playerModel.maxHealth);
+    }
+
+    // Propósito: Aumenta la velocidad de movimiento del jugador temporalmente.
+    // Precondición: bonus > 0, duration > 0
+    public void ApplySpeedBoost(float bonus, float duration)
+    {
+        playerModel.moveSpeed += bonus;
+        StartCoroutine(ResetSpeedAfter(duration, bonus));
+    }
+
+    // Propósito: Reinicia la velocidad de ataque después del tiempo del PowerUp.
+    // Precondición: tiempo > 0
+    private IEnumerator ResetAttackAfter(float tiempo)
+    {
+        yield return new WaitForSeconds(tiempo);
+        playerModel.currentAttackSpeed = playerModel.baseAttackSpeed;
+    }
+
+    // Propósito: Reinicia la velocidad de movimiento después del tiempo del PowerUp.
+    // Precondición: tiempo > 0, bonus > 0
+    private IEnumerator ResetSpeedAfter(float tiempo, float bonus)
+    {
+        yield return new WaitForSeconds(tiempo);
+        playerModel.moveSpeed -= bonus;
+    }
+
+
+
+
+
 }
