@@ -160,9 +160,10 @@ public class GameManager : BaseNetworkBehaviour
     {
         try
         {
-            wheelcartMovement = GameObject.Find("Wheelcart").GetComponent<WheelcartMovement>();
-            var wheelcartDurationEvent = GameObject.Find("Wheelcart").GetComponent<IWheelcartDuration>();
-            var wheelcartEvents = GameObject.Find("Wheelcart").GetComponent<IHealthVariation>();
+            GameObject wheelcart = GameObject.Find("WheelcartMultiplayer");
+            wheelcartMovement = wheelcart.GetComponent<WheelcartMovement>();
+            var wheelcartDurationEvent = wheelcart.GetComponent<IWheelcartDuration>();
+            var wheelcartEvents = wheelcart.GetComponent<IHealthVariation>();
             wheelcartEvents.OnDie += GameOverScreen;
             wheelcartMovement.Completed += WinScreen;
             HUD.SetWheelcartHealthEvent(wheelcartEvents);

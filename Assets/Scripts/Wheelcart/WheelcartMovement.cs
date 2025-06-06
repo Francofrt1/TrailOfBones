@@ -8,7 +8,7 @@ public class WheelcartMovement : MonoBehaviour
     [SerializeField] private float speed = 5f;
     [SerializeField] private Rigidbody rb;
 
-    private float splineProgress;
+    [SerializeField, Range(0f, 1f)] private float splineProgress;
 
     private bool isBlocked = false;
 
