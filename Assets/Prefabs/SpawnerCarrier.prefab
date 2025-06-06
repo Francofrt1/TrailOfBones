@@ -48,7 +48,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spline: {fileID: 0}
   speed: 5
-  startT: 0.08
+  initialProgressOffset: 0.1
+  routeEnd: 0.92
+  splineProgress: 0
 --- !u!1001 &706801543343971717
 PrefabInstance:
   m_ObjectHideFlags: 0

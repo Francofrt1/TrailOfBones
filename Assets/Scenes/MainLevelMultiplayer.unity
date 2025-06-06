@@ -3444,8 +3444,16 @@ PrefabInstance:
       value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 2749232498132185385, guid: 3d5d414797bddde4991f8b5caa424580, type: 3}
+      propertyPath: routeEnd
+      value: 0.92
+      objectReference: {fileID: 0}
+    - target: {fileID: 2749232498132185385, guid: 3d5d414797bddde4991f8b5caa424580, type: 3}
       propertyPath: progressOffset
       value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2749232498132185385, guid: 3d5d414797bddde4991f8b5caa424580, type: 3}
+      propertyPath: initialProgressOffset
+      value: 0.18
       objectReference: {fileID: 0}
     - target: {fileID: 3945989135683954921, guid: 3d5d414797bddde4991f8b5caa424580, type: 3}
       propertyPath: m_Name
@@ -5361,6 +5369,10 @@ PrefabInstance:
       propertyPath: spline
       value: 
       objectReference: {fileID: 1906155497}
+    - target: {fileID: 2455978798947039812, guid: 5ec745f48b49a0940a2553a0d55d3023, type: 3}
+      propertyPath: splineProgress
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2904887283493235098, guid: 5ec745f48b49a0940a2553a0d55d3023, type: 3}
       propertyPath: m_Name
       value: WheelcartMultiplayer
@@ -6360,7 +6372,15 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1906155497}
     - target: {fileID: 2749232498132185385, guid: 3d5d414797bddde4991f8b5caa424580, type: 3}
+      propertyPath: routeEnd
+      value: 0.92
+      objectReference: {fileID: 0}
+    - target: {fileID: 2749232498132185385, guid: 3d5d414797bddde4991f8b5caa424580, type: 3}
       propertyPath: progressOffset
+      value: 0.08
+      objectReference: {fileID: 0}
+    - target: {fileID: 2749232498132185385, guid: 3d5d414797bddde4991f8b5caa424580, type: 3}
+      propertyPath: initialProgressOffset
       value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: 3945989135683954921, guid: 3d5d414797bddde4991f8b5caa424580, type: 3}

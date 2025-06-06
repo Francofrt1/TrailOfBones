@@ -6,18 +6,19 @@ public class SpawnerCarrier : MonoBehaviour
 {
     [SerializeField] private SplineContainer spline;
     [SerializeField] private float speed = 5f;
-    [SerializeField, Range(0f, 1f)] private float progressOffset = 0.1f;
+    [SerializeField, Range(0f, 1f)] private float initialProgressOffset = 0.1f;
+    [SerializeField] private float routeEnd = 0.92f;
 
-    private float t;
+    [SerializeField, Range(0f, 1f)] private float splineProgress;
 
     public event Action<float> OnProgress;
     public event Action OnCompleted;
 
     private void Start()
     {
-        t = Mathf.Clamp01(progressOffset);
-        transform.position = spline.EvaluatePosition(t);
-        Vector3 forward = (Vector3)spline.EvaluateTangent(t);
+        splineProgress = Mathf.Clamp01(initialProgressOffset);
+        transform.position = spline.EvaluatePosition(splineProgress);
+        Vector3 forward = (Vector3)spline.EvaluateTangent(splineProgress);
         forward.Normalize();
         if (forward != Vector3.zero)
             transform.rotation = Quaternion.LookRotation(forward, Vector3.up);
@@ -30,21 +31,21 @@ public class SpawnerCarrier : MonoBehaviour
 
     private void MoveAlongSpline()
     {
-        if (t >= 1f)
+        if (splineProgress >= routeEnd)
             return;
 
-        t += (speed / spline.CalculateLength()) * Time.deltaTime;
-        t = Mathf.Clamp01(t);
+        splineProgress += (speed / spline.CalculateLength()) * Time.deltaTime;
+        splineProgress = Mathf.Clamp01(splineProgress);
 
-        transform.position = spline.EvaluatePosition(t);
+        transform.position = spline.EvaluatePosition(splineProgress);
 
-        Vector3 forward = (Vector3)spline.EvaluateTangent(t);
+        Vector3 forward = (Vector3)spline.EvaluateTangent(splineProgress);
         forward.Normalize();
         if (forward != Vector3.zero)
             transform.rotation = Quaternion.LookRotation(forward, Vector3.up);
 
-        OnProgress?.Invoke(t);
-        if (t >= 1f)
+        OnProgress?.Invoke(splineProgress);
+        if (splineProgress >= routeEnd)
             OnCompleted?.Invoke();
     }
 
