@@ -12,6 +12,7 @@ public class PlayerController : NetworkBehaviour, IDamageable, IAttack, IDeath, 
     private InputHandler inputHandler;
 
     [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private LayerMask wheelcartFloorLayer;
 
     private float currentYRotation = 0f;
 
@@ -22,6 +23,10 @@ public class PlayerController : NetworkBehaviour, IDamageable, IAttack, IDeath, 
     private PlayerModel playerModel;
     private PlayerView playerView;
     private AttackArea attackArea;
+
+    private Transform carrierTransform = null;
+    private Vector3 lastCarrierPosition = Vector3.zero;
+    private Vector3 carrierDelta = Vector3.zero;
 
     public event Action OnDie;
     public event Action<float, float> OnHealthVariation;
@@ -38,6 +43,7 @@ public class PlayerController : NetworkBehaviour, IDamageable, IAttack, IDeath, 
 
         cameraPivot.SetInputHandler(inputHandler);
         groundLayer = LayerMask.GetMask("groundLayer");
+        wheelcartFloorLayer = LayerMask.GetMask("WheelcartFloorLayer");
         AssignEvents();
         OnPlayerSpawned?.Invoke(this);
     }
@@ -97,6 +103,7 @@ public class PlayerController : NetworkBehaviour, IDamageable, IAttack, IDeath, 
 
     private void FixedUpdate()
     {
+        UpdateCarrierDelta();
         PerformMovement();
     }
 
@@ -108,7 +115,10 @@ public class PlayerController : NetworkBehaviour, IDamageable, IAttack, IDeath, 
 
         move.y = rigidBody.velocity.y;
 
-        Vector3 nextPosition = rigidBody.position + move * Time.fixedDeltaTime;
+        Vector3 playerMovement = move * Time.fixedDeltaTime;
+        Vector3 platformMovement = carrierDelta;
+        Vector3 combinedMovement = playerMovement + platformMovement;
+        Vector3 nextPosition = rigidBody.position + combinedMovement;
         rigidBody.MovePosition(nextPosition);
 
         Vector3 flatMove = new Vector3(move.x, 0f, move.z);
@@ -116,26 +126,66 @@ public class PlayerController : NetworkBehaviour, IDamageable, IAttack, IDeath, 
         playerView.SetMovementAnimation(horizontalVelocity);
     }
 
+    private void UpdateCarrierDelta()
+    {
+        if (carrierTransform != null)
+        {
+            carrierDelta = carrierTransform.position - lastCarrierPosition;
+            lastCarrierPosition = carrierTransform.position;
+        }
+        else
+        {
+            carrierDelta = Vector3.zero;
+        }
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
-        if (IsGroundLayer(collision.gameObject.layer))
+        int layer = collision.gameObject.layer;
+
+        bool isGround = IsGroundLayer(layer);
+        bool isCarrier = IsWheelcartFloorLayer(layer);
+
+        if (isGround || isCarrier)
         {
             isGrounded = true;
             playerView.SetIsFallingAnimation(false);
+        }
+
+        if (isCarrier)
+        {
+            carrierTransform = collision.transform;
+            lastCarrierPosition = carrierTransform.position;
         }
     }
 
     private void OnCollisionExit(Collision collision)
     {
-        if (IsGroundLayer(collision.gameObject.layer))
+        int layer = collision.gameObject.layer;
+        
+        bool isGround = IsGroundLayer(layer);
+        bool isCarrier = IsWheelcartFloorLayer(layer);
+
+        if (isGround || isCarrier)
         {
             isGrounded = false;
+        }
+
+        if (isCarrier && collision.transform == carrierTransform)
+        {
+            carrierTransform = null;
+            carrierDelta = Vector3.zero;
         }
     }
 
     private bool IsGroundLayer(int layer)
     {
         return (groundLayer.value & (1 << layer)) != 0;
+    }
+
+    private bool IsWheelcartFloorLayer(int layer)
+    {
+        return (wheelcartFloorLayer.value & (1 << layer)) != 0;
     }
 
     private void ManageRotation(float amount)
