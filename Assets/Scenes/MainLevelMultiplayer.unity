@@ -5369,10 +5369,6 @@ PrefabInstance:
       propertyPath: spline
       value: 
       objectReference: {fileID: 1906155497}
-    - target: {fileID: 2455978798947039812, guid: 5ec745f48b49a0940a2553a0d55d3023, type: 3}
-      propertyPath: splineProgress
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2904887283493235098, guid: 5ec745f48b49a0940a2553a0d55d3023, type: 3}
       propertyPath: m_Name
       value: WheelcartMultiplayer

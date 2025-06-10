@@ -8,6 +8,7 @@ TagManager:
   - LevelFinish
   - Enemy
   - HUD
+  - WheelcartBuffZone
   layers:
   - Default
   - TransparentFX
