@@ -190,6 +190,12 @@ public class PlayerController : NetworkBehaviour, IDamageable, IAttack, IDeath, 
         OnHealthVariation?.Invoke(playerModel.currentHealth, playerModel.maxHealth);
     }
 
+    public void Heal(float healAmount)
+    {
+        playerModel.SetHealth(healAmount);
+        OnHealthVariation?.Invoke(playerModel.currentHealth, playerModel.maxHealth);
+    }
+
     public void OnDeath(string killedById)
     {
         OnDie?.Invoke();
