@@ -8,20 +8,9 @@ public class InventoryController : MonoBehaviour
 {
     private InventoryModel model;
     private InventoryView View;
-    public static InventoryController Instance { get; private set; }
 
     private void Awake()
     {
-        //TODO: change to make an inventory for each player.
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-        }
-        else
-        {
-            Instance = this;
-        }
-
         model = GetComponent<InventoryModel>();
         View = GetComponent<InventoryView>();
     }

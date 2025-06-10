@@ -8,18 +8,13 @@ public class Item : MonoBehaviour
 {
     [SerializeField]
     private ItemObject item;
-    private InventoryController inventoryController;
 
-    private void Start()
-    {
-        inventoryController = InventoryController.Instance;
-    }
 
     private void OnCollisionEnter(Collision collision)
     {
         if(collision.gameObject.CompareTag("Player"))
         {
-            inventoryController.HandleAddItem(this);
+            collision.gameObject.GetComponent<PlayerController>().saveItem(this);
             Destroy(gameObject);
         }
     }

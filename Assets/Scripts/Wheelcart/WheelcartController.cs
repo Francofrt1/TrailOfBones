@@ -13,6 +13,7 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
     public event Action OnDie;
     public event Action<float, float> OnHealthVariation;
     public event Action<float> OnWheelcartDuration;
+    public event Action<bool> OnBlockWheelcartRequested;
 
 
     private void Awake()
@@ -33,7 +34,7 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
 
         if(wheelcartModel.currentHealth <= wheelcartModel.StopWheelcartPercent())
         {
-            //splineAnimate.Pause();
+            OnBlockWheelcartRequested?.Invoke(false);
         }
 
         if (wheelcartModel.currentHealth <= 0)

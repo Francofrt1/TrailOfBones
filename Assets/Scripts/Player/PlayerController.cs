@@ -10,6 +10,7 @@ public class PlayerController : NetworkBehaviour, IDamageable, IAttack, IDeath, 
     private Rigidbody rigidBody;
     private Vector2 movementInput;
     private InputHandler inputHandler;
+    private InventoryController inventoryController;
 
     [SerializeField] private LayerMask groundLayer;
 
@@ -35,7 +36,7 @@ public class PlayerController : NetworkBehaviour, IDamageable, IAttack, IDeath, 
         playerModel = GetComponent<PlayerModel>();
         playerView = GetComponent<PlayerView>();
         attackArea = GetComponentInChildren<AttackArea>();
-
+        inventoryController = GetComponentInChildren<InventoryController>();
         cameraPivot.SetInputHandler(inputHandler);
         groundLayer = LayerMask.GetMask("groundLayer");
         AssignEvents();
@@ -203,5 +204,10 @@ public class PlayerController : NetworkBehaviour, IDamageable, IAttack, IDeath, 
     public string GetID()
     {
         return playerModel.ID;
+    }
+
+    public void saveItem(Item item)
+    {
+        inventoryController.HandleAddItem(item);
     }
 }
