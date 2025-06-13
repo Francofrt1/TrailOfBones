@@ -22,7 +22,7 @@ public class InventoryView : MonoBehaviour
         
     }
 
-    public void UpdateSlot(Dictionary<ItemType, (int, Sprite)> inventory)
+    public void UpdateSlot(Dictionary<ItemType, (int Quantity, Sprite Sprite)> inventory)
     {
         slots.ForEach( slot => 
         {
@@ -35,8 +35,8 @@ public class InventoryView : MonoBehaviour
 
         foreach (var item in inventory)
         {
-            int itemAmount = item.Value.Item1;
-            Sprite itemSprite = item.Value.Item2;
+            int itemAmount = item.Value.Quantity;
+            Sprite itemSprite = item.Value.Sprite;
             GameObject slot = slots.FirstOrDefault(obj => obj.GetComponentInChildren<Image>().sprite == null);
 
             if(slot != null)
