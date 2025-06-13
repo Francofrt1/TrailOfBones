@@ -14,15 +14,21 @@ public class WheelcartMovement : MonoBehaviour
 
     public event Action<float> OnWheelcartprogress;
     public event Action Completed;
+    private WheelcartController wheelcartController;
+
+    private void Awake()
+    {
+        wheelcartController = GetComponent<WheelcartController>();
+    }
 
     private void OnEnable()
     {
-        //[Sistema de eventos del wheelcart].OnBlockWheelcartRequested += BlockMovement;
+        wheelcartController.OnBlockWheelcartRequested += BlockMovement;
     }
 
     private void OnDisable()
     {
-        //[Sistema de eventos del wheelcart].OnBlockWheelcartRequested -= BlockMovement;
+        wheelcartController.OnBlockWheelcartRequested -= BlockMovement;
     }
 
     void FixedUpdate()

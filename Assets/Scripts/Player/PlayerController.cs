@@ -10,6 +10,7 @@ public class PlayerController : NetworkBehaviour, IDamageable, IAttack, IDeath, 
     private Rigidbody rigidBody;
     private Vector2 movementInput;
     private InputHandler inputHandler;
+    private InventoryController inventoryController;
 
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private LayerMask wheelcartFloorLayer;
@@ -40,7 +41,7 @@ public class PlayerController : NetworkBehaviour, IDamageable, IAttack, IDeath, 
         playerModel = GetComponent<PlayerModel>();
         playerView = GetComponent<PlayerView>();
         attackArea = GetComponentInChildren<AttackArea>();
-
+        inventoryController = GetComponentInChildren<InventoryController>();
         cameraPivot.SetInputHandler(inputHandler);
         groundLayer = LayerMask.GetMask("groundLayer");
         wheelcartFloorLayer = LayerMask.GetMask("WheelcartFloorLayer");
@@ -94,6 +95,7 @@ public class PlayerController : NetworkBehaviour, IDamageable, IAttack, IDeath, 
 
     private void Update()
     {
+        RepairWheelcart();
         if (!isJumping && !isGrounded)
         {
             fallingTime += Time.deltaTime;
@@ -259,5 +261,45 @@ public class PlayerController : NetworkBehaviour, IDamageable, IAttack, IDeath, 
     public string GetID()
     {
         return playerModel.ID;
+    }
+
+    public void saveItem(Item item)
+    {
+        inventoryController.HandleAddItem(item);
+    }
+
+    public bool canBeSaved(Item item)
+    {
+        return inventoryController.canBeSaved(item);
+    }
+
+    public void RepairWheelcart()
+    {
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            /*TO DO: 
+             * cambiar para hacer que no dependa de la referencia a la carreta (enviar evento de reparacion?). 
+             * Usar lo de santi con una variable boolena para detectar si esta cerca. 
+             * Cambiar el input de lugar y enviarlo donde corresponde*/
+            GameObject wheelcart = GameObject.FindGameObjectWithTag("DefendableObject");
+
+            if (wheelcart == null) return;
+            if (Vector3.Distance(this.transform.position, wheelcart.transform.position) < 10 && wheelcart.GetComponent<WheelcartController>().NeedRepair())
+            {
+                int logsToSent = wheelcart.GetComponent<WheelcartController>().NeededLogsToRepair();
+                int logsInInventory = inventoryController.GetItemQuantity(ItemType.WoodLog);
+                if (logsToSent >= logsInInventory)
+                {
+                    inventoryController.HandleUseItem(ItemType.WoodLog, logsInInventory);
+                    wheelcart.GetComponent<WheelcartController>().StorageLog(logsInInventory);
+                }
+                else
+                {
+                    inventoryController.HandleUseItem(ItemType.WoodLog, logsToSent);
+                    wheelcart.GetComponent<WheelcartController>().StorageLog(logsToSent);
+                }
+                
+            }
+        }
     }
 }

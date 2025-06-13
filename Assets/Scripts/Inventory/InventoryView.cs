@@ -1,10 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using TMPro;
-using UnityEngine.UI;
 using System.Linq;
-using System;
+using TMPro;
+using UnityEngine;
+using UnityEngine.Splines;
+using UnityEngine.UI;
 
 public class InventoryView : MonoBehaviour
 {
@@ -21,34 +22,30 @@ public class InventoryView : MonoBehaviour
         
     }
 
-
-    public void UpdateSlot(int quantity, Sprite sprite)
+    public void UpdateSlot(Dictionary<ItemType, (int Quantity, Sprite Sprite)> inventory)
     {
-        //find a space that has the same sprite
-        GameObject slot = slots.FirstOrDefault(obj => obj.GetComponentInChildren<Image>().sprite == sprite);
-        if (slot == null) {
-            //If it doesn't find a space containing the sprite, it looks for an empty one. If there aren't any empty spaces, it exits the method without doing anything.
-            if (slots.Any(slot => slot.GetComponentInChildren<Image>().sprite == null)){
-                slot = slots.FirstOrDefault(obj => obj.GetComponentInChildren<Image>().sprite == null);
-            }
-            else
+        slots.ForEach( slot => 
+        {
+            Image img = slot.GetComponentInChildren<Image>();
+            Text amountText = slot.GetComponentInChildren<Text>();
+
+            img.sprite = null;
+            amountText.text = "";
+        });
+
+        foreach (var item in inventory)
+        {
+            int itemAmount = item.Value.Quantity;
+            Sprite itemSprite = item.Value.Sprite;
+            GameObject slot = slots.FirstOrDefault(obj => obj.GetComponentInChildren<Image>().sprite == null);
+
+            if(slot != null)
             {
-                return;
-            } 
-        }
-
-        //finds the children that have the text and image components and gives them the new values.
-        slot.GetComponentInChildren<Text>().text = quantity.ToString();
-        slot.GetComponentInChildren<Image>().sprite = sprite;
-    }
-
-    public void FreeUpSlot(Sprite sprite)
-    {
-        if(slots.Any(slot => slot.GetComponentInChildren<Image>().sprite == sprite)){
-            GameObject slot = slots.FirstOrDefault(obj => obj.GetComponentInChildren<Image>().sprite == sprite);
-            //finds the children that have the text and image components and gives them the new values.
-            slot.GetComponentInChildren<Text>().text = "0";
-            slot.GetComponentInChildren<Image>().sprite = null;
+                Image slotImage = slot.GetComponentInChildren<Image>();
+                Text slotAmount = slot.GetComponentInChildren<Text>();
+                slotImage.sprite = itemSprite;
+                slotAmount.text = itemAmount.ToString();
+            }
         }
     }
 }
