@@ -7,7 +7,7 @@ public class InventoryModel : MonoBehaviour
 {
     private Dictionary<ItemType, (int quantity,Sprite sprite)> inventory = new Dictionary<ItemType, (int, Sprite)>();
 
-    private const int LIMITITEMAMOUNT = 10;
+    private const int LIMITITEMAMOUNT = 99;
     public void AddItem(Item item)
     {
         if (!inventory.ContainsKey(item.GetItemType())) 
@@ -16,19 +16,29 @@ public class InventoryModel : MonoBehaviour
         }
         else
         {
-
             int quantityTotal = Mathf.Min((item.GetQuantity() + inventory[item.GetItemType()].quantity), LIMITITEMAMOUNT);
             inventory[item.GetItemType()] = (quantityTotal,item.GetSprite());
         }
+    }
 
+    public bool limitReached(Item item)
+    {
+        return !inventory.ContainsKey(item.GetItemType()) || inventory[item.GetItemType()].quantity < LIMITITEMAMOUNT;
     }
 
     public void reduceItem(ItemType itemType, int amountToUse)
     {
         if (!inventory.ContainsKey(itemType)) return;
         int quantityTotal = Mathf.Max((inventory[itemType].quantity - amountToUse), 0);
-        inventory[itemType] = (quantityTotal, inventory[itemType].sprite);
 
+        if (quantityTotal > 0)
+        {
+            inventory[itemType] = (quantityTotal, inventory[itemType].sprite);
+        }
+        else
+        {
+            inventory.Remove(itemType);
+        }
     }
 
     public bool checkItemAmount(ItemType itemType, int amountToUse)

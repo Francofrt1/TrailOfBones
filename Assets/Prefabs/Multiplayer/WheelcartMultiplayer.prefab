@@ -166,7 +166,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spline: {fileID: 0}
-  speed: 5
+  speed: 2
   rb: {fileID: 8265042872293393990}
   splineProgress: 0
 --- !u!114 &2760474369087301278
@@ -195,6 +195,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   duration: 60
   maxHealth: 200
+  logStorage: 0
 --- !u!82 &8554795777103640508
 AudioSource:
   m_ObjectHideFlags: 0

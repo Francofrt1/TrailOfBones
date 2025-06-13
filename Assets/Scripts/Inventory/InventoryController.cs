@@ -15,28 +15,31 @@ public class InventoryController : MonoBehaviour
         View = GetComponent<InventoryView>();
     }
 
+    public bool canBeSaved(Item item)
+    {
+        return model.limitReached(item);
+    }
+
     public void HandleAddItem(Item item)
     {
         model.AddItem(item);
 
-        var (quantity, sprite) = model.GetInventory()[item.GetItemType()];
-
-        View.UpdateSlot(quantity, sprite);
+        View.UpdateSlot(model.GetInventory());
     }
 
     public void HandleUseItem(ItemType itemType, int amountToUse) 
     {
         if (!model.checkItemAmount(itemType, amountToUse)) return;
 
-        //TODO: logic to complete the event
-
         model.reduceItem(itemType, amountToUse);
 
-        var (quantity,sprite) = model.GetInventory()[itemType];
+        View.UpdateSlot(model.GetInventory());
+    }
 
-        View.UpdateSlot(quantity, sprite);
-
-        if (quantity <= 0) View.FreeUpSlot(sprite);
+    public int GetItemQuantity(ItemType itemType)
+    {
+        if (!model.GetInventory().ContainsKey(itemType)) return 0;
+        return model.GetInventory()[itemType].Item1;
     }
 
     public bool CanUse(ItemType itemType, int amountToUse)

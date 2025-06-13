@@ -14,6 +14,7 @@ public class Item : MonoBehaviour
     {
         if(collision.gameObject.CompareTag("Player"))
         {
+            if(!collision.gameObject.GetComponent<PlayerController>().canBeSaved(this)) return;
             collision.gameObject.GetComponent<PlayerController>().saveItem(this);
             Destroy(gameObject);
         }
