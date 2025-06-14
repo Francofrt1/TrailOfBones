@@ -14,7 +14,7 @@ public class EnemyManager : NetworkBehaviour
     [AllowMutableSyncType]
     private SyncList<EnemyController> enemies = new SyncList<EnemyController>();
     [AllowMutableSyncType]
-    private SyncList<PlayerController> playerControllers = new SyncList<PlayerController>();
+    private SyncList<PlayerPresenter> playerControllers = new SyncList<PlayerPresenter>();
     [AllowMutableSyncType]
     private SyncDictionary<string, int> playerEnemies = new SyncDictionary<string, int>();
     private GameObject wheelcart;
@@ -22,7 +22,7 @@ public class EnemyManager : NetworkBehaviour
     private int maxEnemiesToPlayer = 4;
     private void Awake()
     {
-        PlayerController.OnPlayerSpawned += SetPlayerSpawned;
+        PlayerPresenter.OnPlayerSpawned += SetPlayerSpawned;
     }
 
     void Start()
@@ -32,7 +32,7 @@ public class EnemyManager : NetworkBehaviour
         spawners.ForEach(spawner => spawner.OnEnemiesSpawned += HandleEnemySpawned);
     }
 
-    public void SetPlayerSpawned(PlayerController newPlayer)
+    public void SetPlayerSpawned(PlayerPresenter newPlayer)
     {
         playerControllers.Add(newPlayer);
         playerEnemies.Add(newPlayer.GetID(), 0);
@@ -88,7 +88,7 @@ public class EnemyManager : NetworkBehaviour
 
     public void ReassignEnemiesToPlayer(string playerId)
     {
-        PlayerController player = playerControllers.FirstOrDefault(p => p.GetID() == playerId);
+        PlayerPresenter player = playerControllers.FirstOrDefault(p => p.GetID() == playerId);
         int currentEnemies = playerEnemies[playerId];
         if (player == null) return;
 

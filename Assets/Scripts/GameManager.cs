@@ -292,10 +292,10 @@ public class GameManager : BaseNetworkBehaviour
             InstanceFinder.SceneManager.OnLoadEnd -= InitializeMatch;
             GenerateForest();
 
-            PlayerController.OnPlayerSpawned += (PlayerController) =>
+            PlayerPresenter.OnPlayerSpawned += (PlayerPresenter) =>
             {
-                _subscribeToPlayerController(PlayerController.gameObject.GetComponent<IHealthVariation>());
-                _subscribeToPlayerInputHandler(PlayerController.gameObject.GetComponent<InputHandler>());
+                _subscribeToPlayerController(PlayerPresenter.gameObject.GetComponent<IHealthVariation>());
+                _subscribeToPlayerInputHandler(PlayerPresenter.gameObject.GetComponent<InputHandler>());
             };
 
             var hudObj = GameObject.Find("HUD");

@@ -7,13 +7,13 @@ public class WheelcartBuff : MonoBehaviour
 {
     [SerializeField] private float healAmountPerPlayer = 1f;
     [SerializeField] private float buffCooldown = 3f;
-    private List<PlayerController> playersInZone = new List<PlayerController>();
+    private List<PlayerPresenter> playersInZone = new List<PlayerPresenter>();
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Player")
         {
-            playersInZone.Add(other.GetComponent<PlayerController>());
+            playersInZone.Add(other.GetComponent<PlayerPresenter>());
         }
     }
 
@@ -21,14 +21,14 @@ public class WheelcartBuff : MonoBehaviour
     {
         if (other.tag == "Player")
         {
-            playersInZone.Remove(other.GetComponent<PlayerController>()); ;
+            playersInZone.Remove(other.GetComponent<PlayerPresenter>()); ;
         }
     }
     
 
     private void HealPlayersInZone()
     {
-        foreach(PlayerController player in playersInZone)
+        foreach(PlayerPresenter player in playersInZone)
         {
             player.Heal(healAmountPerPlayer * playersInZone.Count);
         }

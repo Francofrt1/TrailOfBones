@@ -604,6 +604,12 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 128
+  wheelcartFloorLayer:
+    serializedVersion: 2
+    m_Bits: 1024
+  wheelcartBodyLayer:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!114 &5885265836114090574
 MonoBehaviour:
   m_ObjectHideFlags: 0
