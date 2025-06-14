@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class PlayerController : NetworkBehaviour, IDamageable, IAttack, IDeath, IHealthVariation
+public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, IHealthVariation
 {
     private Rigidbody rigidBody;
     private Vector2 movementInput;
@@ -31,7 +31,7 @@ public class PlayerController : NetworkBehaviour, IDamageable, IAttack, IDeath, 
 
     public event Action OnDie;
     public event Action<float, float> OnHealthVariation;
-    public static Action<PlayerController> OnPlayerSpawned;
+    public static Action<PlayerPresenter> OnPlayerSpawned;
 
     private void Awake()
     {
