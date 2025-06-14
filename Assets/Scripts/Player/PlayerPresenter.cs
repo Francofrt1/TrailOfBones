@@ -14,8 +14,11 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
 
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private LayerMask wheelcartFloorLayer;
+    [SerializeField] private LayerMask wheelcartBodyLayer;
 
     private float currentYRotation = 0f;
+
+    private Vector3 _cartPushbackNormal;
 
     private bool isGrounded;
     private bool isJumping = false;
@@ -111,21 +114,49 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
 
     private void PerformMovement()
     {
-        Vector3 moveDirection = new Vector3(movementInput.x, 0f, movementInput.y);
+        Vector3 localVelocity = playerModel.CalculateLocalVelocity(movementInput);
 
-        Vector3 move = transform.TransformDirection(moveDirection) * playerModel.moveSpeed * playerModel.acceleration;
+        Vector3 horizontalVelocity = new Vector3(localVelocity.x, 0f, localVelocity.z);
+        float verticalVelocity = rigidBody.velocity.y;
 
-        move.y = rigidBody.velocity.y;
+        horizontalVelocity = ApplyPushbackPlaneIfNeeded(horizontalVelocity);
 
-        Vector3 playerMovement = move * Time.fixedDeltaTime;
-        Vector3 platformMovement = carrierDelta;
-        Vector3 combinedMovement = playerMovement + platformMovement;
-        Vector3 nextPosition = rigidBody.position + combinedMovement;
-        rigidBody.MovePosition(nextPosition);
+        localVelocity = new Vector3(horizontalVelocity.x, verticalVelocity, horizontalVelocity.z);
 
-        Vector3 flatMove = new Vector3(move.x, 0f, move.z);
-        float horizontalVelocity = flatMove.magnitude;
-        playerView.SetMovementAnimation(horizontalVelocity);
+        playerView.SetMovementAnimation(localVelocity);
+
+        Vector3 nextPos = NextGlobalPosition(localVelocity * Time.fixedDeltaTime);
+        rigidBody.MovePosition(nextPos);
+    }
+
+    private Vector3 ApplyPushbackPlaneIfNeeded(Vector3 horizontalVelocity)
+    {
+        if (_cartPushbackNormal == Vector3.zero)
+            return horizontalVelocity;
+
+        Vector3 horizontalNormal = new Vector3(_cartPushbackNormal.x, 0f, _cartPushbackNormal.z);
+
+        // Verify if horizontalNormal is not too small
+        if (horizontalNormal.sqrMagnitude < 0.0001f)
+            return horizontalVelocity;
+
+
+        horizontalNormal.Normalize(); // Now is safe to .Normalize()
+
+        float dot = Vector3.Dot(horizontalVelocity, -horizontalNormal);
+        if (dot > 0f)
+        {
+            horizontalVelocity = Vector3.ProjectOnPlane(horizontalVelocity, horizontalNormal);
+        }
+
+        return horizontalVelocity;
+    }
+
+    private Vector3 NextGlobalPosition(Vector3 localDisplacement)
+    {
+        Vector3 worldMove = transform.TransformDirection(localDisplacement);
+        Vector3 combined = worldMove + carrierDelta;
+        return rigidBody.position + combined;
     }
 
     private void UpdateCarrierDelta()
@@ -147,6 +178,7 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
 
         bool isGround = IsGroundLayer(layer);
         bool isCarrier = IsWheelcartFloorLayer(layer);
+        bool isWheelcartBody = IsWheelcartBodyLayer(layer);
 
         if (isGround || isCarrier)
         {
@@ -159,14 +191,33 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
             carrierTransform = collision.transform;
             lastCarrierPosition = carrierTransform.position;
         }
+
+        if (isWheelcartBody)
+        {
+            _cartPushbackNormal = CalculateCartPushbackNormal(collision);
+        }
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        int layer = collision.gameObject.layer;
+
+        bool isWheelcartBody = IsWheelcartBodyLayer(layer);
+
+        if (isWheelcartBody)
+        {
+            _cartPushbackNormal = CalculateCartPushbackNormal(collision);
+            print(_cartPushbackNormal);
+        }
     }
 
     private void OnCollisionExit(Collision collision)
     {
         int layer = collision.gameObject.layer;
-        
+
         bool isGround = IsGroundLayer(layer);
         bool isCarrier = IsWheelcartFloorLayer(layer);
+        bool isWheelcartBody = IsWheelcartBodyLayer(layer);
 
         if (isGround || isCarrier)
         {
@@ -178,6 +229,25 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
             carrierTransform = null;
             carrierDelta = Vector3.zero;
         }
+
+        if (isWheelcartBody)
+        {
+            _cartPushbackNormal = Vector3.zero;
+        }
+    }
+
+    private Vector3 CalculateCartPushbackNormal(Collision collision)
+    {
+        Vector3 totalNormal = Vector3.zero;
+
+        foreach (var contact in collision.contacts)
+        {
+            // Convertimos la normal a espacio local
+            Vector3 localNormal = transform.InverseTransformDirection(contact.normal);
+            totalNormal += localNormal;
+        }
+
+       return totalNormal.normalized;
     }
 
     private bool IsGroundLayer(int layer)
@@ -188,6 +258,11 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
     private bool IsWheelcartFloorLayer(int layer)
     {
         return (wheelcartFloorLayer.value & (1 << layer)) != 0;
+    }
+
+    private bool IsWheelcartBodyLayer(int layer)
+    {
+        return (wheelcartBodyLayer.value & (1 << layer)) != 0;
     }
 
     private void ManageRotation(float amount)
@@ -298,7 +373,7 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
                     inventoryController.HandleUseItem(ItemType.WoodLog, logsToSent);
                     wheelcart.GetComponent<WheelcartController>().StorageLog(logsToSent);
                 }
-                
+
             }
         }
     }

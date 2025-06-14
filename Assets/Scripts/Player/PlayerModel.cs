@@ -24,10 +24,13 @@ public class PlayerModel : NetworkBehaviour
         isDead = false;
         currentAttackSpeed = baseAttackSpeed;
     }
-    private void Start()
-    {
 
+    public Vector3 CalculateLocalVelocity(Vector2 input)
+    {
+        Vector3 direction = new Vector3(input.x, 0f, input.y);
+        return direction * moveSpeed * acceleration;
     }
+
     public void SetHealth(float amount)
     {
         currentHealth += amount;
