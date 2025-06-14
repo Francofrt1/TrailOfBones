@@ -22,10 +22,18 @@ public class PlayerView : NetworkBehaviour
 
     }
 
-    public void SetMovementAnimation(float speed)
+    public void SetMovementAnimation(Vector3 localMove)
     {
         if (IsDying()) return;
+
+        float speed = CalculateAnimationSpeed(localMove);
         animator.SetFloat("Speed", speed);
+    }
+
+    private float CalculateAnimationSpeed(Vector3 localMove)
+    {
+        Vector3 flat = new Vector3(localMove.x, 0f, localMove.z);
+        return flat.magnitude;
     }
 
     public void SetJumpAnimation()
