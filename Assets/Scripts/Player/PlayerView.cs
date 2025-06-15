@@ -1,3 +1,4 @@
+using System;
 using FishNet.Object;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ public class PlayerView : NetworkBehaviour
     public AudioClip hitSound;
 
     public AudioClip[] stepSoundsArray;
+    public event Action<bool> OnAttackStateChanged;
 
     void Start()
     {
@@ -63,9 +65,9 @@ public class PlayerView : NetworkBehaviour
         animator.SetTrigger("Dead");
     }
 
-    public bool IsAttacking()
+    public void CheckIsAttacking()
     {
-        return animator.GetCurrentAnimatorStateInfo(0).IsName("Attack");
+        OnAttackStateChanged?.Invoke(animator.GetBool("IsAttacking"));
     }
 
     public bool IsDying()
@@ -86,7 +88,7 @@ public class PlayerView : NetworkBehaviour
 
         if (stepSoundsArray != null && stepSoundsArray.Length > 0)
         {
-            int index = Random.Range(0, stepSoundsArray.Length);
+            int index = UnityEngine.Random.Range(0, stepSoundsArray.Length);
             AudioClip selectedStep = stepSoundsArray[index];
 
             if (selectedStep != null)
