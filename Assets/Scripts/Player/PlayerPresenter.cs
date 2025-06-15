@@ -16,13 +16,7 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
     [SerializeField] private LayerMask wheelcartFloorLayer;
     [SerializeField] private LayerMask wheelcartBodyLayer;
 
-    private float currentYRotation = 0f;
-
-    private Vector3 _cartPushbackNormal;
-
-    private bool isGrounded;
-    private bool isJumping = false;
-    private float fallingTime = 0f;
+    private Vector3 cartPushbackNormal;
 
     private PlayerModel playerModel;
     private PlayerView playerView;
@@ -74,6 +68,7 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
         inputHandler.OnMouseMoveX += ManageRotation;
         inputHandler.OnAttack += OnAttack;
         inputHandler.OnSprint += OnSprint;
+        playerView.OnAttackStateChanged += OnAttackStateChanged;
     }
 
     private void OnMovePerformed(Vector2 direction)
@@ -88,9 +83,9 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
 
     private void OnJumpPerformed()
     {
-        if (isGrounded)
+        if (playerModel.IsGrounded)
         {
-            fallingTime = 0f;
+            playerModel.ResetFallingTime();
             rigidBody.AddForce(Vector3.up * playerModel.jumpForce, ForceMode.Impulse);
             playerView.SetJumpAnimation();
         }
@@ -99,10 +94,11 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
     private void Update()
     {
         RepairWheelcart();
-        if (!isJumping && !isGrounded)
+
+        if (!playerModel.IsGrounded)
         {
-            fallingTime += Time.deltaTime;
-            playerView.SetIsFallingAnimation(true, fallingTime);
+            playerModel.UpdateFallingTime(Time.deltaTime);
+            playerView.SetIsFallingAnimation(true, playerModel.GetFallingTime());
         }
     }
 
@@ -131,10 +127,10 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
 
     private Vector3 ApplyPushbackPlaneIfNeeded(Vector3 horizontalVelocity)
     {
-        if (_cartPushbackNormal == Vector3.zero)
+        if (cartPushbackNormal == Vector3.zero)
             return horizontalVelocity;
 
-        Vector3 horizontalNormal = new Vector3(_cartPushbackNormal.x, 0f, _cartPushbackNormal.z);
+        Vector3 horizontalNormal = new Vector3(cartPushbackNormal.x, 0f, cartPushbackNormal.z);
 
         // Verify if horizontalNormal is not too small
         if (horizontalNormal.sqrMagnitude < 0.0001f)
@@ -154,7 +150,9 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
 
     private Vector3 NextGlobalPosition(Vector3 localDisplacement)
     {
+        // Converts local input to world direction: W moves in player's forward, not global Z+
         Vector3 worldMove = transform.TransformDirection(localDisplacement);
+        // Adds carrier location variation
         Vector3 combined = worldMove + carrierDelta;
         return rigidBody.position + combined;
     }
@@ -182,7 +180,7 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
 
         if (isGround || isCarrier)
         {
-            isGrounded = true;
+            playerModel.IsGrounded = true;
             playerView.SetIsFallingAnimation(false);
         }
 
@@ -194,7 +192,7 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
 
         if (isWheelcartBody)
         {
-            _cartPushbackNormal = CalculateCartPushbackNormal(collision);
+            cartPushbackNormal = CalculateCartPushbackNormal(collision);
         }
     }
 
@@ -206,7 +204,7 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
 
         if (isWheelcartBody)
         {
-            _cartPushbackNormal = CalculateCartPushbackNormal(collision);
+            cartPushbackNormal = CalculateCartPushbackNormal(collision);
         }
     }
 
@@ -220,7 +218,7 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
 
         if (isGround || isCarrier)
         {
-            isGrounded = false;
+            playerModel.IsGrounded = false;
         }
 
         if (isCarrier && collision.transform == carrierTransform)
@@ -231,7 +229,7 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
 
         if (isWheelcartBody)
         {
-            _cartPushbackNormal = Vector3.zero;
+            cartPushbackNormal = Vector3.zero;
         }
     }
 
@@ -241,12 +239,12 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
 
         foreach (var contact in collision.contacts)
         {
-            // Convertimos la normal a espacio local
+            // Convert normal to local space
             Vector3 localNormal = transform.InverseTransformDirection(contact.normal);
             totalNormal += localNormal;
         }
 
-       return totalNormal.normalized;
+        return totalNormal.normalized;
     }
 
     private bool IsGroundLayer(int layer)
@@ -266,13 +264,20 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
 
     private void ManageRotation(float amount)
     {
-        currentYRotation += amount;
-        transform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
+        Quaternion newRotation = playerModel.UpdateYawRotation(amount);
+
+        transform.rotation = newRotation;
     }
 
+    private void OnAttackStateChanged(bool isAttacking)
+    {
+        playerModel.SetAttackState(isAttacking);
+    }
+    
     public void OnAttack()
     {
-        if (playerView.IsAttacking()) return;
+        playerView.CheckIsAttacking();
+        if (playerModel.CanAttack() == false) return;
         playerView.SetAttackAnimation();
 
         attackArea.DamageablesInRange.RemoveAll(x => x == null || (x as MonoBehaviour) == null);
@@ -288,7 +293,7 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
 
     private void OnSprint()
     {
-        playerModel.acceleration = playerModel.acceleration == 1f ? 2f : 1f;
+        playerModel.ToggleSprint();
     }
 
     private void OnDestroy()
@@ -299,6 +304,7 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
         inputHandler.OnMouseMoveX -= ManageRotation;
         inputHandler.OnAttack -= OnAttack;
         inputHandler.OnSprint -= OnSprint;
+        playerView.OnAttackStateChanged -= OnAttackStateChanged;
     }
 
     public void TakeDamage(float damageAmout, string hittedById)
@@ -306,10 +312,9 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
         playerView.PlayHitSound();
         playerModel.SetHealth(-damageAmout);
 
-        if (playerModel.currentHealth <= 0)
+        if (playerModel.isDead)
         {
             playerView.SetIsDeadAnimation();
-            playerModel.isDead = true;
             OnDeath(hittedById);
         }
 
