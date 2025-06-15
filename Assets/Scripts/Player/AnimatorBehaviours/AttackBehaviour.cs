@@ -4,15 +4,26 @@ using UnityEngine;
 
 public class AttackBehaviour : StateMachineBehaviour
 {
+    override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        animator.SetBool("IsAttacking", true);
+    }
+
+    override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        animator.SetBool("IsAttacking", false);
+    }
+}
+
+    // TODO: Ver si se puede refinar la implementación de este StateMachineBehaviour (Aplicado al estado Attack del animator del player)
+    // para mejorar del todo el cambio de estado tardío que genera el bug (se puede realizar un ataque repetido)
+    // Revisar sus prestaciones:
+
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     //override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     //{
     //    
     //}
-    override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    {
-        animator.SetBool("IsAttacking", true);
-    }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -25,10 +36,6 @@ public class AttackBehaviour : StateMachineBehaviour
     //{
     //    
     //}
-    override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    {
-        animator.SetBool("IsAttacking", false);
-    }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()
     //override public void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -41,7 +48,4 @@ public class AttackBehaviour : StateMachineBehaviour
     //{
     //    // Implement code that sets up animation IK (inverse kinematics)
     //}
-    // Se ejecuta al entrar en el estado Attack
 
-    // Se ejecuta al salir del estado Attack
-}
