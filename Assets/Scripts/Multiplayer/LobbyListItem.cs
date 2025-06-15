@@ -19,7 +19,7 @@ public class LobbyListItem : MonoBehaviour
     public void Setup(Lobby lobby)
     {
         _lobby = lobby;
-        _lobbyText.text = $"Host: {lobby.Owner.Name} - Capacity: ({lobby.MemberCount}/{lobby.MaxMembers})";
+        _lobbyText.text = $"Host: {lobby.GetData("Name")} - Capacity: ({lobby.MemberCount}/{lobby.MaxMembers})";
     }
 
     public void JoinLobby()
