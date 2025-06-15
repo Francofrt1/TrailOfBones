@@ -1,14 +1,9 @@
 using FishNet.Transporting.Multipass;
 using FishNet;
-using Multiplayer.PopupSystem;
 using Multiplayer.Steam;
-using Steamworks;
 using Steamworks.Data;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using static GameManager;
 
 public class LobbyListItem : MonoBehaviour

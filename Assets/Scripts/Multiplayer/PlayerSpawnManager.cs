@@ -33,6 +33,8 @@ namespace Multiplayer
 
             Transform spawnPoint = SpawnCache.Instance.SpawnPoints[index].transform;
 
+            Debug.Log($"Spawning client: {conn.ClientId} at spawn index: {index} on position: {spawnPoint.position}, rotation: {spawnPoint.rotation}");
+
             NetworkObject nob = InstanceFinder.NetworkManager.GetPooledInstantiated(_playerPrefab, spawnPoint.position, spawnPoint.rotation, true);
             InstanceFinder.ServerManager.Spawn(nob, conn);
         }
@@ -45,6 +47,7 @@ namespace Multiplayer
                 PlayerClient client = netObj.GetComponent<PlayerClient>();
 
                 Transform spawnPoint = SpawnCache.Instance.SpawnPoints[index].transform;
+                Debug.Log($"Spawning player: {clientId} at spawn index: {index} on position: {spawnPoint.position}, rotation: {spawnPoint.rotation}");
                 client.S_SetPosition(spawnPoint.position, spawnPoint.rotation, true);
             }
         }
