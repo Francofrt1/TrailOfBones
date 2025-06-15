@@ -1,14 +1,9 @@
 using FishNet.Transporting.Multipass;
 using FishNet;
-using Multiplayer.PopupSystem;
 using Multiplayer.Steam;
-using Steamworks;
 using Steamworks.Data;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using static GameManager;
 
 public class LobbyListItem : MonoBehaviour
@@ -19,7 +14,7 @@ public class LobbyListItem : MonoBehaviour
     public void Setup(Lobby lobby)
     {
         _lobby = lobby;
-        _lobbyText.text = $"Host: {lobby.Owner.Name} - Capacity: ({lobby.MemberCount}/{lobby.MaxMembers})";
+        _lobbyText.text = $"Host: {lobby.GetData("Name")} - Capacity: ({lobby.MemberCount}/{lobby.MaxMembers})";
     }
 
     public void JoinLobby()

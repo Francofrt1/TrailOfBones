@@ -44,7 +44,7 @@ namespace Multiplayer.PlayerSystem
         {
             try
             {
-                PlayerConnectionManager.AllClients.Add(this);
+                PlayerConnectionManager.Instance.AllClients.Add(this);
                 PlayerInfo.OnChange += OnPlayerDataChange;
                 IsReady.OnChange += OnIsReadyChange;
 
