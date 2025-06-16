@@ -14,7 +14,9 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
     public event Action<float, float> OnHealthVariation;
     public event Action<float> OnWheelcartDuration;
     public event Action<bool> OnBlockWheelcartRequested;
-
+    public event Action<int> onChangedLogStorage;
+    public event Action<int> onSetMaxLogStorageUI;
+    public event Action onShowLogStorageUI;
 
     private void Awake()
     {
@@ -26,6 +28,7 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
     {
         OnWheelcartDuration?.Invoke(wheelcartMovement.GetDuration());
         OnHealthVariation?.Invoke(wheelcartModel.currentHealth, wheelcartModel.maxHealth);
+        onSetMaxLogStorageUI?.Invoke(wheelcartModel.GetLogToRepair());
     }
 
     public void TakeDamage(float damageAmout, string hittedById)
@@ -35,6 +38,7 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
         if(NeedRepair())
         {
             OnBlockWheelcartRequested?.Invoke(true);
+            onShowLogStorageUI?.Invoke();
         }
 
         if (wheelcartModel.currentHealth <= 0)
@@ -58,8 +62,9 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
     public void StorageLog(int amount)
     {
         wheelcartModel.AddLog(amount);
+        onChangedLogStorage?.Invoke(wheelcartModel.logStorage);
 
-        if(wheelcartModel.logStorage >= WheelcartModel.logToRepair)
+        if (wheelcartModel.logStorage >= WheelcartModel.logToRepair)
         {
             Repair();
         }
@@ -79,6 +84,8 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
     {
         wheelcartModel.UseAllLogs();
         wheelcartModel.SetHealth((int)wheelcartModel.maxHealth);
+        onChangedLogStorage?.Invoke(0);
+        onShowLogStorageUI?.Invoke();
         OnBlockWheelcartRequested?.Invoke(false);
     }
 }

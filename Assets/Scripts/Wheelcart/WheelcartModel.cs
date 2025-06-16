@@ -36,4 +36,9 @@ public class WheelcartModel : MonoBehaviour
     {
         logStorage = 0;
     }
+
+    public int GetLogToRepair()
+    {
+        return logToRepair;
+    }
 }
