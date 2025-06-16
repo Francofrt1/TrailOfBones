@@ -5,6 +5,7 @@ using Multiplayer.PopupSystem;
 using Multiplayer.Utils;
 using Steamworks;
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -32,8 +33,10 @@ namespace Multiplayer.PlayerSystem
         public readonly SyncVar<PlayerInfoData> PlayerInfo = new SyncVar<PlayerInfoData>();
         public readonly SyncVar<bool> IsReady = new SyncVar<bool>();
 
-        [SerializeField] private GameObject[] componentsToEnable;
-        [SerializeField] private GameObject[] componentsToDisable;
+        [SerializeField] private GameObject[] gameObjectsToEnable;
+        [SerializeField] private Behaviour[] componentsToEnable;
+        [SerializeField] private GameObject inGameContainer;
+        [SerializeField] private GameObject inMenuContainer;
 
         [Header("Party NameTag")] 
         [SerializeField] private TMP_Text _usernameText;
@@ -73,19 +76,21 @@ namespace Multiplayer.PlayerSystem
         [ObserversRpc]
         public void Rpc_ToggleController(bool value)
         {
-            
-            if(!IsOwner) return;
+            inMenuContainer.SetActive(!value);
+            inGameContainer.SetActive(value);
+
+            if (!IsOwner) return;
 
             Cursor.lockState = CursorLockMode.Locked;
-            
-            foreach (var component in componentsToEnable)
+
+            foreach (var gameObject in gameObjectsToEnable)
             {
-                component.SetActive(value);
+                gameObject.SetActive(value);
             }
 
-            foreach (var component in componentsToDisable) 
+            foreach (var component in componentsToEnable)
             {
-                component.SetActive(!value);
+                component.enabled = value;
             }
         }
 
