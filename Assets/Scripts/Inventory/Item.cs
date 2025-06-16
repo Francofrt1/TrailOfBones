@@ -10,8 +10,8 @@ public class Item : MonoBehaviour
     {
         if(collision.gameObject.CompareTag("Player"))
         {
-            if(!collision.gameObject.GetComponent<PlayerPresenter>().canBeSaved(this)) return;
-            collision.gameObject.GetComponent<PlayerPresenter>().saveItem(this);
+            if(!collision.gameObject.GetComponent<PlayerPresenter>().CanBeSaved(this)) return;
+            collision.gameObject.GetComponent<PlayerPresenter>().SaveItem(this);
             Destroy(gameObject);
         }
     }

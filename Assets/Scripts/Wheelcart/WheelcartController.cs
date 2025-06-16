@@ -13,7 +13,9 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
     public event Action<float, float> OnHealthVariation;
     public event Action<float> OnWheelcartDuration;
     public event Action<bool> OnBlockWheelcartRequested;
-
+    public event Action<int> OnChangedLogStorage;
+    public event Action<int> OnSetMaxLogStorageUI;
+    public event Action OnShowLogStorageUI;
 
     private void Awake()
     {
@@ -23,13 +25,14 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
 
     private void Start()
     {
-        
+        OnSetMaxLogStorageUI?.Invoke(wheelcartModel.GetLogToRepair());
     }
 
     public void OnWheelcartSpawned()
     {
         OnWheelcartDuration?.Invoke(wheelcartMovement.GetDuration());
         OnHealthVariation?.Invoke(wheelcartModel.currentHealth, wheelcartModel.maxHealth);
+        OnSetMaxLogStorageUI?.Invoke(wheelcartModel.GetLogToRepair());
     }
 
     public void TakeDamage(float damageAmout, string hittedById)
@@ -38,7 +41,8 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
 
         if(NeedRepair())
         {
-            OnBlockWheelcartRequested?.Invoke(true);
+            StopPlayWheelcar(true);
+            OnShowLogStorageUI?.Invoke();
         }
 
         if (wheelcartModel.currentHealth <= 0)
@@ -62,8 +66,9 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
     public void StorageLog(int amount)
     {
         wheelcartModel.AddLog(amount);
+        OnChangedLogStorage?.Invoke(wheelcartModel.logStorage);
 
-        if(wheelcartModel.logStorage >= WheelcartModel.logToRepair)
+        if (wheelcartModel.logStorage >= WheelcartModel.logToRepair)
         {
             Repair();
         }
@@ -83,6 +88,13 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
     {
         wheelcartModel.UseAllLogs();
         wheelcartModel.SetHealth((int)wheelcartModel.maxHealth);
-        OnBlockWheelcartRequested?.Invoke(false);
+        OnChangedLogStorage?.Invoke(0);
+        OnShowLogStorageUI?.Invoke();
+        StopPlayWheelcar(false);
+    }
+
+    public void StopPlayWheelcar(bool isPaused)
+    {
+        OnBlockWheelcartRequested?.Invoke(isPaused);
     }
 }
