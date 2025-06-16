@@ -21,6 +21,9 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
     private PlayerModel playerModel;
     private PlayerView playerView;
     private AttackArea attackArea;
+    [SerializeField] private GameObject cameraPivotGameObject;
+    [SerializeField] private GameObject attackAreaGameObject;
+    [SerializeField] private GameObject inventoryGameObject;
 
     private Transform carrierTransform = null;
     private Vector3 lastCarrierPosition = Vector3.zero;
@@ -33,13 +36,24 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
     private void Awake()
     {
         rigidBody = GetComponent<Rigidbody>();
-        var cameraPivot = GetComponentInChildren<CameraPivot>();
+        var cameraPivot = cameraPivotGameObject.GetComponent<CameraPivot>();
         inputHandler = GetComponent<InputHandler>();
         playerModel = GetComponent<PlayerModel>();
         playerView = GetComponent<PlayerView>();
-        attackArea = GetComponentInChildren<AttackArea>();
-        inventoryController = GetComponentInChildren<InventoryController>();
-        cameraPivot.SetInputHandler(inputHandler);
+        attackArea = attackAreaGameObject.GetComponent<AttackArea>();
+        inventoryController = inventoryGameObject.GetComponent<InventoryController>();
+        if (cameraPivot != null && inputHandler != null)
+        {
+            cameraPivot.SetInputHandler(inputHandler);
+        }
+        if (cameraPivot == null)
+        {
+            Debug.LogError("CameraPivot component is missing on the player.");
+        }
+        if (inputHandler == null)
+        {
+            Debug.LogError("InputHandler component is missing on the player.");
+        }
         groundLayer = LayerMask.GetMask("groundLayer");
         wheelcartFloorLayer = LayerMask.GetMask("WheelcartFloorLayer");
         AssignEvents();

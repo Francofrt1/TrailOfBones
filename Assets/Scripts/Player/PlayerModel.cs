@@ -1,6 +1,5 @@
 using FishNet.Object;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerModel : NetworkBehaviour
