@@ -25,7 +25,7 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
 
     private void Start()
     {
-        
+        onSetMaxLogStorageUI?.Invoke(wheelcartModel.GetLogToRepair());
     }
 
     public void OnWheelcartSpawned()
@@ -41,7 +41,7 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
 
         if(NeedRepair())
         {
-            OnBlockWheelcartRequested?.Invoke(true);
+            StopPlayWheelcar(true);
             onShowLogStorageUI?.Invoke();
         }
 
@@ -90,6 +90,11 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
         wheelcartModel.SetHealth((int)wheelcartModel.maxHealth);
         onChangedLogStorage?.Invoke(0);
         onShowLogStorageUI?.Invoke();
-        OnBlockWheelcartRequested?.Invoke(false);
+        StopPlayWheelcar(false);
+    }
+
+    public void StopPlayWheelcar(bool isPaused)
+    {
+        OnBlockWheelcartRequested?.Invoke(isPaused);
     }
 }

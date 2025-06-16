@@ -82,6 +82,7 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
         inputHandler.OnMouseMoveX += ManageRotation;
         inputHandler.OnAttack += OnAttack;
         inputHandler.OnSprint += OnSprint;
+        inputHandler.OnUseInventory += UseItems;
         playerView.OnAttackStateChanged += OnAttackStateChanged;
     }
 
@@ -107,7 +108,6 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
 
     private void Update()
     {
-        RepairWheelcart();
 
         if (!playerModel.IsGrounded)
         {
@@ -356,26 +356,26 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
         return playerModel.ID;
     }
 
-    public void saveItem(Item item)
+    public void SaveItem(Item item)
     {
         inventoryController.HandleAddItem(item);
     }
 
-    public bool canBeSaved(Item item)
+    public bool CanBeSaved(Item item)
     {
         return inventoryController.canBeSaved(item);
     }
 
-    public void RepairWheelcart()
+    public void UseItems()
     {
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            /*TO DO: 
-             * cambiar para hacer que no dependa de la referencia a la carreta (enviar evento de reparacion?). 
-             * Usar lo de santi con una variable boolena para detectar si esta cerca. 
-             * Cambiar el input de lugar y enviarlo donde corresponde*/
-            GameObject wheelcart = GameObject.FindGameObjectWithTag("DefendableObject");
+        /*TO DO: 
+             * cambiar para hacer que no dependa de la referencia a la carreta (enviar evento de reparacion?).
+             * Hacer una interfaz interactable y hacer que funcione a partir de ahi sin necesidad de ver que tipo de objeto es*/
 
+        
+           
+            GameObject wheelcart = GameObject.FindGameObjectWithTag("DefendableObject");
+            
             if (wheelcart == null) return;
             if (Vector3.Distance(this.transform.position, wheelcart.transform.position) < 10 && wheelcart.GetComponent<WheelcartController>().NeedRepair())
             {
@@ -391,8 +391,30 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
                     inventoryController.HandleUseItem(ItemType.WoodLog, logsToSent);
                     wheelcart.GetComponent<WheelcartController>().StorageLog(logsToSent);
                 }
-
+                return;
             }
-        }
+
+            GameObject paymentEvent = GameObject.FindGameObjectWithTag("PaymentEvent");
+            if (paymentEvent == null) return;
+            
+            if(Vector3.Distance(this.transform.position, paymentEvent.transform.position) < 5.5f)
+            {
+                PaymentEvent paymentEventController = paymentEvent.GetComponent<PaymentEvent>();
+                if (paymentEventController == null) return;
+                
+                int bonesToSent = paymentEventController.NeededBonesToPay();
+                int bonesInInventory = inventoryController.GetItemQuantity(ItemType.Bone);
+                
+                if (bonesToSent >= bonesInInventory)
+                {
+                    inventoryController.HandleUseItem(ItemType.Bone, bonesInInventory);
+                    paymentEventController.StorageBones(bonesInInventory);
+                }
+                else
+                {
+                    inventoryController.HandleUseItem(ItemType.Bone, bonesToSent);
+                    paymentEventController.StorageBones(bonesToSent);
+                }
+            }
     }
 }

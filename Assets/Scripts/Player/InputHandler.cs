@@ -15,6 +15,7 @@ public class InputHandler : MonoBehaviour
     public event Action OnPauseTogglePerformed;
     public event Action OnAttack;
     public event Action OnSprint;
+    public event Action OnUseInventory;
 
     private InputActionAsset inputActions;
     private InputAction moveAction;
@@ -23,6 +24,7 @@ public class InputHandler : MonoBehaviour
     private InputAction pauseAction;
     private InputAction attackAction;
     private InputAction sprintAction;
+    private InputAction useInventoryAction;
 
     private void Awake()
     {
@@ -40,6 +42,7 @@ public class InputHandler : MonoBehaviour
         lookAction = inputActions.FindAction("Player/Look");
         attackAction = inputActions.FindAction("Player/Attack");
         sprintAction = inputActions.FindAction("Player/Sprint");
+        useInventoryAction = inputActions.FindAction("Player/UseInventory");
         pauseAction = inputActions.FindAction("UI/Pause");
     }
 
@@ -52,6 +55,7 @@ public class InputHandler : MonoBehaviour
         pauseAction.performed += HandlePause;
         attackAction.performed += HandleAttack;
         sprintAction.performed += HandleSprint;
+        useInventoryAction.performed += HandleUseInventory;
     }
 
     private void OnEnable()
@@ -75,12 +79,14 @@ public class InputHandler : MonoBehaviour
         pauseAction.performed -= HandlePause;
         attackAction.performed -= HandleAttack;
         sprintAction.performed -= HandleSprint;
+        useInventoryAction.performed -= HandleUseInventory;
         moveAction.Dispose();
         jumpAction.Dispose();
         lookAction.Dispose();
         pauseAction.Dispose();
         attackAction.Dispose();
         sprintAction.Dispose();
+        useInventoryAction.Dispose();
     }
 
     public void OnPlayerInputEnabled()
@@ -90,6 +96,7 @@ public class InputHandler : MonoBehaviour
         lookAction.Enable();
         attackAction.Enable();
         sprintAction.Enable();
+        useInventoryAction.Enable();
     }
 
     public void OnPlayerInputDisabled()
@@ -99,6 +106,7 @@ public class InputHandler : MonoBehaviour
         lookAction.Disable();
         attackAction.Disable();
         sprintAction.Disable();
+        useInventoryAction.Disable();
     }
 
     public void OnUIInputEnabled()
@@ -171,6 +179,13 @@ public class InputHandler : MonoBehaviour
         if (context.performed)
         {
             OnSprint?.Invoke();
+        }
+    }
+    private void HandleUseInventory(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            OnUseInventory?.Invoke();
         }
     }
 }
