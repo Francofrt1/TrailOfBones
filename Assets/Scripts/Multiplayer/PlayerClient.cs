@@ -5,7 +5,6 @@ using Multiplayer.PopupSystem;
 using Multiplayer.Utils;
 using Steamworks;
 using System;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 

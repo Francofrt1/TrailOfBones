@@ -1,7 +1,6 @@
 using Assets.Scripts.Interfaces;
 using System;
 using UnityEngine;
-using UnityEngine.Splines;
 
 [RequireComponent(typeof(WheelcartModel))]
 [RequireComponent(typeof(WheelcartMovement))]
@@ -23,6 +22,11 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
     }
 
     private void Start()
+    {
+        
+    }
+
+    public void OnWheelcartSpawned()
     {
         OnWheelcartDuration?.Invoke(wheelcartMovement.GetDuration());
         OnHealthVariation?.Invoke(wheelcartModel.currentHealth, wheelcartModel.maxHealth);
