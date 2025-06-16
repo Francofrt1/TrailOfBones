@@ -464,8 +464,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logText: {fileID: 8461072973368281756}
-  wheel1: {fileID: 7294975124696451574}
-  wheel2: {fileID: 4971151702654320917}
+  wheels:
+  - {fileID: 7294975124696451574}
+  - {fileID: 4971151702654320917}
 --- !u!114 &2760474369087301278
 MonoBehaviour:
   m_ObjectHideFlags: 0

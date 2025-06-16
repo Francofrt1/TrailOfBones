@@ -2,15 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using static Steamworks.InventoryItem;
 
 public class WheelcartView : MonoBehaviour
 {
     private WheelcartController wheelcart;
     public TextMeshProUGUI logText;
     private string logToRepair;
-    public GameObject wheel1;
-    public GameObject wheel2;
+    public GameObject[] wheels;
     private AudioSource audio;
 
     private void Awake()
@@ -21,17 +19,17 @@ public class WheelcartView : MonoBehaviour
 
     private void OnEnable()
     {
-        wheelcart.onChangedLogStorage += ChangeLogText;
-        wheelcart.onSetMaxLogStorageUI += SetMaxLogStorageUI;
-        wheelcart.onShowLogStorageUI += ShowUnshowLogStorage;
-        wheelcart.OnBlockWheelcartRequested += StopPlayWheelcarAnim;
+        wheelcart.OnChangedLogStorage += ChangeLogText;
+        wheelcart.OnSetMaxLogStorageUI += SetMaxLogStorageUI;
+        wheelcart.OnShowLogStorageUI += ShowUnshowLogStorage;
+        wheelcart.OnBlockWheelcartRequested += StopPlayWheelcartAnim;
     }
 
     private void OnDisable()
     {
-        wheelcart.onChangedLogStorage -= ChangeLogText;
-        wheelcart.onSetMaxLogStorageUI -= SetMaxLogStorageUI;
-        wheelcart.onShowLogStorageUI -= ShowUnshowLogStorage;
+        wheelcart.OnChangedLogStorage -= ChangeLogText;
+        wheelcart.OnSetMaxLogStorageUI -= SetMaxLogStorageUI;
+        wheelcart.OnShowLogStorageUI -= ShowUnshowLogStorage;
     }
 
     private void SetMaxLogStorageUI(int amount)
@@ -50,7 +48,7 @@ public class WheelcartView : MonoBehaviour
         logText.text = amount.ToString() + " / " + logToRepair;
     }
 
-    private void StopPlayWheelcarAnim(bool isStopped)
+    private void StopPlayWheelcartAnim(bool isStopped)
     {
         if (isStopped)
         {
@@ -66,14 +64,18 @@ public class WheelcartView : MonoBehaviour
 
     private void stopWheelcart()
     {
-        wheel1.GetComponent<Animator>().speed = 0f;
-        wheel2.GetComponent<Animator>().speed = 0f;
+        foreach (var wheel in wheels)
+        {
+            wheel.GetComponent<Animator>().speed = 0;
+        }
 
     }
     private void startWheelcart()
     {
-        wheel1.GetComponent<Animator>().speed = 1f;
-        wheel2.GetComponent<Animator>().speed = 1f;
+        foreach (var wheel in wheels)
+        {
+            wheel.GetComponent<Animator>().speed = 1f;
+        }
     }
 
     private void ShowUnshowLogStorage()

@@ -22,7 +22,7 @@ public class PaymentEvent : MonoBehaviour
     {
         if(stopWheelcarEvent != null)
         {
-            stopWheelcarEvent.Wheelcart += OnWheelcartFound;
+            stopWheelcarEvent.OnWheelcartToPlay += OnWheelcartFound;
         }
     }
 
@@ -30,7 +30,7 @@ public class PaymentEvent : MonoBehaviour
     {
         if(stopWheelcarEvent != null)
         {
-            stopWheelcarEvent.Wheelcart -= OnWheelcartFound;
+            stopWheelcarEvent.OnWheelcartToPlay -= OnWheelcartFound;
         }
     }
 
