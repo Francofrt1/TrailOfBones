@@ -8,7 +8,8 @@ public class WheelcartModel : MonoBehaviour
 
     public int logStorage = 0;
     public const int logToRepair = 5; // cambiar este valor si se desea que se necesiten más o menos troncos para reparar el carro.
-    public void Start()
+
+    public void Awake()
     {
         currentHealth = maxHealth;
     }

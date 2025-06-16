@@ -1,9 +1,6 @@
 using Assets.Scripts.Interfaces;
 using FishNet;
-using FishNet.Component.Spawning;
-using FishNet.Managing;
 using FishNet.Managing.Scened;
-using FishNet.Object;
 using Multiplayer;
 using Multiplayer.Utils;
 using System;
@@ -36,7 +33,8 @@ public class GameManager : BaseNetworkBehaviour
     private WheelcartMovement wheelcartMovement;
     private InputHandler playerInputHandler;
     public List<GameObject> treePrefab;
-    
+
+    [SerializeField] private GameObject wheelCartPrefab;    
 
     [SerializeField]
     private GameState currentGameState = GameState.None;
@@ -151,14 +149,12 @@ public class GameManager : BaseNetworkBehaviour
         playerInputHandler.OnPauseTogglePerformed += TogglePause;
     }
 
-    private void _subscribeToWheelcart()
+    private void _subscribeToWheelcart(GameObject wheelCart)
     {
         try
         {
-            GameObject wheelcart = GameObject.Find("WheelcartMultiplayer");
-            wheelcartMovement = wheelcart.GetComponent<WheelcartMovement>();
-            var wheelcartDurationEvent = wheelcart.GetComponent<IWheelcartDuration>();
-            var wheelcartEvents = wheelcart.GetComponent<IHealthVariation>();
+            var wheelcartDurationEvent = wheelCart.GetComponent<IWheelcartDuration>();
+            var wheelcartEvents = wheelCart.GetComponent<IHealthVariation>();
             wheelcartEvents.OnDie += GameOverScreen;
             wheelcartMovement.Completed += WinScreen;
             HUD.SetWheelcartHealthEvent(wheelcartEvents);
@@ -292,15 +288,14 @@ public class GameManager : BaseNetworkBehaviour
             InstanceFinder.SceneManager.OnLoadEnd -= InitializeMatch;
             GenerateForest();
 
+            var hudObj = GameObject.Find("HUD");
+            HUD = hudObj.GetComponent<HUD>();
+            SpawnWheelCart();
             PlayerPresenter.OnPlayerSpawned += (PlayerPresenter) =>
             {
                 _subscribeToPlayerController(PlayerPresenter.gameObject.GetComponent<IHealthVariation>());
                 _subscribeToPlayerInputHandler(PlayerPresenter.gameObject.GetComponent<InputHandler>());
             };
-
-            var hudObj = GameObject.Find("HUD");
-            HUD = hudObj.GetComponent<HUD>();
-            _subscribeToWheelcart();
             var audios = GetComponents<AudioSource>();
             
             foreach (var audio in audios)
@@ -310,7 +305,27 @@ public class GameManager : BaseNetworkBehaviour
         }
         catch (Exception ex)
         {
-            Debug.Log($"InitializeMatch failed: {ex.Message}");
+            Debug.LogError($"InitializeMatch failed: {ex.Message}");
+        }
+    }
+
+    private void SpawnWheelCart()
+    {
+        try
+        {
+            var wheelCartSpawnPosition = GameObject.Find("WheelcartSpawnPosition");
+            var wheelcart = Instantiate(wheelCartPrefab, wheelCartSpawnPosition.transform.position, Quaternion.identity);
+            ServerManager.Spawn(wheelcart);
+            var spline = GameObject.Find("Spline");
+            var splineContainer = spline.GetComponent<SplineContainer>();
+            wheelcartMovement = wheelcart.GetComponent<WheelcartMovement>();
+            wheelcartMovement.SetSpline(splineContainer);
+            _subscribeToWheelcart(wheelcart);
+            wheelcart.GetComponent<WheelcartController>().OnWheelcartSpawned();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"SpawnWheelCart failed: {ex.Message}");
         }
     }
 }

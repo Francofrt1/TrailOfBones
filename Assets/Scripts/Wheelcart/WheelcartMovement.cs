@@ -38,7 +38,7 @@ public class WheelcartMovement : MonoBehaviour
 
     private void PerformMovement()
     {
-        if (isBlocked) return;
+        if (isBlocked || spline == null) return;
 
         splineProgress += (speed / spline.CalculateLength()) * Time.fixedDeltaTime;
         splineProgress = Mathf.Min(splineProgress, 1f);
@@ -67,7 +67,12 @@ public class WheelcartMovement : MonoBehaviour
 
     public float GetDuration()
     {
-        float length = spline.CalculateLength();
+        float length = spline != null ? spline.CalculateLength() : 0;
         return length / speed;
+    }
+
+    public void SetSpline(SplineContainer splineContainer)
+    {
+        spline = splineContainer;
     }
 }
