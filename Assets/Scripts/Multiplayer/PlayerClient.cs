@@ -33,8 +33,8 @@ namespace Multiplayer.PlayerSystem
         public readonly SyncVar<PlayerInfoData> PlayerInfo = new SyncVar<PlayerInfoData>();
         public readonly SyncVar<bool> IsReady = new SyncVar<bool>();
 
-        [SerializeField] private GameObject[] gameObjectsToEnable;
-        [SerializeField] private Behaviour[] componentsToEnable;
+        [SerializeField] private GameObject[] gameObjectsToDisable;
+        [SerializeField] private Behaviour[] componentsToDisable;
         [SerializeField] private GameObject inGameContainer;
         [SerializeField] private GameObject inMenuContainer;
 
@@ -79,18 +79,22 @@ namespace Multiplayer.PlayerSystem
             inMenuContainer.SetActive(!value);
             inGameContainer.SetActive(value);
 
-            if (!IsOwner) return;
-
-            Cursor.lockState = CursorLockMode.Locked;
-
-            foreach (var gameObject in gameObjectsToEnable)
+            if (!IsOwner)
             {
-                gameObject.SetActive(value);
+                foreach (var gameObject in gameObjectsToDisable)
+                {
+                    gameObject.SetActive(!value);
+                }
+
+                foreach (var component in componentsToDisable)
+                {
+                    component.enabled = !value;
+                }
             }
 
-            foreach (var component in componentsToEnable)
+            if(IsOwner)
             {
-                component.enabled = value;
+                Cursor.lockState = CursorLockMode.Locked;
             }
         }
 

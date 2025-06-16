@@ -16,6 +16,11 @@ public class PlayerView : NetworkBehaviour
     void Start()
     {
         animator = GetComponent<Animator>();
+        if (animator == null)
+        {
+            Debug.LogError("Animator component is missing on PlayerView.");
+            return;
+        }
     }
 
     // Update is called once per frame
