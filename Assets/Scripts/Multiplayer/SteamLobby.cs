@@ -11,7 +11,8 @@ namespace Multiplayer.Steam
     {
         public static SteamLobby Singleton;
         public static Lobby CurrentLobby;
-        
+        [SerializeField] private int maxMembers = 4;
+
         private void Start()
         {
             Singleton = this;
@@ -40,7 +41,7 @@ namespace Multiplayer.Steam
         public async void CreateLobbyAsync()
         {
             PopupManager.Popup_Show(new PopupContent("CREATING LOBBY", ""));
-            await SteamMatchmaking.CreateLobbyAsync(4);
+            await SteamMatchmaking.CreateLobbyAsync(maxMembers);
         }
 
         public async void JoinLobbyAsync(Lobby lobby)

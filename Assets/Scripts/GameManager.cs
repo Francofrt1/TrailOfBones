@@ -1,9 +1,6 @@
 using Assets.Scripts.Interfaces;
 using FishNet;
-using FishNet.Component.Spawning;
-using FishNet.Managing;
 using FishNet.Managing.Scened;
-using FishNet.Object;
 using Multiplayer;
 using Multiplayer.Utils;
 using System;
@@ -36,7 +33,8 @@ public class GameManager : BaseNetworkBehaviour
     private WheelcartMovement wheelcartMovement;
     private InputHandler playerInputHandler;
     public List<GameObject> treePrefab;
-    
+
+    [SerializeField] private GameObject wheelCartPrefab;    
 
     [SerializeField]
     private GameState currentGameState = GameState.None;
@@ -55,7 +53,6 @@ public class GameManager : BaseNetworkBehaviour
         SetCurrentGameState(GameState.InMenu);
     }
 
-    //TODO fix trees not spawning
     public void GenerateForest()
     {
         try
@@ -93,38 +90,34 @@ public class GameManager : BaseNetworkBehaviour
 
     Vector3 GetRandomPositionOnTerrain(Terrain terrain)
     {
-        // Obtiene las dimensiones del terreno
+
         Vector3 terrainSize = terrain.terrainData.size;
 
-        // Genera coordenadas X y Z aleatorias dentro del terreno
         float randomX = UnityEngine.Random.Range(0, terrainSize.x);
         float randomZ = UnityEngine.Random.Range(0, terrainSize.z);
 
-        // Calcula la altura (Y) en ese punto del terreno
         float height = terrain.SampleHeight(new Vector3(randomX, 0, randomZ));
 
-        // Retorna la posición en coordenadas mundiales (ajustando al centro del terreno)
         return new Vector3(randomX, height, randomZ) + terrain.transform.position;
     }
 
     bool IsOnGrass(Vector3 worldPosition, Terrain terrain, int grassTextureIndex)
     {
-        // Convierte la posición mundial a coordenadas locales del terreno
+
         Vector3 terrainLocalPos = worldPosition - terrain.transform.position;
 
-        // Normaliza las coordenadas (0-1)
         Vector2 normalizedPos = new Vector2(
             terrainLocalPos.x / terrain.terrainData.size.x,
             terrainLocalPos.z / terrain.terrainData.size.z
         );
 
-        // Obtén el alphamap en esa posición
+
         int alphaX = (int)(normalizedPos.x * terrain.terrainData.alphamapWidth);
         int alphaY = (int)(normalizedPos.y * terrain.terrainData.alphamapHeight);
 
         float[,,] alphaMap = terrain.terrainData.GetAlphamaps(alphaX, alphaY, 1, 1);
 
-        // Si el valor de la textura de pasto es mayor a un umbral (ej. 0.5), está en pasto
+
         return alphaMap[0, 0, grassTextureIndex] > 0.5f;
     }
 
@@ -132,12 +125,12 @@ public class GameManager : BaseNetworkBehaviour
     {
         Vector3 halfExtents = new Vector3(minDistance / 2f, minDistance / 2f, minDistance / 2f);
 
-        // Usa OverlapBox para detectar colliders en un área cúbica
+
         Collider[] nearbyColliders = Physics.OverlapBox(
-            position,          // Centro del Box
-            halfExtents,       // Mitad del tamaño del Box
-            Quaternion.identity, // Rotación (ninguna en este caso)
-            LayerMask.GetMask("TerrainElements") // Layer a filtrar
+            position,
+            halfExtents,
+            Quaternion.identity,
+            LayerMask.GetMask("TerrainElements") 
         );
 
         return nearbyColliders.Length == 0;
@@ -156,13 +149,12 @@ public class GameManager : BaseNetworkBehaviour
         playerInputHandler.OnPauseTogglePerformed += TogglePause;
     }
 
-    private void _subscribeToWheelcart()
+    private void _subscribeToWheelcart(GameObject wheelCart)
     {
         try
         {
-            wheelcartMovement = GameObject.Find("Wheelcart").GetComponent<WheelcartMovement>();
-            var wheelcartDurationEvent = GameObject.Find("Wheelcart").GetComponent<IWheelcartDuration>();
-            var wheelcartEvents = GameObject.Find("Wheelcart").GetComponent<IHealthVariation>();
+            var wheelcartDurationEvent = wheelCart.GetComponent<IWheelcartDuration>();
+            var wheelcartEvents = wheelCart.GetComponent<IHealthVariation>();
             wheelcartEvents.OnDie += GameOverScreen;
             wheelcartMovement.Completed += WinScreen;
             HUD.SetWheelcartHealthEvent(wheelcartEvents);
@@ -296,15 +288,14 @@ public class GameManager : BaseNetworkBehaviour
             InstanceFinder.SceneManager.OnLoadEnd -= InitializeMatch;
             GenerateForest();
 
-            PlayerController.OnPlayerSpawned += (PlayerController) =>
-            {
-                _subscribeToPlayerController(PlayerController.gameObject.GetComponent<IHealthVariation>());
-                _subscribeToPlayerInputHandler(PlayerController.gameObject.GetComponent<InputHandler>());
-            };
-
             var hudObj = GameObject.Find("HUD");
             HUD = hudObj.GetComponent<HUD>();
-            _subscribeToWheelcart();
+            SpawnWheelCart();
+            PlayerPresenter.OnPlayerSpawned += (PlayerPresenter) =>
+            {
+                _subscribeToPlayerController(PlayerPresenter.gameObject.GetComponent<IHealthVariation>());
+                _subscribeToPlayerInputHandler(PlayerPresenter.gameObject.GetComponent<InputHandler>());
+            };
             var audios = GetComponents<AudioSource>();
             
             foreach (var audio in audios)
@@ -314,7 +305,27 @@ public class GameManager : BaseNetworkBehaviour
         }
         catch (Exception ex)
         {
-            Debug.Log($"InitializeMatch failed: {ex.Message}");
+            Debug.LogError($"InitializeMatch failed: {ex.Message}");
+        }
+    }
+
+    private void SpawnWheelCart()
+    {
+        try
+        {
+            var wheelCartSpawnPosition = GameObject.Find("WheelcartSpawnPosition");
+            var wheelcart = Instantiate(wheelCartPrefab, wheelCartSpawnPosition.transform.position, Quaternion.identity);
+            ServerManager.Spawn(wheelcart);
+            var spline = GameObject.Find("Spline");
+            var splineContainer = spline.GetComponent<SplineContainer>();
+            wheelcartMovement = wheelcart.GetComponent<WheelcartMovement>();
+            wheelcartMovement.SetSpline(splineContainer);
+            _subscribeToWheelcart(wheelcart);
+            wheelcart.GetComponent<WheelcartController>().OnWheelcartSpawned();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"SpawnWheelCart failed: {ex.Message}");
         }
     }
 }

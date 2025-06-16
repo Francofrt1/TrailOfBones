@@ -8,10 +8,28 @@ public class WheelcartMovement : MonoBehaviour
     [SerializeField] private float speed = 5f;
     [SerializeField] private Rigidbody rb;
 
-    float t;
+    [SerializeField, Range(0f, 1f)] private float splineProgress;
+
+    private bool isBlocked = false;
 
     public event Action<float> OnWheelcartprogress;
     public event Action Completed;
+    private WheelcartController wheelcartController;
+
+    private void Awake()
+    {
+        wheelcartController = GetComponent<WheelcartController>();
+    }
+
+    private void OnEnable()
+    {
+        wheelcartController.OnBlockWheelcartRequested += BlockMovement;
+    }
+
+    private void OnDisable()
+    {
+        wheelcartController.OnBlockWheelcartRequested -= BlockMovement;
+    }
 
     void FixedUpdate()
     {
@@ -20,11 +38,13 @@ public class WheelcartMovement : MonoBehaviour
 
     private void PerformMovement()
     {
-        t += (speed / spline.CalculateLength()) * Time.fixedDeltaTime;
-        t = Mathf.Min(t, 1f);
+        if (isBlocked || spline == null) return;
 
-        Vector3 pos = spline.EvaluatePosition(t);
-        Vector3 tan = spline.EvaluateTangent(t);
+        splineProgress += (speed / spline.CalculateLength()) * Time.fixedDeltaTime;
+        splineProgress = Mathf.Min(splineProgress, 1f);
+
+        Vector3 pos = spline.EvaluatePosition(splineProgress);
+        Vector3 tan = spline.EvaluateTangent(splineProgress);
 
         Vector3 newPos = new Vector3(pos.x, rb.position.y, pos.z);
         Vector3 forward = Vector3.ProjectOnPlane(tan, Vector3.up).normalized;
@@ -36,15 +56,23 @@ public class WheelcartMovement : MonoBehaviour
         rb.MovePosition(newPos);
         rb.MoveRotation(rot);
 
-        OnWheelcartprogress?.Invoke(t);
-        if (t == 1f) { Completed?.Invoke(); }
+        OnWheelcartprogress?.Invoke(splineProgress);
+        if (splineProgress == 1f) { Completed?.Invoke(); }
+    }
+
+    private void BlockMovement(bool val)
+    {
+        isBlocked = val;
     }
 
     public float GetDuration()
     {
-        float length = spline.CalculateLength();
+        float length = spline != null ? spline.CalculateLength() : 0;
         return length / speed;
     }
 
-    
+    public void SetSpline(SplineContainer splineContainer)
+    {
+        spline = splineContainer;
+    }
 }

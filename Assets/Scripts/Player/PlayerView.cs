@@ -1,3 +1,4 @@
+using System;
 using FishNet.Object;
 using UnityEngine;
 
@@ -10,10 +11,16 @@ public class PlayerView : NetworkBehaviour
     public AudioClip hitSound;
 
     public AudioClip[] stepSoundsArray;
+    public event Action<bool> OnAttackStateChanged;
 
     void Start()
     {
         animator = GetComponent<Animator>();
+        if (animator == null)
+        {
+            Debug.LogError("Animator component is missing on PlayerView.");
+            return;
+        }
     }
 
     // Update is called once per frame
@@ -22,10 +29,18 @@ public class PlayerView : NetworkBehaviour
 
     }
 
-    public void SetMovementAnimation(float speed)
+    public void SetMovementAnimation(Vector3 localMove)
     {
         if (IsDying()) return;
+
+        float speed = CalculateAnimationSpeed(localMove);
         animator.SetFloat("Speed", speed);
+    }
+
+    private float CalculateAnimationSpeed(Vector3 localMove)
+    {
+        Vector3 flat = new Vector3(localMove.x, 0f, localMove.z);
+        return flat.magnitude;
     }
 
     public void SetJumpAnimation()
@@ -55,13 +70,18 @@ public class PlayerView : NetworkBehaviour
         animator.SetTrigger("Dead");
     }
 
-    public bool IsAttacking()
+    public void CheckIsAttacking()
     {
-        return animator.GetCurrentAnimatorStateInfo(0).IsName("Attack");
+        OnAttackStateChanged?.Invoke(animator.GetBool("IsAttacking"));
     }
 
     public bool IsDying()
     {
+        if (animator == null)
+        {
+            Debug.LogError("Animator component is missing on PlayerView.");
+            return false;
+        }
         return animator.GetCurrentAnimatorStateInfo(0).IsName("Death");
     }
 
@@ -78,7 +98,7 @@ public class PlayerView : NetworkBehaviour
 
         if (stepSoundsArray != null && stepSoundsArray.Length > 0)
         {
-            int index = Random.Range(0, stepSoundsArray.Length);
+            int index = UnityEngine.Random.Range(0, stepSoundsArray.Length);
             AudioClip selectedStep = stepSoundsArray[index];
 
             if (selectedStep != null)

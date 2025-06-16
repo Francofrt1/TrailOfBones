@@ -8,6 +8,8 @@ TagManager:
   - LevelFinish
   - Enemy
   - HUD
+  - WheelcartBuffZone
+  - PaymentEvent
   layers:
   - Default
   - TransparentFX
@@ -19,7 +21,7 @@ TagManager:
   - groundLayer
   - WheelCartLayer
   - TerrainElements
-  - 
+  - WheelcartFloorLayer
   - 
   - 
   - 

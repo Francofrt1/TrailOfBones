@@ -1,7 +1,6 @@
 using Assets.Scripts.Interfaces;
 using System;
 using UnityEngine;
-using UnityEngine.Splines;
 
 [RequireComponent(typeof(WheelcartModel))]
 [RequireComponent(typeof(WheelcartMovement))]
@@ -13,7 +12,10 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
     public event Action OnDie;
     public event Action<float, float> OnHealthVariation;
     public event Action<float> OnWheelcartDuration;
-
+    public event Action<bool> OnBlockWheelcartRequested;
+    public event Action<int> OnChangedLogStorage;
+    public event Action<int> OnSetMaxLogStorageUI;
+    public event Action OnShowLogStorageUI;
 
     private void Awake()
     {
@@ -23,17 +25,24 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
 
     private void Start()
     {
+        OnSetMaxLogStorageUI?.Invoke(wheelcartModel.GetLogToRepair());
+    }
+
+    public void OnWheelcartSpawned()
+    {
         OnWheelcartDuration?.Invoke(wheelcartMovement.GetDuration());
         OnHealthVariation?.Invoke(wheelcartModel.currentHealth, wheelcartModel.maxHealth);
+        OnSetMaxLogStorageUI?.Invoke(wheelcartModel.GetLogToRepair());
     }
 
     public void TakeDamage(float damageAmout, string hittedById)
     {
         wheelcartModel.SetHealth(wheelcartModel.currentHealth - damageAmout);
 
-        if(wheelcartModel.currentHealth <= wheelcartModel.StopWheelcartPercent())
+        if(NeedRepair())
         {
-            //splineAnimate.Pause();
+            StopPlayWheelcar(true);
+            OnShowLogStorageUI?.Invoke();
         }
 
         if (wheelcartModel.currentHealth <= 0)
@@ -54,16 +63,38 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
         return gameObject.tag;
     }
 
-    //private void Update()
-    //{
-    //    if (!splineAnimate.isPlaying)
-    //    {
-    //        if (Input.GetKeyDown(KeyCode.T) && InventoryController.Instance.CanUse(ItemType.WoodLog, 2))
-    //        {
-    //            InventoryController.Instance.HandleUseItem(ItemType.WoodLog,2);
-    //            wheelcartModel.SetHealth((int)wheelcartModel.maxHealth);
-    //            splineAnimate.Play();
-    //        }
-    //    }
-    //}
+    public void StorageLog(int amount)
+    {
+        wheelcartModel.AddLog(amount);
+        OnChangedLogStorage?.Invoke(wheelcartModel.logStorage);
+
+        if (wheelcartModel.logStorage >= WheelcartModel.logToRepair)
+        {
+            Repair();
+        }
+    }
+
+    public bool NeedRepair()
+    {
+        return wheelcartModel.currentHealth <= wheelcartModel.StopWheelcartPercent();
+    }
+
+    public int NeededLogsToRepair()
+    {
+        return wheelcartModel.LogsNeededToRepair();
+    }
+
+    public void Repair()
+    {
+        wheelcartModel.UseAllLogs();
+        wheelcartModel.SetHealth((int)wheelcartModel.maxHealth);
+        OnChangedLogStorage?.Invoke(0);
+        OnShowLogStorageUI?.Invoke();
+        StopPlayWheelcar(false);
+    }
+
+    public void StopPlayWheelcar(bool isPaused)
+    {
+        OnBlockWheelcartRequested?.Invoke(isPaused);
+    }
 }

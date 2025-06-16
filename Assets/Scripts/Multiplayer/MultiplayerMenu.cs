@@ -18,7 +18,6 @@ public class MultiplayerMenu : BaseMonoBehaviour
     [SerializeField] private GameObject _lobbyFinder;
     [SerializeField] private GameObject _buttonsContainer;
 
-    private bool steamworksInitialized = false;
     protected override void RegisterEvents()
     {
         if (!SteamClient.IsValid)
@@ -26,7 +25,6 @@ public class MultiplayerMenu : BaseMonoBehaviour
             try
             {
                 SteamClient.Init(480);
-                steamworksInitialized = true;
             }
             catch (Exception e)
             {
@@ -37,12 +35,9 @@ public class MultiplayerMenu : BaseMonoBehaviour
                 //     Don't have permission to play app?
                 //
 
-                steamworksInitialized = false;
-
                 Debug.LogException(e);
                 Application.Quit();
             }
-            steamworksInitialized = false;
         }
 
         PlayerClient.OnStartClient += UpdateMenu;
@@ -93,11 +88,6 @@ public class MultiplayerMenu : BaseMonoBehaviour
         InstanceFinder.ClientManager.StartConnection();
     }
 
-    //public void StartGame()
-    //{
-    //    //Game.GameSystem.GameManager.StartGame();
-    //}
-
     private void UpdateMenu(PlayerClient client)
     {
         _selectorMenu.SetActive(!client);
@@ -117,7 +107,7 @@ public class MultiplayerMenu : BaseMonoBehaviour
 
     public static bool IsAllPlayersReady()
     {
-        foreach (PlayerClient client in PlayerConnectionManager.AllClients)
+        foreach (PlayerClient client in PlayerConnectionManager.Instance.AllClients)
         {
             if (!client.IsReady.Value)
                 return false;

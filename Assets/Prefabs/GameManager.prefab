@@ -60,6 +60,7 @@ MonoBehaviour:
   - {fileID: 2535800903452769107, guid: bbe49ee6397870f418a8db281163b19f, type: 3}
   - {fileID: 6527233997349638453, guid: da2b42c3af959524fa884be1da3cc086, type: 3}
   - {fileID: 4467082189516647247, guid: 2279705f35fa31645a8e2a9fd7b1f1dc, type: 3}
+  wheelCartPrefab: {fileID: 2904887283493235098, guid: 5ec745f48b49a0940a2553a0d55d3023, type: 3}
   currentGameState: 0
 --- !u!82 &8948247551395719464
 AudioSource:
