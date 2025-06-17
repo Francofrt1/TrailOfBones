@@ -11,12 +11,19 @@ namespace Multiplayer
     public class PlayerSpawnManager : BaseMonoBehaviour
     {
         [SerializeField] private GameObject _playerPrefab;
+        public static PlayerSpawnManager Instance;
         protected override void RegisterEvents()
         {
+            Instance = this;
             PlayerConnectionManager.S_OnConnect += S_OnConnect;
 
             if (InstanceFinder.SceneManager != null)
                 InstanceFinder.SceneManager.OnLoadEnd += OnSceneLoaded;
+        }
+
+        public void Unsubscribe()
+        {
+            UnregisterEvents();
         }
 
         protected override void UnregisterEvents()

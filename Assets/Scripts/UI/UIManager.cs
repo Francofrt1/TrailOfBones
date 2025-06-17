@@ -1,9 +1,5 @@
 using Multiplayer;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
@@ -72,6 +68,8 @@ public class UIManager : MonoBehaviour
 
     private void ToMainMenu()
     {
+        GameManager.Instance.SetCurrentGameState(GameManager.GameState.End);
         ScenesManager.ChangeScene("MainMenu");
+        GameManager.Instance.SetCurrentGameState(GameManager.GameState.InMenu);
     }
 }
