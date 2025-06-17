@@ -47,20 +47,6 @@ namespace Multiplayer.PopupSystem
             {
                 Instance = this;
             }
-            InstanceFinder.SceneManager.OnLoadEnd += OnSceneLoaded;
-        }
-
-        private void OnDisable()
-        {
-            if (InstanceFinder.SceneManager != null)
-            {
-                InstanceFinder.SceneManager.OnLoadEnd -= OnSceneLoaded;
-            }
-        }
-
-        private void OnSceneLoaded(SceneLoadEndEventArgs args)
-        {
-
         }
 
         public static void Popup_Show(PopupContent popupContent)
