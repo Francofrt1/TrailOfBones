@@ -49,5 +49,10 @@ namespace Multiplayer
                 S_OnDisconnect?.Invoke(connection);
             }
         }
+
+        public void Unsubscribe()
+        {
+            UnregisterEvents();
+        }
     }   
 }

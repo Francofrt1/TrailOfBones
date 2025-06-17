@@ -6163,9 +6163,33 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2266203724074840779, guid: 2b47e81b7610f9f429832684eafd1082, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 4.49
+      objectReference: {fileID: 0}
     - target: {fileID: 4076807719215828798, guid: 2b47e81b7610f9f429832684eafd1082, type: 3}
       propertyPath: m_Name
       value: PlayerSpawnPoints
+      objectReference: {fileID: 0}
+    - target: {fileID: 4941626723884220065, guid: 2b47e81b7610f9f429832684eafd1082, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 5.72
+      objectReference: {fileID: 0}
+    - target: {fileID: 8565476615914606156, guid: 2b47e81b7610f9f429832684eafd1082, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 3.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 8988719881943332635, guid: 2b47e81b7610f9f429832684eafd1082, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 18.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 8988719881943332635, guid: 2b47e81b7610f9f429832684eafd1082, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 4.94
+      objectReference: {fileID: 0}
+    - target: {fileID: 8988719881943332635, guid: 2b47e81b7610f9f429832684eafd1082, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 4.08
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6194,7 +6218,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6150942011646421666, guid: 679d7bfb3dd1d7f48af8d689c2bbe83f, type: 3}
       propertyPath: maxTotalEnemies
-      value: 10
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6860775815479579935, guid: 679d7bfb3dd1d7f48af8d689c2bbe83f, type: 3}
       propertyPath: m_LocalPosition.x
