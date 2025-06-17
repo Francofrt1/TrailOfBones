@@ -1,10 +1,6 @@
 using FishNet.CodeGenerating;
-using FishNet.Component.Spawning;
-using FishNet.Demo.AdditiveScenes;
-using FishNet.Example.Scened;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
-using Multiplayer;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -18,8 +14,9 @@ public class EnemyManager : NetworkBehaviour
     [AllowMutableSyncType]
     private SyncDictionary<string, int> playerEnemies = new SyncDictionary<string, int>();
     private GameObject wheelcart;
-    [SerializeField]
-    private int maxEnemiesToPlayer = 4;
+    [SerializeField] private int maxEnemiesToPlayer = 4;
+    [SerializeField] private int maxTotalEnemies = 10;
+    private bool spawnersStopped = false;
     private void Awake()
     {
         PlayerPresenter.OnPlayerSpawned += SetPlayerSpawned;
@@ -46,6 +43,11 @@ public class EnemyManager : NetworkBehaviour
             enemy.OnEnemyKilled += HandleEnemyKilled;
         }
         AssignEnemies(spawnedEnemies);
+        if (maxTotalEnemies <= enemies.Count)
+        {
+            StopSpawners();
+            spawnersStopped = true;
+        } 
     }
 
     public void HandleEnemyKilled(EnemyController enemyKilled, bool inPlayer, string playerId)
@@ -55,6 +57,12 @@ public class EnemyManager : NetworkBehaviour
         {
             playerEnemies[playerId] -= 1;
             ReassignEnemiesToPlayer(playerId);
+        }
+
+        if (maxTotalEnemies > enemies.Count && spawnersStopped)
+        {
+            StartSpawners();
+            spawnersStopped = false;
         }
     }
 
@@ -101,6 +109,24 @@ public class EnemyManager : NetworkBehaviour
                 enemy.SetIsEnemyOnPlayer(true);
                 playerEnemies[playerId] += 1;
             }
+        }
+    }
+
+    private void StopSpawners()
+    {
+        var spawners = FindObjectsOfType<EnemySpawner>();
+        foreach (var spawner in spawners)
+        {
+            spawner.SetCanSpawn(false);
+        }
+    }
+
+    private void StartSpawners()
+    {
+        var spawners = FindObjectsOfType<EnemySpawner>();
+        foreach (var spawner in spawners)
+        {
+            spawner.SetCanSpawn(true);
         }
     }
 }

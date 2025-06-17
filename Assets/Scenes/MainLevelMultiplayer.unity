@@ -6192,6 +6192,10 @@ PrefabInstance:
       propertyPath: <SceneId>k__BackingField
       value: 3652956157
       objectReference: {fileID: 0}
+    - target: {fileID: 6150942011646421666, guid: 679d7bfb3dd1d7f48af8d689c2bbe83f, type: 3}
+      propertyPath: maxTotalEnemies
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 6860775815479579935, guid: 679d7bfb3dd1d7f48af8d689c2bbe83f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 10.329118
