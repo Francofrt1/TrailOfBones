@@ -295,11 +295,10 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
         playerView.SetAttackAnimation();
 
         attackArea.DamageablesInRange.RemoveAll(x => x == null || (x as MonoBehaviour) == null);
-        var damageables = attackArea.DamageablesInRange.Where(x => x.GetTag() != "DefendableObject");
+        var damageables = attackArea.DamageablesInRange.Where(x => x.GetTag() == "Enemy");
         if (!damageables.Any()) return;
         foreach (IDamageable damageable in damageables)
         {
-            if (damageable.GetTag() == "DefendableObject") continue; // ignore wheelcart
             damageable.TakeDamage(playerModel.baseDamage, playerModel.ID);
             Debug.Log($"Player did {playerModel.baseDamage} damage to {damageable.GetTag()}");
         }
