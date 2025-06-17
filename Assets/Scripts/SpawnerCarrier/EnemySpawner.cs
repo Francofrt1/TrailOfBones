@@ -13,6 +13,7 @@ public class EnemySpawner : NetworkBehaviour
     public float spawnRadius = 5f;
     public float spawnInterval = 10f;
     public GameObject enemyPrefab;
+    [SerializeField] private bool canSpawn = true;
 
     public event Action<List<EnemyController>> OnEnemiesSpawned;
     void Start()
@@ -35,15 +36,16 @@ public class EnemySpawner : NetworkBehaviour
             yield return new WaitForSeconds(spawnInterval);
             try
             {
-                
-                for (int i = 0; i < spawnCount; i++)
+                if (canSpawn)
                 {
-                    Vector3 randomPos = transform.position + UnityEngine.Random.insideUnitSphere * spawnRadius;
-                    randomPos.y = transform.position.y; //Keeps enemies on same Y axis
+                    for (int i = 0; i < spawnCount; i++)
+                    {
+                        Vector3 randomPos = transform.position + UnityEngine.Random.insideUnitSphere * spawnRadius;
+                        randomPos.y = transform.position.y; //Keeps enemies on same Y axis
 
-                    SpawnEnemyOnServer(randomPos);
+                        SpawnEnemyOnServer(randomPos);
+                    }
                 }
-                
             }
             catch (Exception ex)
             {
@@ -73,6 +75,11 @@ public class EnemySpawner : NetworkBehaviour
         {
             Debug.Log($"SpawnEnemyOnServer failed: {ex.Message}");
         }
+    }
+
+    public void SetCanSpawn(bool value)
+    {
+        canSpawn = value;
     }
 }
 
