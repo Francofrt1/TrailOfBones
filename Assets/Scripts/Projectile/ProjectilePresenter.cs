@@ -5,6 +5,7 @@ using Assets.Scripts.Interfaces;
 //using FishNet.Object;
 using UnityEngine;
 
+//TODO: Convertir a NetworkBehaviour
 public class ProjectilePresenter : MonoBehaviour
 {
     private ProjectileModel _model;
@@ -19,8 +20,6 @@ public class ProjectilePresenter : MonoBehaviour
         _model = GetComponent<ProjectileModel>();
         _view = GetComponent<ProjectileView>();
         _selfCollider = GetComponent<Collider>();
-
-        GetComponent<Rigidbody>().isKinematic = true;
     }
 
     void Update()
