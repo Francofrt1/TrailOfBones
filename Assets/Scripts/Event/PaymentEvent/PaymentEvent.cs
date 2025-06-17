@@ -10,7 +10,8 @@ public class PaymentEvent : MonoBehaviour
     private PaymentEventModel model;
 
     public event Action<int> OnSetMaxBonesStorageUI;
-    public event Action<int> onChangedBonesStorage;
+    public event Action<int> OnChangedBonesStorage;
+    public event Action OnPaymentCompleted;
 
     private void Awake()
     {
@@ -47,7 +48,7 @@ public class PaymentEvent : MonoBehaviour
     public void StorageBones(int amount)
     {
         model.setBones(amount);
-        onChangedBonesStorage?.Invoke(model.GetBonesStorage());
+        OnChangedBonesStorage?.Invoke(model.GetBonesStorage());
 
         if (model.GetBonesStorage() >= model.GetBonesToPay())
         {
@@ -63,6 +64,7 @@ public class PaymentEvent : MonoBehaviour
     public void CompletePayment()
     {
         model.UseAllBones();
+        OnPaymentCompleted?.Invoke();
         wheelcart.StopPlayWheelcar(false);
     }
 }

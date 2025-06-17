@@ -10,22 +10,26 @@ public class PaymentEventView : MonoBehaviour
     private PaymentEvent paymentEvent;
     public TextMeshProUGUI bonesAmountText;
     private string bonesToPay;
+    private Animation completePaymentAnim;
 
     private void Awake()
     {
         paymentEvent = GetComponent<PaymentEvent>();
+        completePaymentAnim = GetComponentInChildren<Animation>();
     }
 
     private void OnEnable()
     {
         paymentEvent.OnSetMaxBonesStorageUI += SetBonesToPay;
-        paymentEvent.onChangedBonesStorage += ChangeBonesAmountText;
+        paymentEvent.OnChangedBonesStorage += ChangeBonesAmountText;
+        paymentEvent.OnPaymentCompleted += CompletePayment;
 
     }
     private void OnDisable()
     {
         paymentEvent.OnSetMaxBonesStorageUI -= SetBonesToPay;
-        paymentEvent.onChangedBonesStorage -= ChangeBonesAmountText;
+        paymentEvent.OnChangedBonesStorage -= ChangeBonesAmountText;
+        paymentEvent.OnPaymentCompleted -= CompletePayment;
     }
 
     private void SetBonesToPay(int amount)
@@ -41,5 +45,10 @@ public class PaymentEventView : MonoBehaviour
     private void ChangeBonesAmountText(int amount)
     {
         bonesAmountText.text = amount.ToString() + " / " + bonesToPay;
+    }
+
+    private void CompletePayment()
+    {
+        completePaymentAnim.Play("EventAnim");
     }
 }
