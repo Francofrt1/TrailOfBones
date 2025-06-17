@@ -53,6 +53,7 @@ public class PlayerView : NetworkBehaviour
     {
         if (IsDying()) return;
         animator.SetTrigger("Attack");
+        animator.SetBool("IsAttacking", true);
         if (attackSound != null)
             AudioSource.PlayClipAtPoint(attackSound, this.transform.position);
     }
