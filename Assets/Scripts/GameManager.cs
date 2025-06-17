@@ -332,7 +332,8 @@ public class GameManager : BaseNetworkBehaviour
     private void HandlePlayerDeath()
     {
         deadPlayers++;
-        if (deadPlayers >= PlayerConnectionManager.Instance.AllClients.Count)
+        int totalClients = GameObject.FindObjectsByType<PlayerClient>(FindObjectsInactive.Include, FindObjectsSortMode.None).Length;
+        if (deadPlayers >= totalClients)
         {
             GameOverScreen();
         }

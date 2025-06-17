@@ -1,4 +1,7 @@
-﻿using TMPro;
+﻿using FishNet;
+using FishNet.Managing.Scened;
+using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -36,34 +39,61 @@ namespace Multiplayer.PopupSystem
 
         private void Awake()
         {
-            Instance = this;
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                Instance = this;
+            }
+            InstanceFinder.SceneManager.OnLoadEnd += OnSceneLoaded;
+        }
+
+        private void OnDisable()
+        {
+            if (InstanceFinder.SceneManager != null)
+            {
+                InstanceFinder.SceneManager.OnLoadEnd -= OnSceneLoaded;
+            }
+        }
+
+        private void OnSceneLoaded(SceneLoadEndEventArgs args)
+        {
+
         }
 
         public static void Popup_Show(PopupContent popupContent)
         {
-            Instance._textTitle.text = popupContent.Title;
-            Instance._descTitle.text = popupContent.Text;
-            Instance._popUp.SetActive(true);
-            
-            Instance._yesButton.gameObject.SetActive(popupContent.YesButton != null);
-            Instance._noButton.gameObject.SetActive(popupContent.NoButton != null);
-            Instance._confirmButton.gameObject.SetActive(popupContent.NoButton == null && popupContent.YesButton == null && popupContent.ShowConfirmButton);
+            try
+            {
+                Instance._textTitle.text = popupContent.Title;
+                Instance._descTitle.text = popupContent.Text;
+                Instance._popUp.SetActive(true);
+
+                Instance._yesButton.gameObject.SetActive(popupContent.YesButton != null);
+                Instance._noButton.gameObject.SetActive(popupContent.NoButton != null);
+                Instance._confirmButton.gameObject.SetActive(popupContent.NoButton == null && popupContent.YesButton == null && popupContent.ShowConfirmButton);
 
 
-            if (popupContent.YesButton != null)
-            {
-                Instance._yesButton.onClick.RemoveAllListeners();
-                Instance._yesButton.onClick.AddListener(popupContent.YesButton);
-                Popup_Close();
+                if (popupContent.YesButton != null)
+                {
+                    Instance._yesButton.onClick.RemoveAllListeners();
+                    Instance._yesButton.onClick.AddListener(popupContent.YesButton);
+                    Popup_Close();
+                }
+
+                if (popupContent.NoButton != null)
+                {
+                    Instance._yesButton.onClick.RemoveAllListeners();
+                    Instance._yesButton.onClick.AddListener(popupContent.NoButton);
+                    Popup_Close();
+                }
             }
-            
-            if (popupContent.NoButton != null)
+            catch (Exception ex)
             {
-                Instance._yesButton.onClick.RemoveAllListeners();
-                Instance._yesButton.onClick.AddListener(popupContent.NoButton);
-                Popup_Close();
+                Debug.LogError(ex.Message);
             }
-            
         }
         public static void Popup_Close()
         {
