@@ -2,6 +2,8 @@ using Assets.Scripts.Interfaces;
 using FishNet;
 using FishNet.Managing.Scened;
 using Multiplayer;
+using Multiplayer.PlayerSystem;
+using Multiplayer.Steam;
 using Multiplayer.Utils;
 using System;
 using System.Collections.Generic;
@@ -33,6 +35,7 @@ public class GameManager : BaseNetworkBehaviour
     private WheelcartMovement wheelcartMovement;
     private InputHandler playerInputHandler;
     public List<GameObject> treePrefab;
+    private int deadPlayers = 0;
 
     [SerializeField] private GameObject wheelCartPrefab;    
 
@@ -140,7 +143,7 @@ public class GameManager : BaseNetworkBehaviour
     {
         if (playerHealthEvents == null) return;
         HUD.SetPlayerHealthEvent(playerHealthEvents);
-        playerHealthEvents.OnDie += GameOverScreen;
+        playerHealthEvents.OnDie += HandlePlayerDeath;
     }
 
     private void _subscribeToPlayerInputHandler(InputHandler playerInputHandler)
@@ -173,14 +176,6 @@ public class GameManager : BaseNetworkBehaviour
 
     void OnDisable()
     {
-        if (playerInputHandler != null)
-        {
-            playerInputHandler.OnPauseTogglePerformed -= TogglePause;
-        }
-        if (wheelcartMovement != null)
-        {
-            wheelcartMovement.Completed -= WinScreen;
-        }
     }
 
     void Start()
@@ -198,10 +193,9 @@ public class GameManager : BaseNetworkBehaviour
 
     public void GameOverScreen()
     {
-        gameOver = true;
         SetPausedState(true);
+        Time.timeScale = 0f;
         OnLoseScreen?.Invoke();
-        Debug.Log("Game Over, you lose.");
     }
 
     private void TogglePause()
@@ -235,6 +229,16 @@ public class GameManager : BaseNetworkBehaviour
 
     protected override void UnregisterEvents()
     {
+        if (playerInputHandler != null)
+        {
+            playerInputHandler.OnPauseTogglePerformed -= TogglePause;
+        }
+        if (wheelcartMovement != null)
+        {
+            wheelcartMovement.Completed -= WinScreen;
+        }
+
+        PlayerPresenter.OnPlayerSpawned -= HandlePlayerSpawned;
     }
 
     public void SetCurrentGameState(GameState newState)
@@ -244,7 +248,7 @@ public class GameManager : BaseNetworkBehaviour
         switch (currentGameState)
         {
             case GameState.InMenu:
-                // Handle menu state
+                InMenu();
                 break;
             case GameState.InLobby:
                 // Handle lobby state
@@ -259,7 +263,7 @@ public class GameManager : BaseNetworkBehaviour
                 StartMatch();
                 break;
             case GameState.End:
-                // Handle end state
+                EndMatch();
                 break;
             default:
                 break;
@@ -291,11 +295,7 @@ public class GameManager : BaseNetworkBehaviour
             var hudObj = GameObject.Find("HUD");
             HUD = hudObj.GetComponent<HUD>();
             SpawnWheelCart();
-            PlayerPresenter.OnPlayerSpawned += (PlayerPresenter) =>
-            {
-                _subscribeToPlayerController(PlayerPresenter.gameObject.GetComponent<IHealthVariation>());
-                _subscribeToPlayerInputHandler(PlayerPresenter.gameObject.GetComponent<InputHandler>());
-            };
+            PlayerPresenter.OnPlayerSpawned += HandlePlayerSpawned;
             var audios = GetComponents<AudioSource>();
             
             foreach (var audio in audios)
@@ -327,5 +327,51 @@ public class GameManager : BaseNetworkBehaviour
         {
             Debug.LogError($"SpawnWheelCart failed: {ex.Message}");
         }
+    }
+
+    private void HandlePlayerDeath()
+    {
+        deadPlayers++;
+        int totalClients = GameObject.FindObjectsByType<PlayerClient>(FindObjectsInactive.Include, FindObjectsSortMode.None).Length;
+        if (deadPlayers >= totalClients)
+        {
+            GameOverScreen();
+        }
+    }
+
+    private void EndMatch()
+    {
+        gameOver = true;
+        var clients = GameObject.FindObjectsByType<PlayerClient>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        UnregisterEvents();
+        foreach (var client in clients)
+        {
+            Destroy(client.gameObject);
+        }
+        PlayerConnectionManager.Instance.Unsubscribe();
+        PlayerSpawnManager.Instance.Unsubscribe();
+        SteamLobby.LeaveLobby();
+        Debug.Log("Game Over, you lose.");
+    }
+
+    private void InMenu()
+    {
+        winConditionReached = false;
+        gameOver = false;
+        gamePaused = false;
+        deadPlayers = 0;
+
+        var audios = GetComponents<AudioSource>();
+
+        foreach (var audio in audios)
+        {
+            audio.Stop();
+        }
+    }
+
+    private void HandlePlayerSpawned(PlayerPresenter player)
+    {
+        _subscribeToPlayerController(player.gameObject.GetComponent<IHealthVariation>());
+        _subscribeToPlayerInputHandler(player.gameObject.GetComponent<InputHandler>());
     }
 }
