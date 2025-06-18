@@ -76,6 +76,8 @@ namespace Multiplayer.Steam
 
         public static void LeaveLobby()
         {
+            InstanceFinder.ClientManager.StopConnection();
+            InstanceFinder.ServerManager.StopConnection(true);
             CurrentLobby.Leave();
         }
 
