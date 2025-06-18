@@ -14,6 +14,7 @@ public class PlayerView : NetworkBehaviour
 
     public AudioClip[] stepSoundsArray;
     public event Action<bool> OnAttackStateChanged;
+    bool isDying = false;
 
     void Start()
     {
@@ -43,7 +44,7 @@ public class PlayerView : NetworkBehaviour
 
     public void SetMovementAnimation(Vector3 localMove)
     {
-        if (IsDying()) return;
+        if (isDying) return;
 
         float speed = CalculateAnimationSpeed(localMove);
         animator.SetFloat("Speed", speed);
@@ -57,13 +58,13 @@ public class PlayerView : NetworkBehaviour
 
     public void SetJumpAnimation()
     {
-        if (IsDying()) return;
+        if (isDying) return;
         networkAnimator.SetTrigger("Jump");
     }
 
     public void SetAttackAnimation()
     {
-        if (IsDying()) return;
+        if (isDying) return;
         networkAnimator.SetTrigger("Attack");
         animator.SetBool("IsAttacking", true);
         if (attackSound != null)
@@ -79,8 +80,9 @@ public class PlayerView : NetworkBehaviour
 
     public void SetIsDeadAnimation()
     {
-        if (IsDying()) return;
+        if (isDying) return;
         networkAnimator.SetTrigger("Dead");
+        isDying = true;
     }
 
     public void CheckIsAttacking()
@@ -100,14 +102,14 @@ public class PlayerView : NetworkBehaviour
 
     public void PlayHitSound()
     {
-        if (IsDying()) return;
+        if (isDying) return;
         if (hitSound != null)
             AudioSource.PlayClipAtPoint(hitSound, this.transform.position);
     }
 
     public void PlayStepSound()
     {
-        if (IsDying()) return;
+        if (isDying) return;
 
         if (stepSoundsArray != null && stepSoundsArray.Length > 0)
         {

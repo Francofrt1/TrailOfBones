@@ -932,7 +932,8 @@ MonoBehaviour:
   - {fileID: 3460482545311094445}
   - {fileID: 3673917380631560823}
   - {fileID: 6087994286176211162}
-  componentsToDisable: []
+  componentsToDisable:
+  - {fileID: 493730807177584159}
   inGameContainer: {fileID: 7943082474106197344}
   inMenuContainer: {fileID: 8299999261057513521}
   _usernameText: {fileID: 4071943088537988343}
