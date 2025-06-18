@@ -2,7 +2,7 @@ using FishNet.Object;
 using System;
 using UnityEngine;
 
-public class PlayerModel : MonoBehaviour
+public class PlayerModel : NetworkBehaviour
 {
     public string ID { get; private set; }
     public float maxHealth = 100f;
@@ -28,6 +28,15 @@ public class PlayerModel : MonoBehaviour
         currentHealth = maxHealth;
         isDead = false;
         currentAttackSpeed = baseAttackSpeed;
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        if (!base.IsOwner)
+        {
+            this.enabled = false;
+        }
     }
 
     public Vector3 CalculateLocalVelocity(Vector2 input)

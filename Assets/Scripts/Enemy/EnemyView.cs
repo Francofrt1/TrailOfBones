@@ -1,3 +1,4 @@
+using FishNet.Component.Animating;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
@@ -11,14 +12,14 @@ public class EnemyView : MonoBehaviour
     public AudioMixerGroup audioMixerGroup;
     public Slider healthBar;
     // animation 
-    private Animator Animator;
-    private Animator NetworkAnimator;
+    private Animator animator;
+    private NetworkAnimator networkAnimator;
 
     // initializes animation
     private void Start()
     {
-        Animator = GetComponent<Animator>();
-        NetworkAnimator = GetComponent<Animator>();
+        animator = GetComponent<Animator>();
+        networkAnimator = GetComponent<NetworkAnimator>();
         audioSource = GetComponent<AudioSource>();
     }
 
@@ -26,7 +27,7 @@ public class EnemyView : MonoBehaviour
     public void SetMovingAnimation(bool isMoving)
     {
         if (IsDying()) return;
-        Animator.SetBool("isMoving", isMoving);
+        animator.SetBool("isMoving", isMoving);
         if (audioSource.clip != stepSound)
         {
             audioSource.clip = stepSound;
@@ -40,14 +41,14 @@ public class EnemyView : MonoBehaviour
     public void SetAttackAnimation()
     {
         if (IsDying()) return;
-        NetworkAnimator.SetTrigger("attack");
+        networkAnimator.SetTrigger("attack");
     }
 
     // triggers take-damage animation
     public void SetTakeDamageAnimation()
     {
         if (IsDying()) return;
-        NetworkAnimator.SetTrigger("takeDamage");
+        networkAnimator.SetTrigger("takeDamage");
 
         if (audioSource.clip != hitSound)
         {
@@ -63,17 +64,17 @@ public class EnemyView : MonoBehaviour
     public void SetDieAnimation()
     {
         if (IsDying()) return;
-        NetworkAnimator.SetTrigger("dieTrigger");
+        networkAnimator.SetTrigger("dieTrigger");
     }
 
     public bool IsDying()
     {
-        return NetworkAnimator.GetCurrentAnimatorStateInfo(0).IsName("Death");
+        return animator.GetCurrentAnimatorStateInfo(0).IsName("Death");
     }
 
     public float GetCurrentAnimationClipLength()
     {
-        AnimatorClipInfo[] clipInfo = NetworkAnimator.GetCurrentAnimatorClipInfo(0);
+        AnimatorClipInfo[] clipInfo = animator.GetCurrentAnimatorClipInfo(0);
         return clipInfo.Length > 0 ? clipInfo[0].clip.length : 0f;
     }
 

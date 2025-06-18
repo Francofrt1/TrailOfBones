@@ -1,11 +1,13 @@
 using System;
+using FishNet.Component.Animating;
 using FishNet.Object;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
-public class PlayerView : MonoBehaviour
+public class PlayerView : NetworkBehaviour
 {
     private Animator animator;
+    private NetworkAnimator networkAnimator;
 
     public AudioClip attackSound;
     public AudioClip hitSound;
@@ -20,6 +22,16 @@ public class PlayerView : MonoBehaviour
         {
             Debug.LogError("Animator component is missing on PlayerView.");
             return;
+        }
+        networkAnimator = GetComponent<NetworkAnimator>();
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        if (!base.IsOwner)
+        {
+            this.enabled = false;
         }
     }
 
@@ -46,13 +58,13 @@ public class PlayerView : MonoBehaviour
     public void SetJumpAnimation()
     {
         if (IsDying()) return;
-        animator.SetTrigger("Jump");
+        networkAnimator.SetTrigger("Jump");
     }
 
     public void SetAttackAnimation()
     {
         if (IsDying()) return;
-        animator.SetTrigger("Attack");
+        networkAnimator.SetTrigger("Attack");
         animator.SetBool("IsAttacking", true);
         if (attackSound != null)
             AudioSource.PlayClipAtPoint(attackSound, this.transform.position);
@@ -68,7 +80,7 @@ public class PlayerView : MonoBehaviour
     public void SetIsDeadAnimation()
     {
         if (IsDying()) return;
-        animator.SetTrigger("Dead");
+        networkAnimator.SetTrigger("Dead");
     }
 
     public void CheckIsAttacking()
