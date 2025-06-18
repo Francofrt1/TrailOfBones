@@ -3,7 +3,7 @@ using FishNet.Object;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
-public class PlayerView : NetworkBehaviour
+public class PlayerView : MonoBehaviour
 {
     private Animator animator;
 
