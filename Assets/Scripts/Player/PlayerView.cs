@@ -30,9 +30,10 @@ public class PlayerView : NetworkBehaviour
     public override void OnStartClient()
     {
         base.OnStartClient();
-        if (!base.IsOwner)
+        if (!IsOwner)
         {
             this.enabled = false;
+            return;
         }
     }
 
