@@ -2,11 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Assets.Scripts.Interfaces;
-//using FishNet.Object;
+using FishNet.Object;
 using UnityEngine;
 
-//TODO: Convertir a NetworkBehaviour
-public class ProjectilePresenter : MonoBehaviour
+public class ProjectilePresenter : NetworkBehaviour, IShootable
 {
     private ProjectileModel _model;
     private ProjectileView _view;
@@ -14,6 +13,7 @@ public class ProjectilePresenter : MonoBehaviour
     [SerializeField] private LayerMask enemyLayer;
 
     private string shootedByID;
+    private Coroutine _deactivationCoroutine;
 
     private void Awake()
     {
@@ -27,24 +27,23 @@ public class ProjectilePresenter : MonoBehaviour
         PerformMovement();
     }
 
-    public void Activate(string shooterID)
+    public void Shoot(string shooterID)
     {
         shootedByID = shooterID;
         gameObject.SetActive(true);
+        StartDeactivationCoroutine(_model.LifeTime);
     }
 
     private void PerformMovement()
     {
-        transform.position += _model.CalculateMovement(Time.deltaTime);
+        transform.position += _model.CalculateMovement(transform.forward, Time.deltaTime);
     }
 
     void OnTriggerEnter(Collider other)
     {
         int layer = other.gameObject.layer;
 
-        bool isEnemy = IsEnemyLayer(layer);
-
-        if (isEnemy)
+        if (IsEnemyLayer(layer))
         {
             IDamageable damageable = other.GetComponent<IDamageable>();
             damageable.TakeDamage(_model.BaseDamage, shootedByID);
@@ -54,16 +53,30 @@ public class ProjectilePresenter : MonoBehaviour
         _view.ImpactFX();
         _model.BlockMovement(true);
         shootedByID = null;
-        StartCoroutine(DeactivateDeferred(_view.ExplosionTime));
+
+        StartDeactivationCoroutine(_view.ExplosionTime);
     }
 
-    private IEnumerator DeactivateDeferred(float segundos)
+    private void StartDeactivationCoroutine(float seconds)
     {
-        yield return new WaitForSeconds(segundos);
+        // Cancelar cualquier corrutina previa
+        if (_deactivationCoroutine != null)
+        {
+            StopCoroutine(_deactivationCoroutine);
+        }
+
+        // Iniciar nueva corrutina
+        _deactivationCoroutine = StartCoroutine(DeactivateDeferred(seconds));
+    }
+
+    private IEnumerator DeactivateDeferred(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
         gameObject.SetActive(false);
         _selfCollider.enabled = true;
         _view.ResetView();
         _model.BlockMovement(false);
+        _deactivationCoroutine = null;
     }
 
     private bool IsEnemyLayer(int layer)

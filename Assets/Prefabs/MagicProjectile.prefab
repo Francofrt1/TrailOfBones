@@ -240,7 +240,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
+  m_Radius: 0.2
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &3440141572150508366
 MonoBehaviour:
@@ -256,6 +256,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 12
   baseDamage: 6
+  lifeTime: 8
 --- !u!114 &2372821632600382361
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -268,6 +269,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59ef3dccd961e5d4d81dcf1c190e679a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 6642456031246821470}
+  _networkObjectCache: {fileID: 0}
   enemyLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -293,7 +297,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7286886155922620386}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
   m_Name: 
