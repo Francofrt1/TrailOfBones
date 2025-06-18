@@ -153,22 +153,15 @@ public class GameManager : BaseNetworkBehaviour
     {
         try
         {
-            var wheelcartDurationEvent = wheelCart.GetComponent<IWheelcartDuration>();
             var wheelcartEvents = wheelCart.GetComponent<IHealthVariation>();
             wheelcartEvents.OnDie += GameOverScreen;
             wheelcartMovement.Completed += WinScreen;
             HUD.SetWheelcartHealthEvent(wheelcartEvents);
-            HUD.SetWheelcartDuration(wheelcartDurationEvent);
         }
         catch (Exception ex)
         {
             Debug.Log($"_subscribeToWheelcart error {ex.Message}");
         }
-    }
-
-    private void OnEnable()
-    {
-        
     }
 
     void OnDisable()

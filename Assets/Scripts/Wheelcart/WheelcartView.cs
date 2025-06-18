@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class WheelcartView : MonoBehaviour
 {
@@ -10,6 +11,9 @@ public class WheelcartView : MonoBehaviour
     private string logToRepair;
     public GameObject[] wheels;
     private AudioSource audio;
+
+    public Slider progressBar = null;
+    private bool isProgressing = true;
 
     private void Awake()
     {
@@ -23,6 +27,7 @@ public class WheelcartView : MonoBehaviour
         wheelcart.OnSetMaxLogStorageUI += SetMaxLogStorageUI;
         wheelcart.OnShowLogStorageUI += ShowUnshowLogStorage;
         wheelcart.OnBlockWheelcartRequested += StopPlayWheelcartAnim;
+        wheelcart.OnWheelcartDuration += SetProgressBarMaxLimit;
     }
 
     private void OnDisable()
@@ -41,6 +46,7 @@ public class WheelcartView : MonoBehaviour
     {
         ChangeLogText(0);
         ShowUnshowLogStorage();
+        StartCoroutine("UpdateProgressBar");
     }
 
     private void ChangeLogText(int amount)
@@ -50,32 +56,35 @@ public class WheelcartView : MonoBehaviour
 
     private void StopPlayWheelcartAnim(bool isStopped)
     {
+        ChangeStateProgress(isStopped);
+        StopPlayWheelcart(isStopped);
+       
         if (isStopped)
         {
             audio.Pause();
-            stopWheelcart();
         }
         else
         {
             audio.Play();
-            startWheelcart();
         }
     }
 
-    private void stopWheelcart()
+    private void StopPlayWheelcart(bool isStopped)
     {
+        float speed;
+        if (isStopped)
+        {
+            speed = 0f;
+        }
+        else
+        {
+            speed = 1f;
+        }
         foreach (var wheel in wheels)
         {
-            wheel.GetComponent<Animator>().speed = 0;
+            wheel.GetComponent<Animator>().speed = speed;
         }
 
-    }
-    private void startWheelcart()
-    {
-        foreach (var wheel in wheels)
-        {
-            wheel.GetComponent<Animator>().speed = 1f;
-        }
     }
 
     private void ShowUnshowLogStorage()
@@ -89,5 +98,24 @@ public class WheelcartView : MonoBehaviour
         {
             canvas.SetActive(true);
         }
+    }
+
+    IEnumerator UpdateProgressBar()
+    {
+        while (isProgressing && progressBar.value < progressBar.maxValue)
+        {
+            yield return new WaitForSeconds(1f);
+            progressBar.value += 1f;
+        }
+    }
+
+    private void SetProgressBarMaxLimit(float limit)
+    {
+        progressBar.maxValue = limit;
+    }
+
+    public void ChangeStateProgress(bool isStopped)
+    {
+        isProgressing = isStopped;
     }
 }
