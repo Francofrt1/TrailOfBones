@@ -5,7 +5,7 @@ using UnityEngine;
 public class PaymentEventModel : MonoBehaviour
 {
     private int bonesStorage = 0;
-    public const int bonesToPay = 50;
+    public const int bonesToPay = 10;
 
     public void setBones(int amount)
     {
