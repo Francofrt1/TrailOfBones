@@ -171,7 +171,6 @@ public class GameManager : BaseNetworkBehaviour
         Debug.Log("Game Started");
     }
 
-    [ObserversRpc]
     public void WinScreen()
     {
         Time.timeScale = 0f;
@@ -180,7 +179,6 @@ public class GameManager : BaseNetworkBehaviour
         Debug.Log("Game Over, you win.");
     }
 
-    [ObserversRpc]
     public void GameOverScreen()
     {
         Time.timeScale = 0f;
