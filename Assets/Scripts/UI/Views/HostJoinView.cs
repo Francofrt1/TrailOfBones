@@ -23,8 +23,7 @@ public class HostJoinView : View
 
     private void OnHostButtonClicked()
     {
-        //ChangeCamera();
-        ViewManager.Instance.Show<PartyView>();
+        ViewManager.Instance.Show<PartyView>(true);
         GameManager.Instance.SetCurrentGameState(GameState.InLobby);
         InstanceFinder.TransportManager.GetTransport<Multipass>().SetClientTransport<FishyFacepunch.FishyFacepunch>();
         SteamLobby.Singleton.CreateLobbyAsync();

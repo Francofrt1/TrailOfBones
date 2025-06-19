@@ -22,6 +22,6 @@ public class LobbyListItem : MonoBehaviour
         GameManager.Instance.SetCurrentGameState(GameState.InLobby);
         InstanceFinder.TransportManager.GetTransport<Multipass>().SetClientTransport<FishyFacepunch.FishyFacepunch>();
         SteamLobby.Singleton.JoinLobbyAsync(_lobby);
-        ViewManager.Instance.Show<PartyView>();
+        ViewManager.Instance.Show<PartyView>(false);
     }
 }

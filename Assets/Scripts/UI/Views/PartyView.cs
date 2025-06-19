@@ -28,6 +28,15 @@ public class PartyView : View
         base.Initialize();
     }
 
+    public override void Show(object args = null)
+    {
+        base.Show(args);
+        if(args is bool)
+        {
+            startButton.gameObject.SetActive((bool)args);
+        }
+    }
+
     private void OnReadyUpButtonClicked()
     {
         var player = NetworkExtensions.GetLocalPlayer();
