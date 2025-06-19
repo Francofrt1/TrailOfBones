@@ -30,6 +30,16 @@ public class PlayerModel : NetworkBehaviour
         currentAttackSpeed = baseAttackSpeed;
     }
 
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        if (!IsOwner)
+        {
+            this.enabled = false;
+            return;
+        }
+    }
+
     public Vector3 CalculateLocalVelocity(Vector2 input)
     {
         Vector3 direction = new Vector3(input.x, 0f, input.y);

@@ -934,9 +934,6 @@ MonoBehaviour:
   - {fileID: 6087994286176211162}
   componentsToDisable:
   - {fileID: 493730807177584159}
-  - {fileID: 3552347986861586666}
-  - {fileID: 907125715611279512}
-  - {fileID: 7473465992829121439}
   inGameContainer: {fileID: 7943082474106197344}
   inMenuContainer: {fileID: 8299999261057513521}
   _usernameText: {fileID: 4071943088537988343}
@@ -1675,7 +1672,8 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 2058081881636104836, guid: a6956eefbed9b5841ad19390f0f592fa, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a6956eefbed9b5841ad19390f0f592fa, type: 3}

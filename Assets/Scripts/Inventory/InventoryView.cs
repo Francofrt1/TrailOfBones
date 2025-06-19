@@ -1,21 +1,50 @@
+using FishNet.Object;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InventoryView : MonoBehaviour
+public class InventoryView : NetworkBehaviour
 {
     private List<GameObject> slots = new List<GameObject>();
-    // Start is called before the first frame update
-    void Start()
+    private GameObject container;
+    void Awake()
     {
-        GameObject menu = transform.GetChild(0).gameObject;
+        PlayerPresenter.OnPlayerSpawned += HandlePlayerSpawned;
+    }
 
-        for (int i = 0; i < menu.transform.childCount; i++)
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        if (!IsOwner)
         {
-            slots.Add(menu.transform.GetChild(i).gameObject);
+            this.enabled = false;
+            return;
         }
-        
+    }
+
+    private void HandlePlayerSpawned(PlayerPresenter playerPresenter = null)
+    {
+        var hudView = GameObject.FindObjectOfType<HUDView>(true);
+        if (hudView == null)
+        {
+            Debug.LogError("HUDView not found!");
+            return;
+        }
+
+        container = hudView.GetInvetoryMenu();
+        if (container != null)
+        {
+            slots.Clear();
+            for (int i = 0; i < container.transform.childCount; i++)
+            {
+                slots.Add(container.transform.GetChild(i).gameObject);
+            }
+        }
+        else
+        {
+            Debug.LogError("Inventory container not found!");
+        }
     }
 
     public void UpdateSlot(Dictionary<ItemType, (int Quantity, Sprite Sprite)> inventory)
