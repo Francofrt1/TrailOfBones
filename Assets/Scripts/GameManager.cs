@@ -18,12 +18,10 @@ public class GameManager : BaseNetworkBehaviour
         InMenu,
         InLobby,
         Loading,
-        Pause,
         Playing,
         End
     }
     public static GameManager Instance { get; private set; }
-    private bool gamePaused = false;
 
     private HUDView hudView;
     private WheelcartMovement wheelcartMovement;
@@ -133,7 +131,7 @@ public class GameManager : BaseNetworkBehaviour
         return nearbyColliders.Length == 0;
     }
 
-    private void _subscribeToPlayerController(IHealthVariation playerHealthEvents)
+    private void _subscribeToPlayerPresenter(IHealthVariation playerHealthEvents)
     {
         try
         {
@@ -145,12 +143,6 @@ public class GameManager : BaseNetworkBehaviour
         {
             Debug.LogError(ex.Message);
         }
-    }
-
-    private void _subscribeToPlayerInputHandler(InputHandler playerInputHandler)
-    {
-        if (playerInputHandler == null) return;
-        playerInputHandler.OnPauseTogglePerformed += TogglePause;
     }
 
     private void _subscribeToWheelcart()
@@ -188,35 +180,15 @@ public class GameManager : BaseNetworkBehaviour
 
     public void WinScreen()
     {
-        SetPausedState(true);
+        Time.timeScale = 0f;
         ViewManager.Instance.Show<WinView>();
         Debug.Log("Game Over, you win.");
     }
 
     public void GameOverScreen()
     {
-        SetPausedState(true);
         Time.timeScale = 0f;
         ViewManager.Instance.Show<LoseView>();
-    }
-
-    private void TogglePause()
-    {
-        gamePaused = !gamePaused;
-        SetPausedState(gamePaused);
-        if (gamePaused) ViewManager.Instance.Show<PauseView>();
-        Debug.Log(gamePaused ? "Game paused" : "Game resumed");
-    }
-
-    private void SetPausedState(bool paused)
-    {
-        //Time.timeScale = paused ? 0f : 1f;
-        SetCursorState(paused);
-    }
-
-    public void SetPauseGame(bool value)
-    {
-        if (gamePaused != value) { TogglePause(); }
     }
 
     private void SetCursorState(bool value)
@@ -231,10 +203,6 @@ public class GameManager : BaseNetworkBehaviour
 
     protected override void UnregisterEvents()
     {
-        if (playerInputHandler != null)
-        {
-            playerInputHandler.OnPauseTogglePerformed -= TogglePause;
-        }
         if (wheelcartMovement != null)
         {
             wheelcartMovement.Completed -= WinScreen;
@@ -257,9 +225,6 @@ public class GameManager : BaseNetworkBehaviour
                 break;
             case GameState.Loading:
                 // Handle loading state
-                break;
-            case GameState.Pause:
-                SetPausedState(true);
                 break;
             case GameState.Playing:
                 StartMatch();
@@ -351,7 +316,6 @@ public class GameManager : BaseNetworkBehaviour
 
     private void InMenu()
     {
-        gamePaused = false;
         deadPlayers = 0;
 
         var audios = GetComponents<AudioSource>();
@@ -365,8 +329,7 @@ public class GameManager : BaseNetworkBehaviour
     private void HandlePlayerSpawned(PlayerPresenter player)
     {
         hudView = GameObject.FindObjectOfType<HUDView>(true);
-        _subscribeToPlayerController(player.gameObject.GetComponent<IHealthVariation>());
-        _subscribeToPlayerInputHandler(player.gameObject.GetComponent<InputHandler>());
+        _subscribeToPlayerPresenter(player.gameObject.GetComponent<IHealthVariation>());
         _subscribeToWheelcart();
     }
 }

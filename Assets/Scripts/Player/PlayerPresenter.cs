@@ -93,6 +93,7 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
         inputHandler.OnAttack += OnAttack;
         inputHandler.OnSprint += OnSprint;
         inputHandler.OnUseInventory += UseItems;
+        inputHandler.OnPauseTogglePerformed += playerView.TogglePauseMenu;
         playerView.OnAttackStateChanged += OnAttackStateChanged;
     }
 

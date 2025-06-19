@@ -14,7 +14,8 @@ public class PlayerView : NetworkBehaviour
 
     public AudioClip[] stepSoundsArray;
     public event Action<bool> OnAttackStateChanged;
-    bool isDying = false;
+    private bool isDying = false;
+    private bool showPause = false;
 
     void Start()
     {
@@ -25,6 +26,8 @@ public class PlayerView : NetworkBehaviour
             return;
         }
         networkAnimator = GetComponent<NetworkAnimator>();
+
+        PauseView.OnPauseMenuHide += TogglePauseMenu;
     }
 
     public override void OnStartClient()
@@ -35,12 +38,6 @@ public class PlayerView : NetworkBehaviour
             this.enabled = false;
             return;
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     public void SetMovementAnimation(Vector3 localMove)
@@ -74,7 +71,7 @@ public class PlayerView : NetworkBehaviour
 
     public void SetIsFallingAnimation(bool isFalling, float fallingTime = 0f)
     {
-        if (IsDying()) return;
+        if (isDying) return;
         animator.SetBool("IsFalling", isFalling);
         animator.SetFloat("FallingTime", fallingTime);
     }
@@ -89,16 +86,6 @@ public class PlayerView : NetworkBehaviour
     public void CheckIsAttacking()
     {
         OnAttackStateChanged?.Invoke(animator.GetBool("IsAttacking"));
-    }
-
-    public bool IsDying()
-    {
-        if (animator == null)
-        {
-            Debug.LogError("Animator component is missing on PlayerView.");
-            return false;
-        }
-        return animator.GetCurrentAnimatorStateInfo(0).IsName("Death");
     }
 
     public void PlayHitSound()
@@ -122,8 +109,18 @@ public class PlayerView : NetworkBehaviour
         }
     }
 
-    private void OnDestroy()
+    public void TogglePauseMenu()
     {
-        Destroy(animator);
+        showPause = !showPause;
+        Cursor.visible = showPause;
+        Cursor.lockState = showPause ? CursorLockMode.None : CursorLockMode.Locked;
+        if (showPause)
+        {
+            ViewManager.Instance.Show<PauseView>();
+        }
+        else
+        {
+            ViewManager.Instance.Show<HUDView>();
+        }
     }
 }

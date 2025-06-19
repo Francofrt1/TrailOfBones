@@ -8,6 +8,8 @@ public class PauseView : View
     [SerializeField] private Button mainMenuButton;
     [SerializeField] private Button continueButton;
 
+    public static event Action OnPauseMenuHide;
+
     public override void Initialize()
     {
         mainMenuButton.onClick.AddListener(OnMainMenuButtonClicked);
@@ -25,7 +27,6 @@ public class PauseView : View
 
     private void OnContinueButtonClicked()
     {
-        ViewManager.Instance.Show<HUDView>();
-        GameManager.Instance.SetPauseGame(false);
+        OnPauseMenuHide?.Invoke();
     }
 }
