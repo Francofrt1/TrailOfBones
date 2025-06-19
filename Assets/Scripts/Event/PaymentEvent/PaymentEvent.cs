@@ -13,7 +13,8 @@ public class PaymentEvent : MonoBehaviour, IUseInventory
 
     public event Action<int> OnSetMaxBonesStorageUI;
     public event Action<int> OnChangedBonesStorage;
-    public event Action OnPaymentCompleted;
+    [SerializeField]
+    private GameObject flamesWall;
 
     private void Awake()
     {
@@ -49,13 +50,14 @@ public class PaymentEvent : MonoBehaviour, IUseInventory
     public void CompletePayment()
     {
         model.UseAllBones();
-        OnPaymentCompleted?.Invoke();
+        Destroy(flamesWall);
         wheelcart.StopPlayWheelcar(false);
     }
 
     public bool CanInteract(Vector3 playerPosition)
     {
-        return Vector3.Distance(playerPosition, transform.position) < model.interactionDistance;
+        Vector3 couldron = transform.GetChild(0).position;
+        return Vector3.Distance(playerPosition, couldron) < model.interactionDistance;
     }
 
     public int NeededToMake()

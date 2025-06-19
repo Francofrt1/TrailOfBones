@@ -5,8 +5,8 @@ using UnityEngine;
 public class PaymentEventModel : MonoBehaviour
 {
     private int bonesStorage = 0;
-    public const int bonesToPay = 10;
-    public float interactionDistance = 5.5f;
+    public const int bonesToPay = 2;
+    public float interactionDistance = 3.5f;
 
     public void setBones(int amount)
     {

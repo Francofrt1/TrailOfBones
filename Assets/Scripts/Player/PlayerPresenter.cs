@@ -370,24 +370,24 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
         GameObject[] interactables = FindObjectsOfType<GameObject>()
             .Where(component => component.GetComponent<IUseInventory>() != null).ToArray();
         if (interactables.Length == 0) return;
-
         foreach (var item in interactables)
         {
             IUseInventory useInventory = item.GetComponent<IUseInventory>();
             ItemType itemType = useInventory.ItemTypeNeeded();
+            Debug.Log($"{item} : {useInventory.CanInteract(transform.position)}");
             if (useInventory.CanInteract(transform.position))
             {
-                int logsToSend = useInventory.NeededToMake();
-                int logsInInventory = inventoryController.GetItemQuantity(itemType);
-                if (logsToSend >= logsInInventory)
+                int itemsToSend = useInventory.NeededToMake();
+                int itemsInInventory = inventoryController.GetItemQuantity(itemType);
+                if (itemsToSend >= itemsInInventory)
                 {
-                    inventoryController.HandleUseItem(itemType, logsInInventory);
-                    useInventory.StorageItem(logsInInventory);
+                    inventoryController.HandleUseItem(itemType, itemsInInventory);
+                    useInventory.StorageItem(itemsInInventory);
                 }
                 else
                 {
-                    inventoryController.HandleUseItem(itemType, logsToSend);
-                    useInventory.StorageItem(logsToSend);
+                    inventoryController.HandleUseItem(itemType, itemsToSend);
+                    useInventory.StorageItem(itemsToSend);
                 }
                 return;
             }

@@ -8,7 +8,7 @@ public class WheelcartModel : MonoBehaviour
 
     public int logStorage = 0;
     public const int logToRepair = 5;
-    public float interactionDistance = 10.0f;
+    public float interactionDistance = 5.0f;
 
     public void Awake()
     {

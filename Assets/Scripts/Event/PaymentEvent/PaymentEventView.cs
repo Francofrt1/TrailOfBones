@@ -22,14 +22,12 @@ public class PaymentEventView : MonoBehaviour
     {
         paymentEvent.OnSetMaxBonesStorageUI += SetBonesToPay;
         paymentEvent.OnChangedBonesStorage += ChangeBonesAmountText;
-        paymentEvent.OnPaymentCompleted += CompletePayment;
 
     }
     private void OnDisable()
     {
         paymentEvent.OnSetMaxBonesStorageUI -= SetBonesToPay;
         paymentEvent.OnChangedBonesStorage -= ChangeBonesAmountText;
-        paymentEvent.OnPaymentCompleted -= CompletePayment;
     }
 
     private void SetBonesToPay(int amount)
@@ -45,10 +43,5 @@ public class PaymentEventView : MonoBehaviour
     private void ChangeBonesAmountText(int amount)
     {
         bonesAmountText.text = amount.ToString() + " / " + bonesToPay;
-    }
-
-    private void CompletePayment()
-    {
-        completePaymentAnim.Play("EventAnim");
     }
 }

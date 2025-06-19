@@ -609,8 +609,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8503253770289854047}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.3252427, z: -0, w: 0.9456306}
-  m_LocalPosition: {x: 669.28, y: 3.74, z: 538.44}
+  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -619,7 +619,7 @@ Transform:
   - {fileID: 3784723168375826854}
   - {fileID: 2424847672718863515}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!114 &8068580076525165370
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -632,6 +632,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8074df0b28f486148b02d8c4f0490b90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flamesWall: {fileID: 8227661062068459861}
 --- !u!114 &2079186237854863984
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -657,6 +658,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95c2cecce1e887e408cab5339d862055, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  interactionDistance: 5.5
 --- !u!1 &8582037674313671728
 GameObject:
   m_ObjectHideFlags: 0

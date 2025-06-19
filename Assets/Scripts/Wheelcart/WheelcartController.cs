@@ -85,7 +85,8 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
 
     public bool CanInteract(Vector3 playerPosition)
     {
-        return Vector3.Distance(playerPosition, transform.position) < wheelcartModel.interactionDistance && NeedRepair();
+        Vector3 wheelcartCenter = transform.GetChild(0).position;
+        return Vector3.Distance(playerPosition, wheelcartCenter) < wheelcartModel.interactionDistance && NeedRepair();
     }
 
     public int NeededToMake()
