@@ -11,6 +11,7 @@ public class HUDView : View
     [SerializeField] private TextMeshProUGUI playerHealthText = null;
     [SerializeField] private TextMeshProUGUI wheelcartHealthText = null;
     [SerializeField] private Slider progressBar = null;
+    [SerializeField] private GameObject inventoryMenu = null;
 
     private IHealthVariation playerHealthEvents;
     private IHealthVariation wheelcartHealthEvents;
@@ -65,5 +66,10 @@ public class HUDView : View
     {
         wheelcartDurationEvents = wheelcartDuration;
         wheelcartDurationEvents.OnWheelcartDuration += SetProgressBarMaxLimit;
+    }
+
+    public GameObject GetInvetoryMenu()
+    {
+        return inventoryMenu;
     }
 }

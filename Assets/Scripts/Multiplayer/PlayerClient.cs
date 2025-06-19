@@ -94,7 +94,7 @@ namespace Multiplayer.PlayerSystem
             if(IsOwner)
             {
                 Cursor.lockState = CursorLockMode.Locked;
-                ViewManager.Instance.Show<HUDView>();
+                ViewManager.Instance.Initialize();
             }
         }
 

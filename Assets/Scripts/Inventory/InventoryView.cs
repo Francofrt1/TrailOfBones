@@ -14,7 +14,7 @@ public class InventoryView : MonoBehaviour
 
     private void HandlePlayerSpawned(PlayerPresenter playerPresenter)
     {
-        container = GameObject.Find("InventoryMenu");
+        container = GameObject.FindObjectOfType<HUDView>(true).GetInvetoryMenu();
         if (container != null)
         {
             for (int i = 0; i < container.transform.childCount; i++)
