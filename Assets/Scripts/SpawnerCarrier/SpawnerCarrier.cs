@@ -18,7 +18,12 @@ public class SpawnerCarrier : MonoBehaviour
 
     private void Awake()
     {
-        wheelcartController = GameObject.FindGameObjectWithTag("DefendableObject").GetComponent<WheelcartController>();
+        WheelcartController.OnWheelCartSpawned += HandleWheelCartSpawned;
+    }
+
+    private void HandleWheelCartSpawned(WheelcartController controller)
+    {
+        wheelcartController = controller;
     }
 
     private void OnEnable()
@@ -35,6 +40,8 @@ public class SpawnerCarrier : MonoBehaviour
         {
             wheelcartController.OnBlockWheelcartRequested -= PausePlaySpawner;
         }
+
+        WheelcartController.OnWheelCartSpawned -= HandleWheelCartSpawned;
     }
 
     private void Start()
