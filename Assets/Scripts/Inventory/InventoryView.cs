@@ -12,7 +12,7 @@ public class InventoryView : MonoBehaviour
         PlayerPresenter.OnPlayerSpawned += HandlePlayerSpawned;
     }
 
-    private void HandlePlayerSpawned(PlayerPresenter playerPresenter)
+    private void HandlePlayerSpawned(PlayerPresenter playerPresenter = null)
     {
         container = GameObject.FindObjectOfType<HUDView>(true).GetInvetoryMenu();
         if (container != null)
