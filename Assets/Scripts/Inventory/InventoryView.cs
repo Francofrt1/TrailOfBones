@@ -15,10 +15,16 @@ public class InventoryView : MonoBehaviour
     private void HandlePlayerSpawned(PlayerPresenter playerPresenter)
     {
         container = GameObject.Find("InventoryMenu");
-
-        for (int i = 0; i < container.transform.childCount; i++)
+        if (container != null)
         {
-            slots.Add(container.transform.GetChild(i).gameObject);
+            for (int i = 0; i < container.transform.childCount; i++)
+            {
+                slots.Add(container.transform.GetChild(i).gameObject);
+            }
+        }
+        else
+        {
+            Debug.LogError("Inventory container not found!");
         }
     }
 
