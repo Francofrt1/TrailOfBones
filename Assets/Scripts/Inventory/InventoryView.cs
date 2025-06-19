@@ -25,9 +25,17 @@ public class InventoryView : NetworkBehaviour
 
     private void HandlePlayerSpawned(PlayerPresenter playerPresenter = null)
     {
-        container = GameObject.FindObjectOfType<HUDView>(true).GetInvetoryMenu();
+        var hudView = GameObject.FindObjectOfType<HUDView>(true);
+        if (hudView == null)
+        {
+            Debug.LogError("HUDView not found!");
+            return;
+        }
+
+        container = hudView.GetInvetoryMenu();
         if (container != null)
         {
+            slots.Clear();
             for (int i = 0; i < container.transform.childCount; i++)
             {
                 slots.Add(container.transform.GetChild(i).gameObject);
