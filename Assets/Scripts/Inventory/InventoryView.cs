@@ -7,14 +7,24 @@ public class InventoryView : MonoBehaviour
 {
     private List<GameObject> slots = new List<GameObject>();
     private GameObject container;
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        container = GameObject.Find("InventoryMenu");
+        PlayerPresenter.OnPlayerSpawned += HandlePlayerSpawned;
+    }
 
-        for (int i = 0; i < container.transform.childCount; i++)
+    private void HandlePlayerSpawned(PlayerPresenter playerPresenter)
+    {
+        container = GameObject.FindObjectOfType<HUDView>(true).GetInvetoryMenu();
+        if (container != null)
         {
-            slots.Add(container.transform.GetChild(i).gameObject);
+            for (int i = 0; i < container.transform.childCount; i++)
+            {
+                slots.Add(container.transform.GetChild(i).gameObject);
+            }
+        }
+        else
+        {
+            Debug.LogError("Inventory container not found!");
         }
     }
 

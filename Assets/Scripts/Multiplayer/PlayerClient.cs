@@ -91,7 +91,7 @@ namespace Multiplayer.PlayerSystem
                 }
             }
 
-            if(IsOwner)
+            if (IsOwner)
             {
                 Cursor.lockState = CursorLockMode.Locked;
             }

@@ -3585,7 +3585,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45784af91964b8e4cb051ba50b56ec88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  autoInitialize: 0
+  autoInitialize: 1
   views:
   - {fileID: 1219227349}
   - {fileID: 302645801}
@@ -6198,6 +6198,7 @@ MonoBehaviour:
   playerHealthText: {fileID: 224888104}
   wheelcartHealthText: {fileID: 1047734617}
   progressBar: {fileID: 1838573008}
+  inventoryMenu: {fileID: 417821467}
 --- !u!1001 &1227558876
 PrefabInstance:
   m_ObjectHideFlags: 0

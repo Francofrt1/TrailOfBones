@@ -1,9 +1,9 @@
 using Assets.Scripts.Interfaces;
 using FishNet;
 using FishNet.Managing.Scened;
+using FishNet.Object;
 using Multiplayer;
 using Multiplayer.PlayerSystem;
-using Multiplayer.PopupSystem;
 using Multiplayer.Steam;
 using Multiplayer.Utils;
 using System;
@@ -166,15 +166,6 @@ public class GameManager : BaseNetworkBehaviour
         }
     }
 
-    private void OnEnable()
-    {
-        
-    }
-
-    void OnDisable()
-    {
-    }
-
     void Start()
     {
         Debug.Log("Game Started");
@@ -183,6 +174,7 @@ public class GameManager : BaseNetworkBehaviour
     public void WinScreen()
     {
         Time.timeScale = 0f;
+        SetCursorState(true);
         ViewManager.Instance.Show<WinView>();
         Debug.Log("Game Over, you win.");
     }
@@ -190,6 +182,7 @@ public class GameManager : BaseNetworkBehaviour
     public void GameOverScreen()
     {
         Time.timeScale = 0f;
+        SetCursorState(true);
         ViewManager.Instance.Show<LoseView>();
     }
 
