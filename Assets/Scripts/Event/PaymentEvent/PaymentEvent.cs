@@ -1,9 +1,11 @@
+using Assets.Scripts.Interfaces;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Steamworks.InventoryItem;
 
-public class PaymentEvent : MonoBehaviour
+public class PaymentEvent : MonoBehaviour, IUseInventory
 {
     private WheelcartController wheelcart;
     private StopWheelcarEvent stopWheelcarEvent;
@@ -44,10 +46,26 @@ public class PaymentEvent : MonoBehaviour
     {
         wheelcart = wheelcartController;
     }
-
-    public void StorageBones(int amount)
+    public void CompletePayment()
     {
-        model.setBones(amount);
+        model.UseAllBones();
+        OnPaymentCompleted?.Invoke();
+        wheelcart.StopPlayWheelcar(false);
+    }
+
+    public bool CanInteract(Vector3 playerPosition)
+    {
+        return Vector3.Distance(playerPosition, transform.position) < model.interactionDistance;
+    }
+
+    public int NeededToMake()
+    {
+        return model.BonesNeededToPay();
+    }
+
+    public void StorageItem(int itemAmount)
+    {
+        model.setBones(itemAmount);
         OnChangedBonesStorage?.Invoke(model.GetBonesStorage());
 
         if (model.GetBonesStorage() >= model.GetBonesToPay())
@@ -56,15 +74,8 @@ public class PaymentEvent : MonoBehaviour
         }
     }
 
-    public int NeededBonesToPay()
+    public ItemType ItemTypeNeeded()
     {
-        return model.BonesNeededToPay();
-    }
-
-    public void CompletePayment()
-    {
-        model.UseAllBones();
-        OnPaymentCompleted?.Invoke();
-        wheelcart.StopPlayWheelcar(false);
+        return ItemType.Bone;
     }
 }

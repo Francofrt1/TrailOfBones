@@ -7,7 +7,8 @@ public class WheelcartModel : MonoBehaviour
     public float currentHealth { get; private set; }
 
     public int logStorage = 0;
-    public const int logToRepair = 5; // cambiar este valor si se desea que se necesiten más o menos troncos para reparar el carro.
+    public const int logToRepair = 5;
+    public float interactionDistance = 10.0f;
 
     public void Awake()
     {

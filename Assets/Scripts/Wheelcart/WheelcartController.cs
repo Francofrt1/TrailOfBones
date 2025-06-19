@@ -1,10 +1,11 @@
 using Assets.Scripts.Interfaces;
 using System;
 using UnityEngine;
+using static Steamworks.InventoryItem;
 
 [RequireComponent(typeof(WheelcartModel))]
 [RequireComponent(typeof(WheelcartMovement))]
-public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVariation, IWheelcartDuration
+public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVariation, IWheelcartDuration, IUseInventory
 {
     private WheelcartModel wheelcartModel;
     private WheelcartMovement wheelcartMovement;
@@ -63,25 +64,9 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
         return gameObject.tag;
     }
 
-    public void StorageLog(int amount)
-    {
-        wheelcartModel.AddLog(amount);
-        OnChangedLogStorage?.Invoke(wheelcartModel.logStorage);
-
-        if (wheelcartModel.logStorage >= WheelcartModel.logToRepair)
-        {
-            Repair();
-        }
-    }
-
     public bool NeedRepair()
     {
         return wheelcartModel.currentHealth <= wheelcartModel.StopWheelcartPercent();
-    }
-
-    public int NeededLogsToRepair()
-    {
-        return wheelcartModel.LogsNeededToRepair();
     }
 
     public void Repair()
@@ -96,5 +81,31 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
     public void StopPlayWheelcar(bool isPaused)
     {
         OnBlockWheelcartRequested?.Invoke(isPaused);
+    }
+
+    public bool CanInteract(Vector3 playerPosition)
+    {
+        return Vector3.Distance(playerPosition, transform.position) < wheelcartModel.interactionDistance && NeedRepair();
+    }
+
+    public int NeededToMake()
+    {
+        return wheelcartModel.LogsNeededToRepair();
+    }
+
+    public void StorageItem(int itemAmount)
+    {
+        wheelcartModel.AddLog(itemAmount);
+        OnChangedLogStorage?.Invoke(wheelcartModel.logStorage);
+
+        if (wheelcartModel.logStorage >= WheelcartModel.logToRepair)
+        {
+            Repair();
+        }
+    }
+
+    public ItemType ItemTypeNeeded()
+    {
+        return ItemType.WoodLog;
     }
 }
