@@ -395,7 +395,5 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
                 return;
             }
         }
-                }
-            }
     }
 }

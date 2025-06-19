@@ -1,8 +1,9 @@
-using System;
+using Assets.Scripts.Interfaces;
 using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+
 
 public class HUDView : View
 {
@@ -10,7 +11,6 @@ public class HUDView : View
     [SerializeField] private Slider wheelcartHealthBar = null;
     [SerializeField] private TextMeshProUGUI playerHealthText = null;
     [SerializeField] private TextMeshProUGUI wheelcartHealthText = null;
-    [SerializeField] private Slider progressBar = null;
     [SerializeField] private GameObject inventoryMenu = null;
 
     private IHealthVariation playerHealthEvents;
@@ -40,12 +40,6 @@ public class HUDView : View
     {
         wheelcartHealthEvents = wheelcartHealthVariation;
         wheelcartHealthEvents.OnHealthVariation += UpdateWheelcartHealthbar;
-    }
-
-    public void SetWheelcartDuration(IWheelcartDuration wheelcartDuration)
-    {
-        wheelcartDurationEvents = wheelcartDuration;
-        wheelcartDurationEvents.OnWheelcartDuration += SetProgressBarMaxLimit;
     }
 
     public GameObject GetInvetoryMenu()
