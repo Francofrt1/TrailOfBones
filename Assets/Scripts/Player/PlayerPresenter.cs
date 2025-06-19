@@ -57,15 +57,24 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
         groundLayer = LayerMask.GetMask("groundLayer");
         wheelcartFloorLayer = LayerMask.GetMask("WheelcartFloorLayer");
         AssignEvents();
+        InitializeHUD();
+
         OnPlayerSpawned?.Invoke(this);
+    }
+
+    private void InitializeHUD()
+    {
+        if (!IsOwner) return;
+        ViewManager.Instance.Initialize();
     }
 
     public override void OnStartClient()
     {
         base.OnStartClient();
-        if (!base.IsOwner)
+        if (!IsOwner)
         {
             this.enabled = false;
+            return;
         }
     }
 
@@ -76,6 +85,7 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
 
     private void AssignEvents()
     {
+        if (!IsOwner) return;
         inputHandler.OnMovePerformed += OnMovePerformed;
         inputHandler.OnMoveCanceled += OnMoveCanceled;
         inputHandler.OnJumpPerformed += OnJumpPerformed;
@@ -83,6 +93,7 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
         inputHandler.OnAttack += OnAttack;
         inputHandler.OnSprint += OnSprint;
         inputHandler.OnUseInventory += UseItems;
+        inputHandler.OnPauseTogglePerformed += playerView.TogglePauseMenu;
         playerView.OnAttackStateChanged += OnAttackStateChanged;
     }
 
@@ -108,7 +119,6 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
 
     private void Update()
     {
-
         if (!playerModel.IsGrounded)
         {
             playerModel.UpdateFallingTime(Time.deltaTime);
@@ -287,7 +297,7 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
     {
         playerModel.SetAttackState(isAttacking);
     }
-    
+
     public void OnAttack()
     {
         playerView.CheckIsAttacking();
@@ -371,49 +381,47 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
              * cambiar para hacer que no dependa de la referencia a la carreta (enviar evento de reparacion?).
              * Hacer una interfaz interactable y hacer que funcione a partir de ahi sin necesidad de ver que tipo de objeto es*/
 
-        
-           
-            GameObject wheelcart = GameObject.FindGameObjectWithTag("DefendableObject");
-            
-            if (wheelcart == null) return;
-            if (Vector3.Distance(this.transform.position, wheelcart.transform.position) < 10 && wheelcart.GetComponent<WheelcartController>().NeedRepair())
-            {
-                int logsToSend = wheelcart.GetComponent<WheelcartController>().NeededLogsToRepair();
-                int logsInInventory = inventoryController.GetItemQuantity(ItemType.WoodLog);
-                if (logsToSend >= logsInInventory)
-                {
-                    inventoryController.HandleUseItem(ItemType.WoodLog, logsInInventory);
-                    wheelcart.GetComponent<WheelcartController>().StorageLog(logsInInventory);
-                }
-                else
-                {
-                    inventoryController.HandleUseItem(ItemType.WoodLog, logsToSend);
-                    wheelcart.GetComponent<WheelcartController>().StorageLog(logsToSend);
-                }
-                return;
-            }
+        GameObject wheelcart = GameObject.FindGameObjectWithTag("DefendableObject");
 
-            GameObject paymentEvent = GameObject.FindGameObjectWithTag("PaymentEvent");
-            if (paymentEvent == null) return;
-            
-            if(Vector3.Distance(this.transform.position, paymentEvent.transform.position) < 5.5f)
+        if (wheelcart == null) return;
+        if (Vector3.Distance(this.transform.position, wheelcart.transform.position) < 10 && wheelcart.GetComponent<WheelcartController>().NeedRepair())
+        {
+            int logsToSend = wheelcart.GetComponent<WheelcartController>().NeededLogsToRepair();
+            int logsInInventory = inventoryController.GetItemQuantity(ItemType.WoodLog);
+            if (logsToSend >= logsInInventory)
             {
-                PaymentEvent paymentEventController = paymentEvent.GetComponent<PaymentEvent>();
-                if (paymentEventController == null) return;
-                
-                int bonesToSend = paymentEventController.NeededBonesToPay();
-                int bonesInInventory = inventoryController.GetItemQuantity(ItemType.Bone);
-                
-                if (bonesToSend >= bonesInInventory)
-                {
-                    inventoryController.HandleUseItem(ItemType.Bone, bonesInInventory);
-                    paymentEventController.StorageBones(bonesInInventory);
-                }
-                else
-                {
-                    inventoryController.HandleUseItem(ItemType.Bone, bonesToSend);
-                    paymentEventController.StorageBones(bonesToSend);
-                }
+                inventoryController.HandleUseItem(ItemType.WoodLog, logsInInventory);
+                wheelcart.GetComponent<WheelcartController>().StorageLog(logsInInventory);
             }
+            else
+            {
+                inventoryController.HandleUseItem(ItemType.WoodLog, logsToSend);
+                wheelcart.GetComponent<WheelcartController>().StorageLog(logsToSend);
+            }
+            return;
+        }
+
+        GameObject paymentEvent = GameObject.FindGameObjectWithTag("PaymentEvent");
+        if (paymentEvent == null) return;
+
+        if (Vector3.Distance(this.transform.position, paymentEvent.transform.position) < 5.5f)
+        {
+            PaymentEvent paymentEventController = paymentEvent.GetComponent<PaymentEvent>();
+            if (paymentEventController == null) return;
+
+            int bonesToSend = paymentEventController.NeededBonesToPay();
+            int bonesInInventory = inventoryController.GetItemQuantity(ItemType.Bone);
+
+            if (bonesToSend >= bonesInInventory)
+            {
+                inventoryController.HandleUseItem(ItemType.Bone, bonesInInventory);
+                paymentEventController.StorageBones(bonesInInventory);
+            }
+            else
+            {
+                inventoryController.HandleUseItem(ItemType.Bone, bonesToSend);
+                paymentEventController.StorageBones(bonesToSend);
+            }
+        }
     }
 }
