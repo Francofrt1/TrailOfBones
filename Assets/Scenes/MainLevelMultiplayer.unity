@@ -3585,7 +3585,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45784af91964b8e4cb051ba50b56ec88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  autoInitialize: 0
+  autoInitialize: 1
   views:
   - {fileID: 1219227349}
   - {fileID: 302645801}
