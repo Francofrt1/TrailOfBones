@@ -75,6 +75,12 @@ namespace Multiplayer.PlayerSystem
         [ObserversRpc]
         public void Rpc_ToggleController(bool value)
         {
+            if (IsOwner)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                ViewManager.Instance.Initialize();
+            }
+
             inMenuContainer.SetActive(!value);
             inGameContainer.SetActive(value);
 
@@ -89,12 +95,6 @@ namespace Multiplayer.PlayerSystem
                 {
                     component.enabled = !value;
                 }
-            }
-
-            if(IsOwner)
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-                ViewManager.Instance.Initialize();
             }
         }
 
