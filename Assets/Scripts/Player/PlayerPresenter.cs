@@ -57,13 +57,15 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
         groundLayer = LayerMask.GetMask("groundLayer");
         wheelcartFloorLayer = LayerMask.GetMask("WheelcartFloorLayer");
         AssignEvents();
-
-        if (GameManager.Instance.CurrentGameState == GameManager.GameState.Playing)
-        {
-            ViewManager.Instance.Initialize();
-        }
+        InitializeHUD();
 
         OnPlayerSpawned?.Invoke(this);
+    }
+
+    private void InitializeHUD()
+    {
+        if (!IsOwner) return;
+        ViewManager.Instance.Initialize();
     }
 
     public override void OnStartClient()
