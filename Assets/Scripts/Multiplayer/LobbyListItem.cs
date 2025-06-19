@@ -19,9 +19,9 @@ public class LobbyListItem : MonoBehaviour
 
     public void JoinLobby()
     {
-        MultiplayerMenu.ChangeCamera();
         GameManager.Instance.SetCurrentGameState(GameState.InLobby);
         InstanceFinder.TransportManager.GetTransport<Multipass>().SetClientTransport<FishyFacepunch.FishyFacepunch>();
         SteamLobby.Singleton.JoinLobbyAsync(_lobby);
+        ViewManager.Instance.Show<PartyView>();
     }
 }

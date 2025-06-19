@@ -110,7 +110,6 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
 
     private void Update()
     {
-
         if (!playerModel.IsGrounded)
         {
             playerModel.UpdateFallingTime(Time.deltaTime);
@@ -372,8 +371,6 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
         /*TO DO: 
              * cambiar para hacer que no dependa de la referencia a la carreta (enviar evento de reparacion?).
              * Hacer una interfaz interactable y hacer que funcione a partir de ahi sin necesidad de ver que tipo de objeto es*/
-
-
 
         GameObject wheelcart = GameObject.FindGameObjectWithTag("DefendableObject");
 
