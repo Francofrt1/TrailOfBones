@@ -2,6 +2,7 @@ using Assets.Scripts.Interfaces;
 using FishNet;
 using FishNet.Managing.Scened;
 using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using Multiplayer;
 using Multiplayer.PlayerSystem;
 using Multiplayer.Steam;
@@ -27,9 +28,10 @@ public class GameManager : BaseNetworkBehaviour
 
     private HUDView hudView;
     private WheelcartMovement wheelcartMovement;
-    private InputHandler playerInputHandler;
     public List<GameObject> treePrefab;
     private int deadPlayers = 0;
+    public readonly SyncVar<bool> MatchWin = new SyncVar<bool>();
+    public readonly SyncVar<bool> GameOver = new SyncVar<bool>();
 
     [SerializeField] private GameObject wheelCartPrefab;    
 
@@ -48,6 +50,8 @@ public class GameManager : BaseNetworkBehaviour
         }
 
         SetCurrentGameState(GameState.InMenu);
+        //MatchWin.OnChange += WinScreen;
+        GameOver.OnChange += GameOverScreen;
     }
 
     public void GenerateForest()
@@ -154,8 +158,8 @@ public class GameManager : BaseNetworkBehaviour
             var wheelCart = GameObject.FindObjectOfType<WheelcartController>();
             var wheelcartDurationEvent = wheelCart.GetComponent<IWheelcartDuration>();
             var wheelcartEvents = wheelCart.GetComponent<IHealthVariation>();
-            wheelcartEvents.OnDie += GameOverScreen;
-            wheelcartMovement.Completed += WinScreen;
+            wheelcartEvents.OnDie += () => Cmd_GameOver();
+            wheelcartMovement.Completed += () => Cmd_WinMatch();
             hudView.SetWheelcartHealthEvent(wheelcartEvents);
             hudView.SetWheelcartDuration(wheelcartDurationEvent);
             wheelCart.GetComponent<WheelcartController>().OnWheelcartSpawned();
@@ -171,7 +175,7 @@ public class GameManager : BaseNetworkBehaviour
         Debug.Log("Game Started");
     }
 
-    public void WinScreen()
+    private void WinScreen(bool prev, bool value, bool asserver)
     {
         Time.timeScale = 0f;
         SetCursorState(true);
@@ -179,7 +183,7 @@ public class GameManager : BaseNetworkBehaviour
         Debug.Log("Game Over, you win.");
     }
 
-    public void GameOverScreen()
+    public void GameOverScreen(bool prev, bool value, bool asserver)
     {
         Time.timeScale = 0f;
         SetCursorState(true);
@@ -198,11 +202,7 @@ public class GameManager : BaseNetworkBehaviour
 
     protected override void UnregisterEvents()
     {
-        if (wheelcartMovement != null)
-        {
-            wheelcartMovement.Completed -= WinScreen;
-        }
-
+        wheelcartMovement.Completed -= () => Cmd_WinMatch();
         PlayerPresenter.OnPlayerSpawned -= HandlePlayerSpawned;
     }
 
@@ -293,7 +293,7 @@ public class GameManager : BaseNetworkBehaviour
         int totalClients = GameObject.FindObjectsByType<PlayerClient>(FindObjectsInactive.Include, FindObjectsSortMode.None).Length;
         if (deadPlayers >= totalClients)
         {
-            GameOverScreen();
+            Cmd_GameOver();
         }
     }
 
@@ -328,5 +328,23 @@ public class GameManager : BaseNetworkBehaviour
         hudView = GameObject.FindObjectOfType<HUDView>(true);
         _subscribeToPlayerPresenter(player.gameObject.GetComponent<IHealthVariation>());
         _subscribeToWheelcart();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void Cmd_WinMatch()
+    {
+        MatchWin.Value = !MatchWin.Value;
+    }
+
+    [ObserversRpc(BufferLast = false)]
+    private void Rpc_ShowGameOverScreen()
+    {
+        GameOverScreen(false, true, false);
+    }
+
+    public void Cmd_GameOver()
+    {
+        GameOver.Value = !GameOver.Value;
+        Rpc_ShowGameOverScreen();
     }
 }
