@@ -57,15 +57,17 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
         groundLayer = LayerMask.GetMask("groundLayer");
         wheelcartFloorLayer = LayerMask.GetMask("WheelcartFloorLayer");
         AssignEvents();
+
         OnPlayerSpawned?.Invoke(this);
     }
 
     public override void OnStartClient()
     {
         base.OnStartClient();
-        if (!base.IsOwner)
+        if (!IsOwner)
         {
             this.enabled = false;
+            return;
         }
     }
 
@@ -76,6 +78,7 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
 
     private void AssignEvents()
     {
+        if (!IsOwner) return;
         inputHandler.OnMovePerformed += OnMovePerformed;
         inputHandler.OnMoveCanceled += OnMoveCanceled;
         inputHandler.OnJumpPerformed += OnJumpPerformed;
@@ -83,6 +86,7 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
         inputHandler.OnAttack += OnAttack;
         inputHandler.OnSprint += OnSprint;
         inputHandler.OnUseInventory += UseItems;
+        inputHandler.OnPauseTogglePerformed += playerView.TogglePauseMenu;
         playerView.OnAttackStateChanged += OnAttackStateChanged;
     }
 
@@ -108,7 +112,6 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
 
     private void Update()
     {
-
         if (!playerModel.IsGrounded)
         {
             playerModel.UpdateFallingTime(Time.deltaTime);
@@ -287,7 +290,7 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
     {
         playerModel.SetAttackState(isAttacking);
     }
-    
+
     public void OnAttack()
     {
         playerView.CheckIsAttacking();
@@ -392,5 +395,7 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
                 return;
             }
         }
+                }
+            }
     }
 }

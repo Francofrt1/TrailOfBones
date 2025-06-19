@@ -1,10 +1,11 @@
+using FishNet.Object;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(InventoryModel))]
 [RequireComponent(typeof(InventoryView))]
-public class InventoryController : MonoBehaviour
+public class InventoryController : NetworkBehaviour
 {
     private InventoryModel model;
     private InventoryView View;
@@ -13,6 +14,16 @@ public class InventoryController : MonoBehaviour
     {
         model = GetComponent<InventoryModel>();
         View = GetComponent<InventoryView>();
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        if (!IsOwner)
+        {
+            this.enabled = false;
+            return;
+        }
     }
 
     public bool canBeSaved(Item item)

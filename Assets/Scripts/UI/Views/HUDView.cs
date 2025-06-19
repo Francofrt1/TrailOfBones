@@ -1,15 +1,17 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-using Assets.Scripts.Interfaces;
 
-public class HUD : MonoBehaviour
+public class HUDView : View
 {
-    public Slider playerHealthBar = null;
-    public Slider wheelcartHealthBar = null;
-    public TextMeshProUGUI playerHealthText = null;
-    public TextMeshProUGUI wheelcartHealthText = null;
-    public Slider progressBar = null;
+    [SerializeField] private Slider playerHealthBar = null;
+    [SerializeField] private Slider wheelcartHealthBar = null;
+    [SerializeField] private TextMeshProUGUI playerHealthText = null;
+    [SerializeField] private TextMeshProUGUI wheelcartHealthText = null;
+    [SerializeField] private Slider progressBar = null;
+    [SerializeField] private GameObject inventoryMenu = null;
 
     private IHealthVariation playerHealthEvents;
     private IHealthVariation wheelcartHealthEvents;
@@ -18,7 +20,7 @@ public class HUD : MonoBehaviour
     {
         playerHealthBar.maxValue = maxHealth;
         playerHealthBar.value = playerHealthAmount;
-        playerHealthText.text = "HP: " + playerHealthAmount.ToString(); 
+        playerHealthText.text = "HP: " + playerHealthAmount.ToString();
     }
 
     public void UpdateWheelcartHealthbar(float wheelcartHealthAmount, float maxHealth)
@@ -38,5 +40,16 @@ public class HUD : MonoBehaviour
     {
         wheelcartHealthEvents = wheelcartHealthVariation;
         wheelcartHealthEvents.OnHealthVariation += UpdateWheelcartHealthbar;
+    }
+
+    public void SetWheelcartDuration(IWheelcartDuration wheelcartDuration)
+    {
+        wheelcartDurationEvents = wheelcartDuration;
+        wheelcartDurationEvents.OnWheelcartDuration += SetProgressBarMaxLimit;
+    }
+
+    public GameObject GetInvetoryMenu()
+    {
+        return inventoryMenu;
     }
 }
