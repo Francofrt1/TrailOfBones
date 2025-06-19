@@ -9,9 +9,13 @@ public class LootableObject : NetworkBehaviour, IDamageable, IDeath
     private float health = 30f;
     [SerializeField]
     private GameObject item;
+    [SerializeField]
+    private ParticleSystem particles;
 
     public void TakeDamage(float damageAmout, string hittedById)
     {
+        particles.Play();
+        if (particles.isPlaying) Debug.Log("esta andando despues");
         health -= damageAmout;
 
         if(health <= 0) { 
