@@ -1,6 +1,7 @@
 ﻿using System;
 using FishNet;
 using FishNet.Managing.Scened;
+using Multiplayer.PopupSystem;
 using UnityEngine;
 using SceneManager = UnityEngine.SceneManagement.SceneManager;
 
@@ -20,6 +21,18 @@ namespace Multiplayer
         private void Awake()
         {
             _instance = this;
+            InstanceFinder.SceneManager.OnLoadStart += HandleLoadStart;
+            InstanceFinder.SceneManager.OnLoadEnd += HandleLoadEnd;
+        }
+
+        private void HandleLoadStart(SceneLoadStartEventArgs args)
+        {
+            PopupManager.Popup_Show(new PopupContent("LOADING", "Please Wait..."));
+        }
+
+        private void HandleLoadEnd(SceneLoadEndEventArgs args)
+        {
+            PopupManager.Popup_Close();
         }
 
         public static void ChangeScene(EScenes scene, bool asServer = false)
@@ -47,11 +60,10 @@ namespace Multiplayer
                 SceneLoadData sld = new SceneLoadData(scene);
                 sld.ReplaceScenes = ReplaceOption.All;
                 InstanceFinder.SceneManager.LoadGlobalScenes(sld);
-
                 return;
             }
 
-            SceneManager.LoadScene(scene);
+            SceneManager.LoadSceneAsync(scene);
         }
     }
 }

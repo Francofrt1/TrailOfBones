@@ -59,7 +59,7 @@ public class PartyView : View
             return;
         }
 
-        GameManager.Instance.SetCurrentGameState(GameState.Playing);
+        GameManager.Instance.SetCurrentGameState(GameState.StartMatch);
     }
 
     private void OnLeaveLobbyButtonClicked()

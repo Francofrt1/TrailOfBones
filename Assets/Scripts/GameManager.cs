@@ -3,6 +3,7 @@ using FishNet;
 using FishNet.Managing.Scened;
 using Multiplayer;
 using Multiplayer.PlayerSystem;
+using Multiplayer.PopupSystem;
 using Multiplayer.Steam;
 using Multiplayer.Utils;
 using System;
@@ -18,6 +19,7 @@ public class GameManager : BaseNetworkBehaviour
         InMenu,
         InLobby,
         Loading,
+        StartMatch,
         Playing,
         End
     }
@@ -224,10 +226,11 @@ public class GameManager : BaseNetworkBehaviour
                 // Handle lobby state
                 break;
             case GameState.Loading:
-                // Handle loading state
+                break;
+            case GameState.StartMatch:
+                StartMatch();
                 break;
             case GameState.Playing:
-                StartMatch();
                 break;
             case GameState.End:
                 EndMatch();
@@ -256,6 +259,7 @@ public class GameManager : BaseNetworkBehaviour
         {
             if (obj.LoadedScenes[0].name != "MainLevelMultiplayer") return;
             InstanceFinder.SceneManager.OnLoadEnd -= InitializeMatch;
+            SetCurrentGameState(GameState.Playing);
             GenerateForest();
             SpawnWheelCart();
             PlayerPresenter.OnPlayerSpawned += HandlePlayerSpawned;
