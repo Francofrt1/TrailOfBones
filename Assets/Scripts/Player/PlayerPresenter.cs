@@ -57,6 +57,12 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
         groundLayer = LayerMask.GetMask("groundLayer");
         wheelcartFloorLayer = LayerMask.GetMask("WheelcartFloorLayer");
         AssignEvents();
+
+        if (GameManager.Instance.CurrentGameState == GameManager.GameState.Playing)
+        {
+            ViewManager.Instance.Initialize();
+        }
+
         OnPlayerSpawned?.Invoke(this);
     }
 
