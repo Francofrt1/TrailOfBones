@@ -11,6 +11,7 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
     private WheelcartMovement wheelcartMovement;
 
     public event Action OnDie;
+    public static event Action<WheelcartController> OnWheelCartSpawned;
     public event Action<float, float> OnHealthVariation;
     public event Action<float> OnWheelcartDuration;
     public event Action<bool> OnBlockWheelcartRequested;
@@ -34,6 +35,7 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
         OnWheelcartDuration?.Invoke(wheelcartMovement.GetDuration());
         OnHealthVariation?.Invoke(wheelcartModel.currentHealth, wheelcartModel.maxHealth);
         OnSetMaxLogStorageUI?.Invoke(wheelcartModel.GetLogToRepair());
+        OnWheelCartSpawned?.Invoke(this);
     }
 
     public void TakeDamage(float damageAmout, string hittedById)
