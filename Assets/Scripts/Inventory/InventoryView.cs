@@ -1,9 +1,10 @@
+using FishNet.Object;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InventoryView : MonoBehaviour
+public class InventoryView : NetworkBehaviour
 {
     private List<GameObject> slots = new List<GameObject>();
     private GameObject container;
@@ -12,11 +13,29 @@ public class InventoryView : MonoBehaviour
         PlayerPresenter.OnPlayerSpawned += HandlePlayerSpawned;
     }
 
-    private void HandlePlayerSpawned(PlayerPresenter playerPresenter)
+    public override void OnStartClient()
     {
-        container = GameObject.FindObjectOfType<HUDView>(true).GetInvetoryMenu();
+        base.OnStartClient();
+        if (!IsOwner)
+        {
+            this.enabled = false;
+            return;
+        }
+    }
+
+    private void HandlePlayerSpawned(PlayerPresenter playerPresenter = null)
+    {
+        var hudView = GameObject.FindObjectOfType<HUDView>(true);
+        if (hudView == null)
+        {
+            Debug.LogError("HUDView not found!");
+            return;
+        }
+
+        container = hudView.GetInvetoryMenu();
         if (container != null)
         {
+            slots.Clear();
             for (int i = 0; i < container.transform.childCount; i++)
             {
                 slots.Add(container.transform.GetChild(i).gameObject);

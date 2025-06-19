@@ -1,13 +1,24 @@
+using FishNet.Object;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InventoryModel : MonoBehaviour
+public class InventoryModel : NetworkBehaviour
 {
     private Dictionary<ItemType, (int quantity,Sprite sprite)> inventory = new Dictionary<ItemType, (int, Sprite)>();
 
     private const int LIMITITEMAMOUNT = 99;
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        if (!IsOwner)
+        {
+            this.enabled = false;
+            return;
+        }
+    }
     public void AddItem(Item item)
     {
         if (!inventory.ContainsKey(item.GetItemType())) 
