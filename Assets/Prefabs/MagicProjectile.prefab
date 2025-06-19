@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3396086043546370849}
   - component: {fileID: 1857054843629599570}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Trail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -170,7 +170,7 @@ GameObject:
   - component: {fileID: 4560628370960390203}
   - component: {fileID: 6642456031246821470}
   - component: {fileID: -4514242330362092553}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: MagicProjectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -419,9 +419,29 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1401066475044691109, guid: f616b4490bd50fa41b2becf9f7f6b160, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 1401192509640781335, guid: f616b4490bd50fa41b2becf9f7f6b160, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 1401514248089330933, guid: f616b4490bd50fa41b2becf9f7f6b160, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     - target: {fileID: 1401539386437934245, guid: f616b4490bd50fa41b2becf9f7f6b160, type: 3}
       propertyPath: m_Name
       value: MagicFire
+      objectReference: {fileID: 0}
+    - target: {fileID: 1401539386437934245, guid: f616b4490bd50fa41b2becf9f7f6b160, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 1401957154335739331, guid: f616b4490bd50fa41b2becf9f7f6b160, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -446,13 +466,33 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 9012142553013199403}
     m_Modifications:
+    - target: {fileID: 1080554763449460, guid: 67a684e320da6e7439421a07e3fa265c, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 1169958064465980, guid: 67a684e320da6e7439421a07e3fa265c, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 1422804397384892, guid: 67a684e320da6e7439421a07e3fa265c, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     - target: {fileID: 1845955007268882, guid: 67a684e320da6e7439421a07e3fa265c, type: 3}
       propertyPath: m_Name
       value: Explosion
       objectReference: {fileID: 0}
     - target: {fileID: 1845955007268882, guid: 67a684e320da6e7439421a07e3fa265c, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 1845955007268882, guid: 67a684e320da6e7439421a07e3fa265c, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1988778204445182, guid: 67a684e320da6e7439421a07e3fa265c, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 1988778204445182, guid: 67a684e320da6e7439421a07e3fa265c, type: 3}
       propertyPath: m_IsActive

@@ -22,8 +22,8 @@ TagManager:
   - WheelCartLayer
   - TerrainElements
   - WheelcartFloorLayer
-  - 
-  - 
+  - AttackAreaLayer
+  - ProjectileLayer
   - 
   - 
   - 

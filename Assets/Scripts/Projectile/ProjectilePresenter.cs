@@ -22,6 +22,12 @@ public class ProjectilePresenter : NetworkBehaviour, IShootable
         _selfCollider = GetComponent<Collider>();
     }
 
+    private void Start()
+    {
+        // Undock from any parent transform
+        transform.parent = null;
+    }
+
     void Update()
     {
         PerformMovement();
@@ -30,6 +36,7 @@ public class ProjectilePresenter : NetworkBehaviour, IShootable
     public void Shoot(string shooterID)
     {
         shootedByID = shooterID;
+
         gameObject.SetActive(true);
         StartDeactivationCoroutine(_model.LifeTime);
     }

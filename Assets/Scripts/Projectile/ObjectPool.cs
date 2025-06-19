@@ -27,7 +27,7 @@ public class ObjectPool : NetworkBehaviour
             //ServerManager.Spawn(obj);
 
             obj.name = prefab.name + "_" + i;
-            //obj.SetActive(false);
+
             pool.Add(obj);
         }
     }
@@ -38,7 +38,6 @@ public class ObjectPool : NetworkBehaviour
         {
             if (!obj.activeInHierarchy)
             {
-                //obj.SetActive(true);
                 return obj;
             }
         }
@@ -48,7 +47,6 @@ public class ObjectPool : NetworkBehaviour
         // Instantiante another object if needed
         GameObject newObj = Instantiate(prefab, containerObjects.transform);
         //ServerManager.Spawn(newObj);
-        //newObj.SetActive(true);
         pool.Add(newObj);
         return newObj;
     }

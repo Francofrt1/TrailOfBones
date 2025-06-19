@@ -65,7 +65,7 @@ public abstract class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, 
         }
     }
 
-    private void Start()
+    protected virtual void Start()
     {
         OnHealthVariation?.Invoke(playerModel.currentHealth, playerModel.maxHealth);
         OnPlayerSpawned?.Invoke(this);

@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using Assets.Scripts.Interfaces;
+using FishNet.Object;
 using UnityEngine;
 
-public class ProjectilePoolManager : MonoBehaviour
+public class ProjectilePoolManager : NetworkBehaviour
 {
 
     [SerializeField] private ObjectPool projectilePool;
