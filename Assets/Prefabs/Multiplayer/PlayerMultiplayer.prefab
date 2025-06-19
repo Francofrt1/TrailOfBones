@@ -422,9 +422,9 @@ GameObject:
   - component: {fileID: 6607075912862878340}
   - component: {fileID: 493730807177584159}
   - component: {fileID: 3552347986861586666}
+  - component: {fileID: 7388127204090517677}
   - component: {fileID: 5885265836114090574}
   - component: {fileID: 907125715611279512}
-  - component: {fileID: 7473465992829121439}
   - component: {fileID: 1601677295327338856}
   - component: {fileID: 2589100354167658217}
   - component: {fileID: 1100990833996333090}
@@ -588,6 +588,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mouseSensitivity: 0.5
+--- !u!114 &7388127204090517677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7943082474106197344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f63c1e6b6983c54aa36ba02f7d35e03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 3875465447857652874}
+  _networkObjectCache: {fileID: 0}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  wheelcartFloorLayer:
+    serializedVersion: 2
+    m_Bits: 1024
+  wheelcartBodyLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  cameraPivotGameObject: {fileID: 6087994286176211162}
+  attackAreaGameObject: {fileID: 3673917380631560823}
+  inventoryGameObject: {fileID: 3460482545311094445}
 --- !u!114 &5885265836114090574
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -641,33 +668,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 6eee7f295d5ff8b4f934dec7f44eaf97, type: 3}
   - {fileID: 8300000, guid: 9b1f6289334342841afe6a5a8349e7ec, type: 3}
   - {fileID: 8300000, guid: afeb90013e6764449ae1616f47705ff7, type: 3}
---- !u!114 &7473465992829121439
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7943082474106197344}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ad6a0b36d176f745a659efacbdbcfb2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _componentIndexCache: 255
-  _addedNetworkObject: {fileID: 3875465447857652874}
-  _networkObjectCache: {fileID: 0}
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 128
-  wheelcartFloorLayer:
-    serializedVersion: 2
-    m_Bits: 1024
-  wheelcartBodyLayer:
-    serializedVersion: 2
-    m_Bits: 256
-  cameraPivotGameObject: {fileID: 6087994286176211162}
-  attackAreaGameObject: {fileID: 3673917380631560823}
-  inventoryGameObject: {fileID: 3460482545311094445}
 --- !u!136 &1601677295327338856
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -936,7 +936,7 @@ MonoBehaviour:
   - {fileID: 493730807177584159}
   - {fileID: 3552347986861586666}
   - {fileID: 907125715611279512}
-  - {fileID: 7473465992829121439}
+  - {fileID: 0}
   inGameContainer: {fileID: 7943082474106197344}
   inMenuContainer: {fileID: 8299999261057513521}
   _usernameText: {fileID: 4071943088537988343}

@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, IHealthVariation
+public abstract class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, IHealthVariation
 {
     private Rigidbody rigidBody;
     private Vector2 movementInput;
@@ -18,11 +18,9 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
 
     private Vector3 cartPushbackNormal;
 
-    private PlayerModel playerModel;
-    private PlayerView playerView;
-    private AttackArea attackArea;
+    protected PlayerModel playerModel;
+    protected PlayerView playerView;
     [SerializeField] private GameObject cameraPivotGameObject;
-    [SerializeField] private GameObject attackAreaGameObject;
     [SerializeField] private GameObject inventoryGameObject;
 
     private Transform carrierTransform = null;
@@ -40,7 +38,6 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
         inputHandler = GetComponent<InputHandler>();
         playerModel = GetComponent<PlayerModel>();
         playerView = GetComponent<PlayerView>();
-        attackArea = attackAreaGameObject.GetComponent<AttackArea>();
         inventoryController = inventoryGameObject.GetComponent<InventoryController>();
         if (cameraPivot != null && inputHandler != null)
         {
@@ -57,7 +54,6 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
         groundLayer = LayerMask.GetMask("groundLayer");
         wheelcartFloorLayer = LayerMask.GetMask("WheelcartFloorLayer");
         AssignEvents();
-        OnPlayerSpawned?.Invoke(this);
     }
 
     public override void OnStartClient()
@@ -72,6 +68,7 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
     private void Start()
     {
         OnHealthVariation?.Invoke(playerModel.currentHealth, playerModel.maxHealth);
+        OnPlayerSpawned?.Invoke(this);
     }
 
     private void AssignEvents()
@@ -287,22 +284,18 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
     {
         playerModel.SetAttackState(isAttacking);
     }
-    
+
     public void OnAttack()
     {
         playerView.CheckIsAttacking();
         if (playerModel.CanAttack() == false) return;
         playerView.SetAttackAnimation();
 
-        attackArea.DamageablesInRange.RemoveAll(x => x == null || (x as MonoBehaviour) == null);
-        var damageables = attackArea.DamageablesInRange.Where(x => x.GetTag() == "Enemy");
-        if (!damageables.Any()) return;
-        foreach (IDamageable damageable in damageables)
-        {
-            damageable.TakeDamage(playerModel.baseDamage, playerModel.ID);
-            Debug.Log($"Player did {playerModel.baseDamage} damage to {damageable.GetTag()}");
-        }
+        DoAttack();
     }
+    
+    public abstract void DoAttack();
+
 
     private void OnSprint()
     {
@@ -371,49 +364,49 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
              * cambiar para hacer que no dependa de la referencia a la carreta (enviar evento de reparacion?).
              * Hacer una interfaz interactable y hacer que funcione a partir de ahi sin necesidad de ver que tipo de objeto es*/
 
-        
-           
-            GameObject wheelcart = GameObject.FindGameObjectWithTag("DefendableObject");
-            
-            if (wheelcart == null) return;
-            if (Vector3.Distance(this.transform.position, wheelcart.transform.position) < 10 && wheelcart.GetComponent<WheelcartController>().NeedRepair())
-            {
-                int logsToSend = wheelcart.GetComponent<WheelcartController>().NeededLogsToRepair();
-                int logsInInventory = inventoryController.GetItemQuantity(ItemType.WoodLog);
-                if (logsToSend >= logsInInventory)
-                {
-                    inventoryController.HandleUseItem(ItemType.WoodLog, logsInInventory);
-                    wheelcart.GetComponent<WheelcartController>().StorageLog(logsInInventory);
-                }
-                else
-                {
-                    inventoryController.HandleUseItem(ItemType.WoodLog, logsToSend);
-                    wheelcart.GetComponent<WheelcartController>().StorageLog(logsToSend);
-                }
-                return;
-            }
 
-            GameObject paymentEvent = GameObject.FindGameObjectWithTag("PaymentEvent");
-            if (paymentEvent == null) return;
-            
-            if(Vector3.Distance(this.transform.position, paymentEvent.transform.position) < 5.5f)
+
+        GameObject wheelcart = GameObject.FindGameObjectWithTag("DefendableObject");
+
+        if (wheelcart == null) return;
+        if (Vector3.Distance(this.transform.position, wheelcart.transform.position) < 10 && wheelcart.GetComponent<WheelcartController>().NeedRepair())
+        {
+            int logsToSend = wheelcart.GetComponent<WheelcartController>().NeededLogsToRepair();
+            int logsInInventory = inventoryController.GetItemQuantity(ItemType.WoodLog);
+            if (logsToSend >= logsInInventory)
             {
-                PaymentEvent paymentEventController = paymentEvent.GetComponent<PaymentEvent>();
-                if (paymentEventController == null) return;
-                
-                int bonesToSend = paymentEventController.NeededBonesToPay();
-                int bonesInInventory = inventoryController.GetItemQuantity(ItemType.Bone);
-                
-                if (bonesToSend >= bonesInInventory)
-                {
-                    inventoryController.HandleUseItem(ItemType.Bone, bonesInInventory);
-                    paymentEventController.StorageBones(bonesInInventory);
-                }
-                else
-                {
-                    inventoryController.HandleUseItem(ItemType.Bone, bonesToSend);
-                    paymentEventController.StorageBones(bonesToSend);
-                }
+                inventoryController.HandleUseItem(ItemType.WoodLog, logsInInventory);
+                wheelcart.GetComponent<WheelcartController>().StorageLog(logsInInventory);
             }
+            else
+            {
+                inventoryController.HandleUseItem(ItemType.WoodLog, logsToSend);
+                wheelcart.GetComponent<WheelcartController>().StorageLog(logsToSend);
+            }
+            return;
+        }
+
+        GameObject paymentEvent = GameObject.FindGameObjectWithTag("PaymentEvent");
+        if (paymentEvent == null) return;
+
+        if (Vector3.Distance(this.transform.position, paymentEvent.transform.position) < 5.5f)
+        {
+            PaymentEvent paymentEventController = paymentEvent.GetComponent<PaymentEvent>();
+            if (paymentEventController == null) return;
+
+            int bonesToSend = paymentEventController.NeededBonesToPay();
+            int bonesInInventory = inventoryController.GetItemQuantity(ItemType.Bone);
+
+            if (bonesToSend >= bonesInInventory)
+            {
+                inventoryController.HandleUseItem(ItemType.Bone, bonesInInventory);
+                paymentEventController.StorageBones(bonesInInventory);
+            }
+            else
+            {
+                inventoryController.HandleUseItem(ItemType.Bone, bonesToSend);
+                paymentEventController.StorageBones(bonesToSend);
+            }
+        }
     }
 }
