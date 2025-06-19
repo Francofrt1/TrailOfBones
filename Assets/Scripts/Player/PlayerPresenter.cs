@@ -59,9 +59,10 @@ public abstract class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, 
     public override void OnStartClient()
     {
         base.OnStartClient();
-        if (!base.IsOwner)
+        if (!IsOwner)
         {
             this.enabled = false;
+            return;
         }
     }
 
@@ -73,6 +74,7 @@ public abstract class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, 
 
     private void AssignEvents()
     {
+        if (!IsOwner) return;
         inputHandler.OnMovePerformed += OnMovePerformed;
         inputHandler.OnMoveCanceled += OnMoveCanceled;
         inputHandler.OnJumpPerformed += OnJumpPerformed;
@@ -80,6 +82,7 @@ public abstract class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, 
         inputHandler.OnAttack += OnAttack;
         inputHandler.OnSprint += OnSprint;
         inputHandler.OnUseInventory += UseItems;
+        inputHandler.OnPauseTogglePerformed += playerView.TogglePauseMenu;
         playerView.OnAttackStateChanged += OnAttackStateChanged;
     }
 
@@ -105,7 +108,6 @@ public abstract class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, 
 
     private void Update()
     {
-
         if (!playerModel.IsGrounded)
         {
             playerModel.UpdateFallingTime(Time.deltaTime);
@@ -363,8 +365,6 @@ public abstract class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, 
         /*TO DO: 
              * cambiar para hacer que no dependa de la referencia a la carreta (enviar evento de reparacion?).
              * Hacer una interfaz interactable y hacer que funcione a partir de ahi sin necesidad de ver que tipo de objeto es*/
-
-
 
         GameObject wheelcart = GameObject.FindGameObjectWithTag("DefendableObject");
 

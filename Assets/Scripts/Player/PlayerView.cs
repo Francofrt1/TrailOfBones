@@ -1,4 +1,5 @@
 using System;
+using FishNet.Component.Animating;
 using FishNet.Object;
 using UnityEngine;
 
@@ -6,12 +7,15 @@ using UnityEngine;
 public class PlayerView : NetworkBehaviour
 {
     private Animator animator;
+    private NetworkAnimator networkAnimator;
 
     public AudioClip attackSound;
     public AudioClip hitSound;
 
     public AudioClip[] stepSoundsArray;
     public event Action<bool> OnAttackStateChanged;
+    private bool isDying = false;
+    private bool showPause = false;
 
     void Start()
     {
@@ -21,17 +25,24 @@ public class PlayerView : NetworkBehaviour
             Debug.LogError("Animator component is missing on PlayerView.");
             return;
         }
+        networkAnimator = GetComponent<NetworkAnimator>();
+
+        PauseView.OnPauseMenuHide += TogglePauseMenu;
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void OnStartClient()
     {
-
+        base.OnStartClient();
+        if (!IsOwner)
+        {
+            this.enabled = false;
+            return;
+        }
     }
 
     public void SetMovementAnimation(Vector3 localMove)
     {
-        if (IsDying()) return;
+        if (isDying) return;
 
         float speed = CalculateAnimationSpeed(localMove);
         animator.SetFloat("Speed", speed);
@@ -45,14 +56,14 @@ public class PlayerView : NetworkBehaviour
 
     public void SetJumpAnimation()
     {
-        if (IsDying()) return;
-        animator.SetTrigger("Jump");
+        if (isDying) return;
+        networkAnimator.SetTrigger("Jump");
     }
 
     public void SetAttackAnimation()
     {
-        if (IsDying()) return;
-        animator.SetTrigger("Attack");
+        if (isDying) return;
+        networkAnimator.SetTrigger("Attack");
         animator.SetBool("IsAttacking", true);
         if (attackSound != null)
             AudioSource.PlayClipAtPoint(attackSound, this.transform.position);
@@ -60,15 +71,16 @@ public class PlayerView : NetworkBehaviour
 
     public void SetIsFallingAnimation(bool isFalling, float fallingTime = 0f)
     {
-        if (IsDying()) return;
+        if (isDying) return;
         animator.SetBool("IsFalling", isFalling);
         animator.SetFloat("FallingTime", fallingTime);
     }
 
     public void SetIsDeadAnimation()
     {
-        if (IsDying()) return;
-        animator.SetTrigger("Dead");
+        if (isDying) return;
+        networkAnimator.SetTrigger("Dead");
+        isDying = true;
     }
 
     public void CheckIsAttacking()
@@ -76,26 +88,16 @@ public class PlayerView : NetworkBehaviour
         OnAttackStateChanged?.Invoke(animator.GetBool("IsAttacking"));
     }
 
-    public bool IsDying()
-    {
-        if (animator == null)
-        {
-            Debug.LogError("Animator component is missing on PlayerView.");
-            return false;
-        }
-        return animator.GetCurrentAnimatorStateInfo(0).IsName("Death");
-    }
-
     public void PlayHitSound()
     {
-        if (IsDying()) return;
+        if (isDying) return;
         if (hitSound != null)
             AudioSource.PlayClipAtPoint(hitSound, this.transform.position);
     }
 
     public void PlayStepSound()
     {
-        if (IsDying()) return;
+        if (isDying) return;
 
         if (stepSoundsArray != null && stepSoundsArray.Length > 0)
         {
@@ -107,8 +109,18 @@ public class PlayerView : NetworkBehaviour
         }
     }
 
-    private void OnDestroy()
+    public void TogglePauseMenu()
     {
-        Destroy(animator);
+        showPause = !showPause;
+        Cursor.visible = showPause;
+        Cursor.lockState = showPause ? CursorLockMode.None : CursorLockMode.Locked;
+        if (showPause)
+        {
+            ViewManager.Instance.Show<PauseView>();
+        }
+        else
+        {
+            ViewManager.Instance.Show<HUDView>();
+        }
     }
 }

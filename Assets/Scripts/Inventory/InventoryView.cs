@@ -6,16 +6,26 @@ using UnityEngine.UI;
 public class InventoryView : MonoBehaviour
 {
     private List<GameObject> slots = new List<GameObject>();
-    // Start is called before the first frame update
-    void Start()
+    private GameObject container;
+    void Awake()
     {
-        GameObject menu = transform.GetChild(0).gameObject;
+        PlayerPresenter.OnPlayerSpawned += HandlePlayerSpawned;
+    }
 
-        for (int i = 0; i < menu.transform.childCount; i++)
+    private void HandlePlayerSpawned(PlayerPresenter playerPresenter)
+    {
+        container = GameObject.FindObjectOfType<HUDView>(true).GetInvetoryMenu();
+        if (container != null)
         {
-            slots.Add(menu.transform.GetChild(i).gameObject);
+            for (int i = 0; i < container.transform.childCount; i++)
+            {
+                slots.Add(container.transform.GetChild(i).gameObject);
+            }
         }
-        
+        else
+        {
+            Debug.LogError("Inventory container not found!");
+        }
     }
 
     public void UpdateSlot(Dictionary<ItemType, (int Quantity, Sprite Sprite)> inventory)
