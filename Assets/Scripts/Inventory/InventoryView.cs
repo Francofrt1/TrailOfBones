@@ -1,15 +1,26 @@
+using FishNet.Object;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InventoryView : MonoBehaviour
+public class InventoryView : NetworkBehaviour
 {
     private List<GameObject> slots = new List<GameObject>();
     private GameObject container;
     void Awake()
     {
         PlayerPresenter.OnPlayerSpawned += HandlePlayerSpawned;
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        if (!IsOwner)
+        {
+            this.enabled = false;
+            return;
+        }
     }
 
     private void HandlePlayerSpawned(PlayerPresenter playerPresenter = null)

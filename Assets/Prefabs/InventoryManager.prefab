@@ -46,6 +46,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d78f0dea9c0810946bc82bc5c7f7970a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
 --- !u!114 &8422251109890421647
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58,6 +61,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b228883bd7e91b64e8906811fb63dc99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
 --- !u!114 &2725416175643272529
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -70,3 +76,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04c2aecacb0984b47b54266c4753057d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
