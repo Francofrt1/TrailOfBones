@@ -47,10 +47,6 @@ public class GameManager : BaseNetworkBehaviour
         {
             Instance = this;
         }
-
-        SetCurrentGameState(GameState.InMenu);
-        //MatchWin.OnChange += WinScreen;
-        GameOver.OnChange += GameOverScreen;
     }
 
     private void _subscribeToPlayerPresenter(IHealthVariation playerHealthEvents)
@@ -114,10 +110,15 @@ public class GameManager : BaseNetworkBehaviour
 
     protected override void RegisterEvents()
     {
+        SetCurrentGameState(GameState.InMenu);
+        MatchWin.OnChange += WinScreen;
+        GameOver.OnChange += GameOverScreen;
     }
 
     protected override void UnregisterEvents()
     {
+        MatchWin.OnChange -= WinScreen;
+        GameOver.OnChange -= GameOverScreen;
         wheelcartMovement.Completed -= () => Cmd_WinMatch();
         PlayerPresenter.OnPlayerSpawned -= HandlePlayerSpawned;
     }
