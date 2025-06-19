@@ -7,8 +7,12 @@ public class InventoryView : MonoBehaviour
 {
     private List<GameObject> slots = new List<GameObject>();
     private GameObject container;
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
+    {
+        PlayerPresenter.OnPlayerSpawned += HandlePlayerSpawned;
+    }
+
+    private void HandlePlayerSpawned(PlayerPresenter playerPresenter)
     {
         container = GameObject.Find("InventoryMenu");
 
