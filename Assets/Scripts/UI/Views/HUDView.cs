@@ -12,9 +12,17 @@ public class HUDView : View
     [SerializeField] private TextMeshProUGUI playerHealthText = null;
     [SerializeField] private TextMeshProUGUI wheelcartHealthText = null;
     [SerializeField] private GameObject inventoryMenu = null;
+    [SerializeField] private Slider progressBar = null;
 
     private IHealthVariation playerHealthEvents;
     private IHealthVariation wheelcartHealthEvents;
+    private IWheelcartDuration wheelcartDurationEvents;
+
+    private bool wheelcartIsBlocked = false;
+    private void Start()
+    {
+        StartCoroutine("UpdateProgressBar");
+    }
 
     public void UpdatePlayerHealthbar(float playerHealthAmount, float maxHealth)
     {
@@ -42,8 +50,39 @@ public class HUDView : View
         wheelcartHealthEvents.OnHealthVariation += UpdateWheelcartHealthbar;
     }
 
+    IEnumerator UpdateProgressBar()
+    {
+        while (progressBar.value < progressBar.maxValue)
+        {
+            yield return new WaitForSeconds(1f);
+            if (!wheelcartIsBlocked)
+            {
+                progressBar.value++;
+            }
+        }
+    }
+
+    private void SetProgressBarMaxLimit(float limit)
+    {
+        progressBar.maxValue = limit;
+    }
+
+    public void SetWheelcartDuration(IWheelcartDuration wheelcartDuration)
+    { 
+        wheelcartDurationEvents = wheelcartDuration;
+        wheelcartDurationEvents.OnWheelcartDuration += SetProgressBarMaxLimit;
+    }
+
     public GameObject GetInvetoryMenu()
     {
         return inventoryMenu;
+    }
+    public void SetWheelcartBlockedEvent(WheelcartController wheelcartController)
+    {
+        wheelcartController.OnBlockWheelcartRequested += SetWheelcartBlocked;
+    }
+    public void SetWheelcartBlocked(bool isBlocked)
+    {
+        wheelcartIsBlocked = isBlocked;
     }
 }
