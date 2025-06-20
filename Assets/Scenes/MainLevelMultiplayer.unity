@@ -3133,6 +3133,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8227661062068459861, guid: 5e6333b792ba06a48b9a49ef616be25b, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 8496995092390521705, guid: 5e6333b792ba06a48b9a49ef616be25b, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
     - target: {fileID: 8503253770289854047, guid: 5e6333b792ba06a48b9a49ef616be25b, type: 3}
       propertyPath: m_Name
       value: PaymentEvent
@@ -6254,7 +6262,6 @@ MonoBehaviour:
   wheelcartHealthBar: {fileID: 1741127946}
   playerHealthText: {fileID: 224888104}
   wheelcartHealthText: {fileID: 1047734617}
-  progressBar: {fileID: 1838573008}
   inventoryMenu: {fileID: 417821467}
 --- !u!1001 &1227558876
 PrefabInstance:
@@ -10310,3 +10317,4 @@ SceneRoots:
   - {fileID: 673277904}
   - {fileID: 1961428934}
   - {fileID: 5149727416655428089}
+  - {fileID: 568255283}

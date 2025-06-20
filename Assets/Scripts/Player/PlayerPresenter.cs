@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, IHealthVariation
+public abstract class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, IHealthVariation
 {
     private Rigidbody rigidBody;
     private Vector2 movementInput;
@@ -18,11 +18,9 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
 
     private Vector3 cartPushbackNormal;
 
-    private PlayerModel playerModel;
-    private PlayerView playerView;
-    private AttackArea attackArea;
-    [SerializeField] private GameObject cameraPivotGameObject;
-    [SerializeField] private GameObject attackAreaGameObject;
+    protected PlayerModel playerModel;
+    protected PlayerView playerView;
+    [SerializeField] protected CameraPivot cameraPivot;
     [SerializeField] private GameObject inventoryGameObject;
 
     private Transform carrierTransform = null;
@@ -36,11 +34,9 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
     private void Awake()
     {
         rigidBody = GetComponent<Rigidbody>();
-        var cameraPivot = cameraPivotGameObject.GetComponent<CameraPivot>();
         inputHandler = GetComponent<InputHandler>();
         playerModel = GetComponent<PlayerModel>();
         playerView = GetComponent<PlayerView>();
-        attackArea = attackAreaGameObject.GetComponent<AttackArea>();
         inventoryController = inventoryGameObject.GetComponent<InventoryController>();
         if (cameraPivot != null && inputHandler != null)
         {
@@ -57,8 +53,6 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
         groundLayer = LayerMask.GetMask("groundLayer");
         wheelcartFloorLayer = LayerMask.GetMask("WheelcartFloorLayer");
         AssignEvents();
-
-        OnPlayerSpawned?.Invoke(this);
     }
 
     public override void OnStartClient()
@@ -71,8 +65,9 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
         }
     }
 
-    private void Start()
+    protected virtual void Start()
     {
+        OnPlayerSpawned?.Invoke(this);
         OnHealthVariation?.Invoke(playerModel.currentHealth, playerModel.maxHealth);
     }
 
@@ -297,15 +292,11 @@ public class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, IDeath, I
         if (playerModel.CanAttack() == false) return;
         playerView.SetAttackAnimation();
 
-        attackArea.DamageablesInRange.RemoveAll(x => x == null || (x as MonoBehaviour) == null);
-        var damageables = attackArea.DamageablesInRange.Where(x => x.GetTag() == "Enemy");
-        if (!damageables.Any()) return;
-        foreach (IDamageable damageable in damageables)
-        {
-            damageable.TakeDamage(playerModel.baseDamage, playerModel.ID);
-            Debug.Log($"Player did {playerModel.baseDamage} damage to {damageable.GetTag()}");
-        }
+        DoAttack();
     }
+
+    public abstract void DoAttack();
+
 
     private void OnSprint()
     {

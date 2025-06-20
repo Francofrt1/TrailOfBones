@@ -8,9 +8,13 @@ public class ProjectileModel : MonoBehaviour
     private float speedFactor = 1f;
     [SerializeField] float baseDamage = 6f;
     public float BaseDamage => baseDamage;
-    public Vector3 CalculateMovement(float deltaTime)
+    [SerializeField] float lifeTime = 8f;
+    public float LifeTime => lifeTime;
+
+
+    public Vector3 CalculateMovement(Vector3 referenceForward, float deltaTime)
     {
-        return new Vector3(0f, 0f, speed * deltaTime * speedFactor);
+        return referenceForward * speed * deltaTime * speedFactor;
     }
 
     public void BlockMovement(bool val)
