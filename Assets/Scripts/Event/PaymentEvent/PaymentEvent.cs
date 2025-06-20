@@ -51,6 +51,7 @@ public class PaymentEvent : MonoBehaviour, IUseInventory
     {
         model.UseAllBones();
         Destroy(flamesWall);
+        wheelcart.SetStatusInEvent(false);
         wheelcart.StopPlayWheelcar(false);
     }
 
@@ -80,4 +81,6 @@ public class PaymentEvent : MonoBehaviour, IUseInventory
     {
         return ItemType.Bone;
     }
+
+    
 }

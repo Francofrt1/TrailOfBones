@@ -12,6 +12,7 @@ public class StopWheelcarEvent : MonoBehaviour
             if (wheelcart != null)
             {
                 wheelcart.StopPlayWheelcar(true);
+                wheelcart.SetStatusInEvent(true);
                 OnWheelcartToPlay?.Invoke(wheelcart);
                 gameObject.SetActive(false);
             }

@@ -82,6 +82,7 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
 
     public void StopPlayWheelcar(bool isPaused)
     {
+        if (wheelcartModel.isInEvent) return;
         OnBlockWheelcartRequested?.Invoke(isPaused);
     }
 
@@ -110,5 +111,10 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
     public ItemType ItemTypeNeeded()
     {
         return ItemType.WoodLog;
+    }
+
+    public void SetStatusInEvent(bool inEvent)
+    {
+        wheelcartModel.isInEvent = inEvent;
     }
 }

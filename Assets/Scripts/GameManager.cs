@@ -73,6 +73,8 @@ public class GameManager : BaseNetworkBehaviour
             wheelcartEvents.OnDie += () => Cmd_GameOver();
             wheelcartMovement.Completed += () => Cmd_WinMatch();
             hudView.SetWheelcartHealthEvent(wheelcartEvents);
+            hudView.SetWheelcartDuration(wheelcartDurationEvent);
+            hudView.SetWheelcartBlockedEvent(wheelCart);
             wheelCart.GetComponent<WheelcartController>().OnWheelcartSpawned();
         }
         catch (Exception ex)
