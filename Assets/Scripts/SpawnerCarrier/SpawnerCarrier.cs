@@ -14,6 +14,36 @@ public class SpawnerCarrier : MonoBehaviour
     public event Action<float> OnProgress;
     public event Action OnCompleted;
 
+    private WheelcartController wheelcartController;
+
+    private void Awake()
+    {
+        WheelcartController.OnWheelCartSpawned += HandleWheelCartSpawned;
+    }
+
+    private void HandleWheelCartSpawned(WheelcartController controller)
+    {
+        wheelcartController = controller;
+    }
+
+    private void OnEnable()
+    {
+        if (wheelcartController != null)
+        {
+            wheelcartController.OnBlockWheelcartRequested += PausePlaySpawner;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if(wheelcartController != null)
+        {
+            wheelcartController.OnBlockWheelcartRequested -= PausePlaySpawner;
+        }
+
+        WheelcartController.OnWheelCartSpawned -= HandleWheelCartSpawned;
+    }
+
     private void Start()
     {
         splineProgress = Mathf.Clamp01(initialProgressOffset);
@@ -52,5 +82,17 @@ public class SpawnerCarrier : MonoBehaviour
     public float GetDuration()
     {
         return spline.CalculateLength() / speed;
+    }
+
+    private void PausePlaySpawner(bool isPaused)
+    {
+        if (isPaused)
+        {
+            speed = 0f;
+        }
+        else
+        {
+            speed = 5f;
+        }
     }
 }

@@ -1086,6 +1086,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6925303888939187629, guid: 4719ced393551154ca1b317eed449d2d, type: 3}
+      propertyPath: _isGlobal
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6925303888939187629, guid: 4719ced393551154ca1b317eed449d2d, type: 3}
       propertyPath: WasActiveDuringEdit
       value: 1
       objectReference: {fileID: 0}
