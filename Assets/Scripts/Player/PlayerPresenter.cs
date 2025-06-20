@@ -20,7 +20,7 @@ public abstract class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, 
 
     protected PlayerModel playerModel;
     protected PlayerView playerView;
-    [SerializeField] private GameObject cameraPivotGameObject;
+    [SerializeField] protected CameraPivot cameraPivot;
     [SerializeField] private GameObject inventoryGameObject;
 
     private Transform carrierTransform = null;
@@ -34,7 +34,6 @@ public abstract class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, 
     private void Awake()
     {
         rigidBody = GetComponent<Rigidbody>();
-        var cameraPivot = cameraPivotGameObject.GetComponent<CameraPivot>();
         inputHandler = GetComponent<InputHandler>();
         playerModel = GetComponent<PlayerModel>();
         playerView = GetComponent<PlayerView>();
@@ -295,7 +294,7 @@ public abstract class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, 
 
         DoAttack();
     }
-    
+
     public abstract void DoAttack();
 
 
