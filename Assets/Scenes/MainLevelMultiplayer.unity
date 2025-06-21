@@ -6263,6 +6263,7 @@ MonoBehaviour:
   playerHealthText: {fileID: 224888104}
   wheelcartHealthText: {fileID: 1047734617}
   inventoryMenu: {fileID: 417821467}
+  progressBar: {fileID: 1838573008}
 --- !u!1001 &1227558876
 PrefabInstance:
   m_ObjectHideFlags: 0

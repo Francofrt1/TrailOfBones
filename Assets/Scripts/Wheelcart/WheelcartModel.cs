@@ -10,6 +10,8 @@ public class WheelcartModel : MonoBehaviour
     public const int logToRepair = 5;
     public float interactionDistance = 5.0f;
 
+    public bool isInEvent = false;
+
     public void Awake()
     {
         currentHealth = maxHealth;
