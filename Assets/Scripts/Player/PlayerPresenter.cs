@@ -361,14 +361,11 @@ public abstract class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, 
 
     public void UseItems()
     {
-        GameObject[] interactables = FindObjectsOfType<GameObject>()
-            .Where(component => component.GetComponent<IUseInventory>() != null).ToArray();
-        if (interactables.Length == 0) return;
+        IUseInventory[] interactables = FindObjectsOfType<GameObject>().OfType<IUseInventory>().ToArray();
         foreach (var item in interactables)
         {
-            IUseInventory useInventory = item.GetComponent<IUseInventory>();
+            IUseInventory useInventory = item;
             ItemType itemType = useInventory.ItemTypeNeeded();
-            Debug.Log($"{item} : {useInventory.CanInteract(transform.position)}");
             if (useInventory.CanInteract(transform.position))
             {
                 int itemsToSend = useInventory.NeededToMake();
@@ -383,7 +380,6 @@ public abstract class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, 
                     inventoryController.HandleUseItem(itemType, itemsToSend);
                     useInventory.StorageItem(itemsToSend);
                 }
-                return;
             }
         }
     }
