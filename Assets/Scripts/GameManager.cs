@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Splines;
 
-public class GameManager : BaseNetworkBehaviour
+public class GameManager : NetworkBehaviour
 {
     public enum GameState
     {
@@ -47,6 +47,28 @@ public class GameManager : BaseNetworkBehaviour
         {
             Instance = this;
         }
+        SetCurrentGameState(GameState.InMenu);
+    }
+
+    public override void OnStartNetwork()
+    {
+        base.OnStartNetwork();
+        MatchWin.OnChange += WinScreen;
+        GameOver.OnChange += GameOverScreen;
+    }
+
+    public override void OnStopClient()
+    {
+        base.OnStopClient();
+    }
+
+    private void UnregisterEvents()
+    {
+        MatchWin.OnChange -= WinScreen;
+        GameOver.OnChange -= GameOverScreen;
+        PlayerPresenter.OnPlayerSpawned -= HandlePlayerSpawned;
+        PlayerPresenter.OnPlayerSpawned -= _subscribeToPlayerPresenter;
+        wheelcartMovement.Completed -= () => Cmd_WinMatch();
     }
 
     private void _subscribeToPlayerPresenter(IHealthVariation playerHealthEvents)
@@ -105,21 +127,6 @@ public class GameManager : BaseNetworkBehaviour
     {
         Cursor.visible = value;
         Cursor.lockState = value ? CursorLockMode.None : CursorLockMode.Locked;
-    }
-
-    protected override void RegisterEvents()
-    {
-        SetCurrentGameState(GameState.InMenu);
-        MatchWin.OnChange += WinScreen;
-        GameOver.OnChange += GameOverScreen;
-    }
-
-    protected override void UnregisterEvents()
-    {
-        MatchWin.OnChange -= WinScreen;
-        GameOver.OnChange -= GameOverScreen;
-        wheelcartMovement.Completed -= () => Cmd_WinMatch();
-        PlayerPresenter.OnPlayerSpawned -= HandlePlayerSpawned;
     }
 
     public void SetCurrentGameState(GameState newState)
