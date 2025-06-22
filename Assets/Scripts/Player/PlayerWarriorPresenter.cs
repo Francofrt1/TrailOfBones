@@ -7,9 +7,9 @@ public class PlayerWarriorPresenter : PlayerPresenter
     private AttackArea attackArea;
     [SerializeField] private GameObject attackAreaGameObject;
 
-    protected override void Start()
+    protected override void Awake()
     {
-        base.Start();
+        base.Awake();
         attackArea = attackAreaGameObject.GetComponent<AttackArea>();
     }
     
