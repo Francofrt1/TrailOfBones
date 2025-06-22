@@ -648,6 +648,9 @@ MonoBehaviour:
     m_Bits: 256
   cameraPivot: {fileID: 8115541493485195202}
   inventoryGameObject: {fileID: 3460482545311094445}
+  projectileLayer:
+    serializedVersion: 2
+    m_Bits: 4096
 --- !u!114 &5885265836114090574
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1256,6 +1259,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5938285384088495788, guid: f5ee25b78a80b85408719ce2634f821e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.52
+      objectReference: {fileID: 0}
+    - target: {fileID: 5938285384088495788, guid: f5ee25b78a80b85408719ce2634f821e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 5938285384088495788, guid: f5ee25b78a80b85408719ce2634f821e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -5.56
+      objectReference: {fileID: 0}
     - target: {fileID: 7460652364491278129, guid: f5ee25b78a80b85408719ce2634f821e, type: 3}
       propertyPath: m_Name
       value: CameraPivot
@@ -1435,6 +1450,10 @@ PrefabInstance:
     - target: {fileID: 1665268894765973591, guid: a6956eefbed9b5841ad19390f0f592fa, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2600989375183644506, guid: a6956eefbed9b5841ad19390f0f592fa, type: 3}
+      propertyPath: WasActiveDuringEdit
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6785477433620180538, guid: a6956eefbed9b5841ad19390f0f592fa, type: 3}
       propertyPath: m_Name

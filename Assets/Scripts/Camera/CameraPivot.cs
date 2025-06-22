@@ -5,7 +5,6 @@ public class CameraPivot : MonoBehaviour
     [SerializeField] private float pitchLimitUp = 80f;
     [SerializeField] private float pitchLimitDown = -12f;
 
-    [SerializeField] private GameObject crosshair;
     [SerializeField] private GameObject cameraObject;
     private Camera cameraReference;
 
@@ -26,7 +25,6 @@ public class CameraPivot : MonoBehaviour
     {
         inputHandler = playerInputHandler;
         inputHandler.OnMouseMoveY += ManagePitch;
-        inputHandler.OnPauseTogglePerformed += ToggleCrosshairView;
     }
 
     private void ManagePitch(float amount)
@@ -40,17 +38,14 @@ public class CameraPivot : MonoBehaviour
         transform.localRotation = Quaternion.Euler(currentPitch, 0f, 0f);
     }
 
-    private void ToggleCrosshairView()
-    {
-        crosshair.SetActive(!crosshair.activeSelf);
-    }
-
-    public Vector3? GetRaycastHitPoint(float maxDistance)
+    public Vector3? GetRaycastHitPoint(float maxDistance, LayerMask collisionMask)
     {
         Ray ray = cameraReference.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f));
         Debug.DrawRay(ray.origin, ray.direction * maxDistance, Color.red, 2f);
 
-        return Physics.Raycast(ray, out RaycastHit hit, maxDistance) ? hit.point : (Vector3?)null;
+        return Physics.Raycast(ray, out RaycastHit hit, maxDistance, collisionMask)
+            ? hit.point
+            : (Vector3?)null;
     }
 
     public Vector3 Forward => cameraReference.transform.forward;

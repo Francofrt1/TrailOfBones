@@ -48,11 +48,10 @@ public class ProjectilePresenter : NetworkBehaviour, IShootable
 
     void OnTriggerEnter(Collider other)
     {
-        int layer = other.gameObject.layer;
+        IDamageable damageable = other.GetComponent<IDamageable>();
 
-        if (IsEnemyLayer(layer))
+        if (damageable != null && damageable.GetTag() == "Enemy")
         {
-            IDamageable damageable = other.GetComponent<IDamageable>();
             damageable.TakeDamage(_model.BaseDamage, shootedByID);
         }
 
@@ -84,10 +83,5 @@ public class ProjectilePresenter : NetworkBehaviour, IShootable
         _view.ResetView();
         _model.BlockMovement(false);
         _deactivationCoroutine = null;
-    }
-
-    private bool IsEnemyLayer(int layer)
-    {
-        return (enemyLayer.value & (1 << layer)) != 0;
     }
 }

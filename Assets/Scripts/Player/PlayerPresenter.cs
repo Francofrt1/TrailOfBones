@@ -31,7 +31,7 @@ public abstract class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, 
     public event Action<float, float> OnHealthVariation;
     public static Action<PlayerPresenter> OnPlayerSpawned;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         rigidBody = GetComponent<Rigidbody>();
         inputHandler = GetComponent<InputHandler>();
