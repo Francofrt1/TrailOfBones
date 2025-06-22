@@ -1259,6 +1259,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5938285384088495788, guid: f5ee25b78a80b85408719ce2634f821e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.52
+      objectReference: {fileID: 0}
+    - target: {fileID: 5938285384088495788, guid: f5ee25b78a80b85408719ce2634f821e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 5938285384088495788, guid: f5ee25b78a80b85408719ce2634f821e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -5.56
+      objectReference: {fileID: 0}
     - target: {fileID: 7460652364491278129, guid: f5ee25b78a80b85408719ce2634f821e, type: 3}
       propertyPath: m_Name
       value: CameraPivot

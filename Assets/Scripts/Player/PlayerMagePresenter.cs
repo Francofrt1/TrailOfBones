@@ -4,11 +4,15 @@ public class PlayerMagePresenter : PlayerPresenter
 {
     private ProjectilePoolManager poolManager;
     [SerializeField] private LayerMask projectileLayer;
-
+    private LayerMask resolvedCollisionMask;
+    
     protected override void Start()
     {
         base.Start();
         poolManager = GetComponent<ProjectilePoolManager>();
+
+        //This collision mask has the interaction of projectileLayer with the other LayerMask:
+        resolvedCollisionMask = LayerCollisionUtils.GetCollisionMaskForLayer(projectileLayer);
     }
 
     public override void DoAttack()
@@ -16,9 +20,7 @@ public class PlayerMagePresenter : PlayerPresenter
         Vector3 offset = transform.up * 1f + transform.forward * 2f;
         Vector3 origin = transform.position + offset;
 
-        LayerMask validRaycastMask = LayerCollisionUtils.GetCollisionMaskForLayer(projectileLayer);
-
-        Vector3? destiny = cameraPivot.GetRaycastHitPoint(100f, validRaycastMask);
+        Vector3? destiny = cameraPivot.GetRaycastHitPoint(100f, resolvedCollisionMask);
 
         Vector3 direction = (destiny ?? (origin + cameraPivot.Forward * 100f)) - origin;
         Quaternion rotation = Quaternion.LookRotation(direction);

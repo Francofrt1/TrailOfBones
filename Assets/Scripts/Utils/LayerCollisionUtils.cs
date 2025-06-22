@@ -9,6 +9,7 @@ public static class LayerCollisionUtils
 {
     public static LayerMask GetCollisionMaskForLayer(LayerMask sourceLayerMask)
     {
+
         if (sourceLayerMask.value == 0)
         {
             Debug.LogWarning("Source LayerMask is empty.");
@@ -27,7 +28,6 @@ public static class LayerCollisionUtils
                 mask |= (1 << i);
             }
         }
-
         return mask;
     }
 }
