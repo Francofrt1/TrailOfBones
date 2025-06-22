@@ -220,7 +220,7 @@ GameObject:
   - component: {fileID: 1159487778934392400}
   - component: {fileID: 4607483904406409801}
   - component: {fileID: 4270271559824881741}
-  m_Layer: 8
+  m_Layer: 14
   m_Name: WheelcartBuffZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -496,6 +496,7 @@ MonoBehaviour:
   maxHealth: 1000
   logStorage: 10
   interactionDistance: 5
+  isInEvent: 0
 --- !u!82 &8554795777103640508
 AudioSource:
   m_ObjectHideFlags: 0

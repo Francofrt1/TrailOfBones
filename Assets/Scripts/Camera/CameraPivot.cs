@@ -45,12 +45,14 @@ public class CameraPivot : MonoBehaviour
         crosshair.SetActive(!crosshair.activeSelf);
     }
 
-    public Vector3? GetRaycastHitPoint(float maxDistance)
+    public Vector3? GetRaycastHitPoint(float maxDistance, LayerMask collisionMask)
     {
         Ray ray = cameraReference.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f));
         Debug.DrawRay(ray.origin, ray.direction * maxDistance, Color.red, 2f);
 
-        return Physics.Raycast(ray, out RaycastHit hit, maxDistance) ? hit.point : (Vector3?)null;
+        return Physics.Raycast(ray, out RaycastHit hit, maxDistance, collisionMask)
+            ? hit.point
+            : (Vector3?)null;
     }
 
     public Vector3 Forward => cameraReference.transform.forward;
