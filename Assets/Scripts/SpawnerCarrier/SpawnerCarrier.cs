@@ -8,6 +8,7 @@ public class SpawnerCarrier : MonoBehaviour
     [SerializeField] private float speed = 5f;
     [SerializeField, Range(0f, 1f)] private float initialProgressOffset = 0.1f;
     [SerializeField] private float routeEnd = 0.92f;
+    private bool isPaused = false;
 
     [SerializeField, Range(0f, 1f)] private float splineProgress;
 
@@ -24,14 +25,7 @@ public class SpawnerCarrier : MonoBehaviour
     private void HandleWheelCartSpawned(WheelcartController controller)
     {
         wheelcartController = controller;
-    }
-
-    private void OnEnable()
-    {
-        if (wheelcartController != null)
-        {
-            wheelcartController.OnBlockWheelcartRequested += PausePlaySpawner;
-        }
+        wheelcartController.OnBlockWheelcartRequested += PausePlaySpawner;
     }
 
     private void OnDisable()
@@ -61,7 +55,7 @@ public class SpawnerCarrier : MonoBehaviour
 
     private void MoveAlongSpline()
     {
-        if (splineProgress >= routeEnd)
+        if (splineProgress >= routeEnd || isPaused)
             return;
 
         splineProgress += (speed / spline.CalculateLength()) * Time.deltaTime;
@@ -81,18 +75,13 @@ public class SpawnerCarrier : MonoBehaviour
 
     public float GetDuration()
     {
+        if (spline == null || speed <= 0)
+            return 0f;
         return spline.CalculateLength() / speed;
     }
 
-    private void PausePlaySpawner(bool isPaused)
+    private void PausePlaySpawner(bool newValue)
     {
-        if (isPaused)
-        {
-            speed = 0f;
-        }
-        else
-        {
-            speed = 5f;
-        }
+        isPaused = newValue;
     }
 }
