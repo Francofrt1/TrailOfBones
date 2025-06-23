@@ -524,8 +524,8 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7943082474106197344}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: ae8eec9a059108b40a251135881d7897, type: 3}
-  m_Controller: {fileID: 9100000, guid: e93c53ba2ec50434a98728e1c0c0a1c2, type: 2}
+  m_Avatar: {fileID: 9000000, guid: a070cff5a53a5fc4a9b2b4585badb3d4, type: 3}
+  m_Controller: {fileID: 9100000, guid: a2c66f510c4bde345a77d3e5a46e755c, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -691,7 +691,7 @@ MonoBehaviour:
   _componentIndexCache: 5
   _addedNetworkObject: {fileID: 3875465447857652874}
   _networkObjectCache: {fileID: 3875465447857652874}
-  attackSound: {fileID: 8300000, guid: 2096c823eafa90940bed233b53e670ce, type: 3}
+  attackSound: {fileID: 8300000, guid: 2f13e7d2e0746ea48a9dc5909a597953, type: 3}
   hitSound: {fileID: 8300000, guid: aa48101fd9bd24b82af88afb182a9bf5, type: 3}
   stepSoundsArray:
   - {fileID: 8300000, guid: 5461cae585b64f64089805f0d313bc84, type: 3}
@@ -1356,13 +1356,42 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a070cff5a53a5fc4a9b2b4585badb3d4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5768176764579806440}
   m_SourcePrefab: {fileID: 100100000, guid: a070cff5a53a5fc4a9b2b4585badb3d4, type: 3}
 --- !u!4 &7220754772569695162 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a070cff5a53a5fc4a9b2b4585badb3d4, type: 3}
   m_PrefabInstance: {fileID: 7187744215605199953}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &8034024372497381632 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: a070cff5a53a5fc4a9b2b4585badb3d4, type: 3}
+  m_PrefabInstance: {fileID: 7187744215605199953}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &5768176764579806440
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8034024372497381632}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: a070cff5a53a5fc4a9b2b4585badb3d4, type: 3}
+  m_Controller: {fileID: 9100000, guid: a2c66f510c4bde345a77d3e5a46e755c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &7938932776364488855
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1455,6 +1484,38 @@ PrefabInstance:
       propertyPath: WasActiveDuringEdit
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2600989375183644506, guid: a6956eefbed9b5841ad19390f0f592fa, type: 3}
+      propertyPath: <PrefabId>k__BackingField
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: 2600989375183644506, guid: a6956eefbed9b5841ad19390f0f592fa, type: 3}
+      propertyPath: NetworkBehaviours.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2600989375183644506, guid: a6956eefbed9b5841ad19390f0f592fa, type: 3}
+      propertyPath: SerializedTransformProperties.IsValid
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2600989375183644506, guid: a6956eefbed9b5841ad19390f0f592fa, type: 3}
+      propertyPath: SerializedTransformProperties.Scale.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2600989375183644506, guid: a6956eefbed9b5841ad19390f0f592fa, type: 3}
+      propertyPath: SerializedTransformProperties.Scale.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2600989375183644506, guid: a6956eefbed9b5841ad19390f0f592fa, type: 3}
+      propertyPath: SerializedTransformProperties.Scale.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2600989375183644506, guid: a6956eefbed9b5841ad19390f0f592fa, type: 3}
+      propertyPath: SerializedTransformProperties.Rotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2725416175643272529, guid: a6956eefbed9b5841ad19390f0f592fa, type: 3}
+      propertyPath: _networkObjectCache
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 6785477433620180538, guid: a6956eefbed9b5841ad19390f0f592fa, type: 3}
       propertyPath: m_Name
       value: InventoryManager
@@ -1462,6 +1523,14 @@ PrefabInstance:
     - target: {fileID: 6785477433620180538, guid: a6956eefbed9b5841ad19390f0f592fa, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7473020550121475476, guid: a6956eefbed9b5841ad19390f0f592fa, type: 3}
+      propertyPath: _networkObjectCache
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8422251109890421647, guid: a6956eefbed9b5841ad19390f0f592fa, type: 3}
+      propertyPath: _networkObjectCache
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1530,6 +1599,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Mage
       objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: a070cff5a53a5fc4a9b2b4585badb3d4, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: a2c66f510c4bde345a77d3e5a46e755c, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
