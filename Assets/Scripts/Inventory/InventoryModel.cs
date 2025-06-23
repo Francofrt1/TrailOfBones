@@ -8,7 +8,7 @@ public class InventoryModel : NetworkBehaviour
 {
     private Dictionary<ItemType, (int quantity,Sprite sprite)> inventory = new Dictionary<ItemType, (int, Sprite)>();
 
-    private const int LIMITITEMAMOUNT = 99;
+    [SerializeField] private int maxItemAmount = 99;
 
     public override void OnStartClient()
     {
@@ -27,14 +27,14 @@ public class InventoryModel : NetworkBehaviour
         }
         else
         {
-            int quantityTotal = Mathf.Min((item.GetQuantity() + inventory[item.GetItemType()].quantity), LIMITITEMAMOUNT);
+            int quantityTotal = Mathf.Min((item.GetQuantity() + inventory[item.GetItemType()].quantity), maxItemAmount);
             inventory[item.GetItemType()] = (quantityTotal,item.GetSprite());
         }
     }
 
     public bool limitReached(Item item)
     {
-        return !inventory.ContainsKey(item.GetItemType()) || inventory[item.GetItemType()].quantity < LIMITITEMAMOUNT;
+        return !inventory.ContainsKey(item.GetItemType()) || inventory[item.GetItemType()].quantity < maxItemAmount;
     }
 
     public void reduceItem(ItemType itemType, int amountToUse)
