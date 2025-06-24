@@ -7,7 +7,6 @@ using static Steamworks.InventoryItem;
 
 public class PaymentEvent : MonoBehaviour, IUseInventory
 {
-    private WheelcartController wheelcart;
     private StopWheelcarEvent stopWheelcarEvent;
     private PaymentEventModel model;
 
@@ -15,6 +14,9 @@ public class PaymentEvent : MonoBehaviour, IUseInventory
     public event Action<int> OnChangedBonesStorage;
     [SerializeField]
     private GameObject flamesWall;
+   
+    public Action<bool> OnPaymentActive;
+
 
     private void Awake()
     {
@@ -45,14 +47,14 @@ public class PaymentEvent : MonoBehaviour, IUseInventory
 
     private void OnWheelcartFound(WheelcartController wheelcartController)
     {
-        wheelcart = wheelcartController;
+
+        wheelcartController.SetPaymentEvent(this);
     }
     public void CompletePayment()
     {
         model.UseAllBones();
         Destroy(flamesWall);
-        wheelcart.SetStatusInEvent(false);
-        wheelcart.StopPlayWheelcar(false);
+        OnPaymentActive?.Invoke(false);
     }
 
     public bool CanInteract(Vector3 playerPosition)
@@ -82,5 +84,4 @@ public class PaymentEvent : MonoBehaviour, IUseInventory
         return ItemType.Bone;
     }
 
-    
 }

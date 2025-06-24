@@ -11,8 +11,6 @@ public class StopWheelcarEvent : MonoBehaviour
             WheelcartController wheelcart = other.GetComponent<WheelcartController>();
             if (wheelcart != null)
             {
-                wheelcart.StopPlayWheelcar(true);
-                wheelcart.SetStatusInEvent(true);
                 OnWheelcartToPlay?.Invoke(wheelcart);
                 gameObject.SetActive(false);
             }

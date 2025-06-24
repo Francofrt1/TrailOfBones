@@ -1,3 +1,4 @@
+using Assets.Scripts.Interfaces;
 using System;
 using UnityEngine;
 using UnityEngine.Splines;
@@ -15,20 +16,23 @@ public class WheelcartMovement : MonoBehaviour
     public event Action<float> OnWheelcartprogress;
     public event Action Completed;
     private WheelcartController wheelcartController;
+    private IStopWheelcart stopWheelcart;
 
     private void Awake()
     {
         wheelcartController = GetComponent<WheelcartController>();
+        stopWheelcart = GetComponent<IStopWheelcart>();
+
     }
 
     private void OnEnable()
     {
-        wheelcartController.OnBlockWheelcartRequested += BlockMovement;
+        stopWheelcart.OnBlockWheelcartRequested += BlockMovement;
     }
 
     private void OnDisable()
     {
-        wheelcartController.OnBlockWheelcartRequested -= BlockMovement;
+        stopWheelcart.OnBlockWheelcartRequested -= BlockMovement;
     }
 
     void FixedUpdate()

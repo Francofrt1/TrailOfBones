@@ -1,11 +1,12 @@
 using Assets.Scripts.Interfaces;
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using static Steamworks.InventoryItem;
 
 [RequireComponent(typeof(WheelcartModel))]
 [RequireComponent(typeof(WheelcartMovement))]
-public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVariation, IWheelcartDuration, IUseInventory
+public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVariation, IWheelcartDuration, IUseInventory, IStopWheelcart
 {
     private WheelcartModel wheelcartModel;
     private WheelcartMovement wheelcartMovement;
@@ -115,6 +116,22 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
 
     public void SetStatusInEvent(bool inEvent)
     {
-        wheelcartModel.isInEvent = inEvent;
+        if (inEvent)
+        {
+            StopPlayWheelcar(inEvent);
+            wheelcartModel.isInEvent = inEvent;
+        }
+        else
+        {
+            wheelcartModel.isInEvent = inEvent;
+            StopPlayWheelcar(inEvent);
+        }
+            
+    }
+
+    public void SetPaymentEvent(PaymentEvent paymentEvent)
+    {
+        paymentEvent.OnPaymentActive += SetStatusInEvent;
+        SetStatusInEvent(true);
     }
 }
