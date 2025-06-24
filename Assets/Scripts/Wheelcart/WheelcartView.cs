@@ -1,3 +1,4 @@
+using Assets.Scripts.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -7,6 +8,7 @@ using UnityEngine.UI;
 public class WheelcartView : MonoBehaviour
 {
     private WheelcartController wheelcart;
+    private IStopWheelcart stopWheelcartInterface;
     public TextMeshProUGUI logText;
     private string logToRepair;
     public GameObject[] wheels;
@@ -15,6 +17,7 @@ public class WheelcartView : MonoBehaviour
     private void Awake()
     {
         wheelcart = GetComponent<WheelcartController>();
+        stopWheelcartInterface = GetComponent<IStopWheelcart>();
         audio = GetComponent<AudioSource>();
     }
 
@@ -23,7 +26,7 @@ public class WheelcartView : MonoBehaviour
         wheelcart.OnChangedLogStorage += ChangeLogText;
         wheelcart.OnSetMaxLogStorageUI += SetMaxLogStorageUI;
         wheelcart.OnShowLogStorageUI += ShowUnshowLogStorage;
-        wheelcart.OnBlockWheelcartRequested += StopPlayWheelcartAnim;
+        stopWheelcartInterface.OnBlockWheelcartRequested += StopPlayWheelcartAnim;
     }
 
     private void OnDisable()
@@ -31,6 +34,7 @@ public class WheelcartView : MonoBehaviour
         wheelcart.OnChangedLogStorage -= ChangeLogText;
         wheelcart.OnSetMaxLogStorageUI -= SetMaxLogStorageUI;
         wheelcart.OnShowLogStorageUI -= ShowUnshowLogStorage;
+        stopWheelcartInterface.OnBlockWheelcartRequested -= StopPlayWheelcartAnim;
     }
 
     private void SetMaxLogStorageUI(int amount)

@@ -92,11 +92,12 @@ public class GameManager : NetworkBehaviour
             var wheelCart = GameObject.FindObjectOfType<WheelcartController>();
             var wheelcartDurationEvent = wheelCart.GetComponent<IWheelcartDuration>();
             var wheelcartEvents = wheelCart.GetComponent<IHealthVariation>();
+            var wheelcartStopEvent = wheelCart.GetComponent<IStopWheelcart>();
             wheelcartEvents.OnDie += () => Cmd_GameOver();
             wheelcartMovement.Completed += () => Cmd_WinMatch();
             hudView.SetWheelcartHealthEvent(wheelcartEvents);
             hudView.SetWheelcartDuration(wheelcartDurationEvent);
-            hudView.SetWheelcartBlockedEvent(wheelCart);
+            hudView.SetWheelcartBlockedEvent(wheelcartStopEvent);
             wheelCart.GetComponent<WheelcartController>().OnWheelcartSpawned();
         }
         catch (Exception ex)

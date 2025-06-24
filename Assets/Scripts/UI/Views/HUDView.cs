@@ -77,9 +77,9 @@ public class HUDView : View
     {
         return inventoryMenu;
     }
-    public void SetWheelcartBlockedEvent(WheelcartController wheelcartController)
+    public void SetWheelcartBlockedEvent(IStopWheelcart wheelcartStopInterface)
     {
-        wheelcartController.OnBlockWheelcartRequested += SetWheelcartBlocked;
+        wheelcartStopInterface.OnBlockWheelcartRequested += SetWheelcartBlocked;
     }
     public void SetWheelcartBlocked(bool isBlocked)
     {
