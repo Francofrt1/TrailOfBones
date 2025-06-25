@@ -16,7 +16,7 @@ public class PaymentEvent : MonoBehaviour, IUseInventory
     private GameObject flamesWall;
    
     public Action<bool> OnPaymentActive;
-
+    [SerializeField] private GameObject paymentPoint;
 
     private void Awake()
     {
@@ -55,6 +55,7 @@ public class PaymentEvent : MonoBehaviour, IUseInventory
         model.UseAllBones();
         Destroy(flamesWall);
         OnPaymentActive?.Invoke(false);
+        paymentPoint.SetActive(false);
     }
 
     public bool CanInteract(Vector3 playerPosition)

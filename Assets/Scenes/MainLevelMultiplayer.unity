@@ -3133,6 +3133,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8068580076525165370, guid: 5e6333b792ba06a48b9a49ef616be25b, type: 3}
+      propertyPath: paymentPoint
+      value: 
+      objectReference: {fileID: 1680862764}
     - target: {fileID: 8227661062068459861, guid: 5e6333b792ba06a48b9a49ef616be25b, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -6397,6 +6401,14 @@ PrefabInstance:
       propertyPath: <SceneId>k__BackingField
       value: 3419746287
       objectReference: {fileID: 0}
+    - target: {fileID: 2739786340430513771, guid: 3d5d414797bddde4991f8b5caa424580, type: 3}
+      propertyPath: spawnCount
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2739786340430513771, guid: 3d5d414797bddde4991f8b5caa424580, type: 3}
+      propertyPath: spawnInterval
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 2749232498132185385, guid: 3d5d414797bddde4991f8b5caa424580, type: 3}
       propertyPath: spline
       value: 
@@ -6420,6 +6432,14 @@ PrefabInstance:
     - target: {fileID: 3945989135683954921, guid: 3d5d414797bddde4991f8b5caa424580, type: 3}
       propertyPath: m_Name
       value: SpawnerCarrier2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6590675772443637717, guid: 3d5d414797bddde4991f8b5caa424580, type: 3}
+      propertyPath: spawnCount
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6590675772443637717, guid: 3d5d414797bddde4991f8b5caa424580, type: 3}
+      propertyPath: spawnInterval
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6703166480840352904, guid: 3d5d414797bddde4991f8b5caa424580, type: 3}
       propertyPath: WasActiveDuringEdit
@@ -8220,6 +8240,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 383432529}
   m_SourcePrefab: {fileID: 100100000, guid: d175823ae89d58148a6e101846c4efed, type: 3}
+--- !u!1 &1680862764 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8582037674313671728, guid: 5e6333b792ba06a48b9a49ef616be25b, type: 3}
+  m_PrefabInstance: {fileID: 568255283}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1705142653 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 6dceb03925e25ed448b569dd76c4f27f, type: 3}
@@ -10047,7 +10072,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6150942011646421666, guid: 679d7bfb3dd1d7f48af8d689c2bbe83f, type: 3}
       propertyPath: maxTotalEnemies
-      value: 100
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 6860775815479579935, guid: 679d7bfb3dd1d7f48af8d689c2bbe83f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -10215,6 +10240,10 @@ PrefabInstance:
       propertyPath: <SceneId>k__BackingField
       value: 3217014765
       objectReference: {fileID: 0}
+    - target: {fileID: 2739786340430513771, guid: 3d5d414797bddde4991f8b5caa424580, type: 3}
+      propertyPath: spawnInterval
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 2749232498132185385, guid: 3d5d414797bddde4991f8b5caa424580, type: 3}
       propertyPath: spline
       value: 
@@ -10234,6 +10263,10 @@ PrefabInstance:
     - target: {fileID: 3945989135683954921, guid: 3d5d414797bddde4991f8b5caa424580, type: 3}
       propertyPath: m_Name
       value: SpawnerCarrier1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6590675772443637717, guid: 3d5d414797bddde4991f8b5caa424580, type: 3}
+      propertyPath: spawnInterval
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6703166480840352904, guid: 3d5d414797bddde4991f8b5caa424580, type: 3}
       propertyPath: WasActiveDuringEdit
