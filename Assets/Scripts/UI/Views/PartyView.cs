@@ -7,25 +7,41 @@ using Multiplayer.PopupSystem;
 using Multiplayer.Utils;
 using FishNet;
 using Multiplayer.Steam;
+using TMPro;
+using System;
 
 public class PartyView : View
 {
+    public static event Action OnClassChanged;
     [SerializeField] private Button readyUpButton;
     [SerializeField] private Button startButton;
     [SerializeField] private Button leaveLobbyButton;
+    [SerializeField] private Button rightArrowButton;
+    [SerializeField] private Button leftArrowButton;
+    [SerializeField] private TMP_Text className;
+    private bool isMage = false;
 
     public override void Initialize()
     {
         readyUpButton.onClick.AddListener(OnReadyUpButtonClicked);
         startButton.onClick.AddListener(OnStartButtonClicked);
         leaveLobbyButton?.onClick.AddListener(OnLeaveLobbyButtonClicked);
+        rightArrowButton?.onClick.AddListener(OnClassChangeButtonClicked);
+        leftArrowButton?.onClick.AddListener(OnClassChangeButtonClicked);
 
-        if(InstanceFinder.IsClientStarted)
+        if (InstanceFinder.IsClientStarted)
         {
             startButton.gameObject.SetActive(false);
         }
 
         base.Initialize();
+    }
+
+    private void OnClassChangeButtonClicked()
+    {
+        OnClassChanged?.Invoke();
+        isMage = !isMage;
+        className.text = isMage ? "Mage" : "Warrior";
     }
 
     public override void Show(object args = null)

@@ -1,4 +1,5 @@
 using Assets.Scripts.Interfaces;
+using Multiplayer.PlayerSystem;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -13,6 +14,7 @@ public class HUDView : View
     [SerializeField] private TextMeshProUGUI wheelcartHealthText = null;
     [SerializeField] private GameObject inventoryMenu = null;
     [SerializeField] private Slider progressBar = null;
+    [SerializeField] private GameObject crossHair = null;
 
     private IHealthVariation playerHealthEvents;
     private IHealthVariation wheelcartHealthEvents;
@@ -22,6 +24,15 @@ public class HUDView : View
     private void Start()
     {
         StartCoroutine("UpdateProgressBar");
+        PlayerClient.OnPlayerStarted += HandlePlayerStarted;
+    }
+
+    private void HandlePlayerStarted(bool isMage)
+    {
+        if (!isMage)
+        {
+            crossHair.SetActive(false);
+        }
     }
 
     public void UpdatePlayerHealthbar(float playerHealthAmount, float maxHealth)
