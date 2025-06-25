@@ -6340,6 +6340,7 @@ MonoBehaviour:
   wheelcartHealthText: {fileID: 1047734617}
   inventoryMenu: {fileID: 417821467}
   progressBar: {fileID: 1838573008}
+  crossHair: {fileID: 1099495618}
 --- !u!1001 &1227558876
 PrefabInstance:
   m_ObjectHideFlags: 0

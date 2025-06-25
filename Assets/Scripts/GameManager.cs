@@ -252,6 +252,7 @@ public class GameManager : NetworkBehaviour
     {
         hudView = GameObject.FindObjectOfType<HUDView>(true);
         _subscribeToPlayerPresenter(player.gameObject.GetComponent<IHealthVariation>());
+        player.gameObject.GetComponentInParent<PlayerClient>().OnPlayerSpawned();
         _subscribeToWheelcart();
     }
 
