@@ -256,7 +256,6 @@ public class GameManager : NetworkBehaviour
         _subscribeToWheelcart();
     }
 
-    [ServerRpc(RequireOwnership = false)]
     public void Cmd_WinMatch()
     {
         MatchWin.Value = !MatchWin.Value;
