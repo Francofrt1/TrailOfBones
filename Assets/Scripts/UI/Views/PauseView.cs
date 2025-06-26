@@ -26,11 +26,7 @@ public class PauseView : View
     }
 
     
-    public override void Show(object args = null)
-    {
-        base.Show(args); 
-        
-    }
+   
 
     
     public override void Hide()
@@ -54,7 +50,6 @@ public class PauseView : View
     {
         OnPauseMenuHide?.Invoke();
         
-        Time.timeScale = 1f; 
       
     }
 
@@ -62,7 +57,7 @@ public class PauseView : View
     {
         ViewManager.Instance.Show<ControlsView>(); 
         
-        Time.timeScale = 0f;
+
         
     }
 
