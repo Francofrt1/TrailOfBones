@@ -279,7 +279,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5961034109050530384, guid: 00edc98f68e6add4e91255f6f9e72d1d, type: 3}
       propertyPath: spawnInterval
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5961034109050530384, guid: 00edc98f68e6add4e91255f6f9e72d1d, type: 3}
       propertyPath: _networkObjectCache
