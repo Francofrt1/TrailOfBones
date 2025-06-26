@@ -33,10 +33,6 @@ public class PaymentEventView : MonoBehaviour
     private void SetBonesToPay(int amount)
     {
         bonesToPay = amount.ToString();
-    }
-
-    private void Start()
-    {
         ChangeBonesAmountText(0);
     }
 

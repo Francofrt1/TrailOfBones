@@ -9,7 +9,7 @@ public class WheelcartModel : MonoBehaviour
     [SerializeField] private float stopWheelcartPercent = 0.8f;
 
     public int logStorage = 0;
-    public const int logToRepair = 5;
+    public const int logToRepair = 4;
     public float interactionDistance = 5.0f;
 
     public bool isInEvent = false;
