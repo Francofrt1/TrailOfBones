@@ -29,8 +29,7 @@ public class PauseView : View
     public override void Show(object args = null)
     {
         base.Show(args); 
-        Time.timeScale = 0f; 
-        Debug.Log("PauseView: Mostrada y Time.timeScale = 0.");
+        
     }
 
     
@@ -47,7 +46,7 @@ public class PauseView : View
         GameManager.Instance.SetCurrentGameState(GameManager.GameState.End);
         ScenesManager.ChangeScene("MainMenu");
         GameManager.Instance.SetCurrentGameState(GameManager.GameState.InMenu);
-        Time.timeScale = 1f; 
+        
        
     }
 
