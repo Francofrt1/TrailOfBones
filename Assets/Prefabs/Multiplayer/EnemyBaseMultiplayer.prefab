@@ -159,7 +159,7 @@ MonoBehaviour:
   baseDamage: 5
   attackCooldown: 2
   attackDurationAdjustment: -0.2
-  movementSpeed: 3
+  movementSpeed: 2.7
   drop: {fileID: 4351147015997587858, guid: ad41b46d90d46a84db8d7e734165c44d, type: 3}
 --- !u!195 &7546450163983781143
 NavMeshAgent:

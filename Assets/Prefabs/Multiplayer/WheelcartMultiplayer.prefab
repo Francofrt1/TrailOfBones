@@ -449,7 +449,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spline: {fileID: 0}
-  speed: 2
+  speed: 2.2
   rb: {fileID: 8265042872293393990}
   splineProgress: 0
 --- !u!114 &4987909278634136392
@@ -494,8 +494,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   duration: 60
   maxHealth: 1000
-  stopWheelcartPercent: 0.99
-  logStorage: 10
+  stopWheelcartPercent: 0.4
+  logStorage: 0
   interactionDistance: 5
   isInEvent: 0
 --- !u!82 &8554795777103640508
