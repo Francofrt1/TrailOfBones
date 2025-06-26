@@ -65,7 +65,7 @@ public class EnemyController : NetworkBehaviour, IDamageable, IAttack, IDeath
         view.SetMaxHealthBar(model.maxHealth);
     }
 
-    void Update()
+    void FixedUpdate()
     {
         HandleMovement();
     }

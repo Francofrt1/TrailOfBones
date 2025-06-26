@@ -385,7 +385,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 24
-  baseDamage: 7
+  baseDamage: 11
   lifeTime: 8
 --- !u!114 &2372821632600382361
 MonoBehaviour:
@@ -399,9 +399,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59ef3dccd961e5d4d81dcf1c190e679a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 0
   _addedNetworkObject: {fileID: 6642456031246821470}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 6642456031246821470}
   enemyLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -439,6 +439,7 @@ MonoBehaviour:
   <PredictedSpawn>k__BackingField: {fileID: 0}
   <PredictedOwner>k__BackingField: {fileID: 0}
   NetworkBehaviours:
+  - {fileID: 2372821632600382361}
   - {fileID: -4514242330362092553}
   InitializedParentNetworkBehaviour: {fileID: 0}
   InitializedNestedNetworkObjects: []
@@ -464,7 +465,7 @@ MonoBehaviour:
   _spectatorInterpolation: 2
   _enableTeleport: 0
   _teleportThreshold: 1
-  <PrefabId>k__BackingField: 0
+  <PrefabId>k__BackingField: 1
   <SpawnableCollectionId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 1073077048727322463
   <SceneId>k__BackingField: 0
@@ -485,7 +486,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a6a39c46bf52104ba8efe3100bce3f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 0
+  _componentIndexCache: 1
   _addedNetworkObject: {fileID: 6642456031246821470}
   _networkObjectCache: {fileID: 6642456031246821470}
 --- !u!1001 &160011112589021431
