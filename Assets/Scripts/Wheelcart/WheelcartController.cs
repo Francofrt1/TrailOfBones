@@ -11,6 +11,8 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
     private WheelcartModel wheelcartModel;
     private WheelcartMovement wheelcartMovement;
 
+    private bool needRepair = false;
+
     public event Action OnDie;
     public static event Action<WheelcartController> OnWheelCartSpawned;
     public event Action<float, float> OnHealthVariation;
@@ -43,18 +45,21 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
     {
         wheelcartModel.SetHealth(wheelcartModel.currentHealth - damageAmout);
 
-        if(NeedRepair())
-        {
-            StopPlayWheelcar(true);
-            OnShowLogStorageUI?.Invoke();
-        }
+        OnHealthVariation?.Invoke(wheelcartModel.currentHealth, wheelcartModel.maxHealth);
 
         if (wheelcartModel.currentHealth <= 0)
         {
             OnDeath(hittedById);
         }
+
+        if (NeedRepair())
+        {
+            if (needRepair) { return; }
+            StopPlayWheelcar(true);
+            OnShowLogStorageUI?.Invoke();
+            needRepair = true;
+        }
         //Debug.Log(wheelcartModel.currentHealth);
-        OnHealthVariation?.Invoke(wheelcartModel.currentHealth, wheelcartModel.maxHealth);
     }
 
     public void OnDeath(string killedById)
@@ -79,6 +84,7 @@ public class WheelcartController : MonoBehaviour, IDamageable, IDeath, IHealthVa
         OnChangedLogStorage?.Invoke(0);
         OnShowLogStorageUI?.Invoke();
         StopPlayWheelcar(false);
+        needRepair = false;
     }
 
     public void StopPlayWheelcar(bool isPaused)
