@@ -449,7 +449,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spline: {fileID: 0}
-  speed: 2
+  speed: 2.2
   rb: {fileID: 8265042872293393990}
   splineProgress: 0
 --- !u!114 &4987909278634136392
@@ -494,7 +494,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   duration: 60
   maxHealth: 1000
-  logStorage: 10
+  stopWheelcartPercent: 0.4
+  logStorage: 0
   interactionDistance: 5
   isInEvent: 0
 --- !u!82 &8554795777103640508
@@ -613,6 +614,7 @@ MonoBehaviour:
   <PredictedOwner>k__BackingField: {fileID: 0}
   NetworkBehaviours:
   - {fileID: -4288148841011680755}
+  - {fileID: 4366697294527864180}
   InitializedParentNetworkBehaviour: {fileID: 0}
   InitializedNestedNetworkObjects: []
   RuntimeParentNetworkBehaviour: {fileID: 0}
@@ -637,7 +639,7 @@ MonoBehaviour:
   _spectatorInterpolation: 2
   _enableTeleport: 0
   _teleportThreshold: 1
-  <PrefabId>k__BackingField: 4
+  <PrefabId>k__BackingField: 7
   <SpawnableCollectionId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 10293773148389875644
   <SceneId>k__BackingField: 0
@@ -673,9 +675,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2836e36774ca1c4bbbee976e17b649c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 1
   _addedNetworkObject: {fileID: 1729983261187838661}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 1729983261187838661}
   _componentConfiguration: 0
   _synchronizeParent: 0
   _packing:

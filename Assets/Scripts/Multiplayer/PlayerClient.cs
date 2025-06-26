@@ -27,21 +27,29 @@ namespace Multiplayer.PlayerSystem
         public static Action<PlayerClient> OnStartClient;
         public static Action<bool> OnIsReady;
         public static Action<PlayerClient> C_OnSetPosition;
-        
-        
+        public static Action<bool> OnPlayerStarted;
+
         public readonly SyncVar<PlayerInfoData> PlayerInfo = new SyncVar<PlayerInfoData>();
         public readonly SyncVar<bool> IsReady = new SyncVar<bool>();
 
         [SerializeField] private GameObject[] gameObjectsToDisable;
         [SerializeField] private Behaviour[] componentsToDisable;
-        [SerializeField] private GameObject inGameContainer;
-        [SerializeField] private GameObject inMenuContainer;
+        [SerializeField] private GameObject inGameWarriorContainer;
+        [SerializeField] private GameObject inMenuWarriorContainer;
+        [SerializeField] private GameObject inGameMageContainer;
+        [SerializeField] private GameObject inMenuMageContainer;
+
+        [SerializeField] private bool isMage = false;
 
         [Header("Party NameTag")] 
         [SerializeField] private TMP_Text _usernameText;
         [SerializeField] private TMP_Text _usernameTextInGame;
         [SerializeField] private TMP_Text _isReadyText;
-        
+
+        [SerializeField] private TMP_Text _usernameMageText;
+        [SerializeField] private TMP_Text _usernameMageTextInGame;
+        [SerializeField] private TMP_Text _isReadyMageText;
+
         protected override void RegisterEvents()
         {
             try
@@ -58,25 +66,50 @@ namespace Multiplayer.PlayerSystem
                 }
 
                 Cmd_UpdatePlayerInfo(SteamClient.SteamId, SteamClient.Name);
+                PartyView.OnClassChanged += HandleClassChanged;
             }
             catch (Exception ex)
             {
                 Debug.LogError(ex);
             }
         }
-        
+
+        private void HandleClassChanged()
+        {
+            isMage = !isMage;
+            if (isMage)
+            {
+                inMenuMageContainer.SetActive(true);
+                inMenuWarriorContainer.SetActive(false);
+            }
+            else
+            {
+                inMenuMageContainer.SetActive(false);
+                inMenuWarriorContainer.SetActive(true);
+            }
+        }
+
         protected override void UnregisterEvents()
         {
             OnStartClient?.Invoke(null);
             PlayerInfo.OnChange -= OnPlayerDataChange;
             IsReady.OnChange -= OnIsReadyChange;
+            PartyView.OnClassChanged -= HandleClassChanged;
         }
 
         [ObserversRpc]
         public void Rpc_ToggleController(bool value)
         {
-            inMenuContainer.SetActive(!value);
-            inGameContainer.SetActive(value);
+            if (isMage)
+            {
+                inMenuMageContainer.SetActive(!value);
+                inGameMageContainer.SetActive(value);
+            }
+            else
+            {
+                inMenuWarriorContainer.SetActive(!value);
+                inGameWarriorContainer.SetActive(value);
+            }
 
             if (!IsOwner)
             {
@@ -116,6 +149,11 @@ namespace Multiplayer.PlayerSystem
             C_OnSetPosition?.Invoke(this);
         }
 
+        public void OnPlayerSpawned()
+        {
+            OnPlayerStarted?.Invoke(isMage);
+        }
+
         #region SyncVar Hooks
 
         private void OnPlayerDataChange(PlayerInfoData prev, PlayerInfoData currentData, bool asserver)
@@ -124,6 +162,8 @@ namespace Multiplayer.PlayerSystem
             {
                 _usernameText.text = currentData.Username;
                 _usernameTextInGame.text = currentData.Username;
+                _usernameMageText.text = currentData.Username;
+                _usernameMageTextInGame.text = currentData.Username;
             }
             catch (Exception ex)
             {
@@ -142,7 +182,8 @@ namespace Multiplayer.PlayerSystem
         private void OnIsReadyChange(bool prev, bool value, bool asserver)
         {
             _isReadyText.text = value ? "Ready" : "Not Ready";
-            
+            _isReadyMageText.text = value ? "Ready" : "Not Ready";
+
             if (IsOwner)
             {
                 OnIsReady?.Invoke(value);

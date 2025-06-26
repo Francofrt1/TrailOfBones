@@ -361,10 +361,10 @@ public abstract class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, 
 
     public void UseItems()
     {
-        IUseInventory[] interactables = FindObjectsOfType<GameObject>().OfType<IUseInventory>().ToArray();
+        GameObject[] interactables = FindObjectsOfType<GameObject>().Where(component => component.GetComponent<IUseInventory>() != null).ToArray();
         foreach (var item in interactables)
         {
-            IUseInventory useInventory = item;
+            IUseInventory useInventory = item.GetComponent<IUseInventory>();
             ItemType itemType = useInventory.ItemTypeNeeded();
             if (useInventory.CanInteract(transform.position))
             {

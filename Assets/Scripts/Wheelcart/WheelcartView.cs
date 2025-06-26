@@ -11,6 +11,7 @@ public class WheelcartView : MonoBehaviour
     private IStopWheelcart stopWheelcartInterface;
     public TextMeshProUGUI logText;
     private string logToRepair;
+
     public GameObject[] wheels;
     private AudioSource audio;
 
@@ -19,12 +20,12 @@ public class WheelcartView : MonoBehaviour
         wheelcart = GetComponent<WheelcartController>();
         stopWheelcartInterface = GetComponent<IStopWheelcart>();
         audio = GetComponent<AudioSource>();
+        wheelcart.OnSetMaxLogStorageUI += SetMaxLogStorageUI;
     }
 
     private void OnEnable()
     {
         wheelcart.OnChangedLogStorage += ChangeLogText;
-        wheelcart.OnSetMaxLogStorageUI += SetMaxLogStorageUI;
         wheelcart.OnShowLogStorageUI += ShowUnshowLogStorage;
         stopWheelcartInterface.OnBlockWheelcartRequested += StopPlayWheelcartAnim;
     }
@@ -40,11 +41,11 @@ public class WheelcartView : MonoBehaviour
     private void SetMaxLogStorageUI(int amount)
     {
         logToRepair = amount.ToString();
+        ChangeLogText(0);
     }
 
     private void Start()
     {
-        ChangeLogText(0);
         ShowUnshowLogStorage();
     }
 

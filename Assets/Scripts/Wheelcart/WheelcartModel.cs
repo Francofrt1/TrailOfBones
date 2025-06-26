@@ -6,8 +6,10 @@ public class WheelcartModel : MonoBehaviour
     public float maxHealth = 1000f;
     public float currentHealth { get; private set; }
 
+    [SerializeField] private float stopWheelcartPercent = 0.8f;
+
     public int logStorage = 0;
-    public const int logToRepair = 5;
+    public const int logToRepair = 4;
     public float interactionDistance = 5.0f;
 
     public bool isInEvent = false;
@@ -23,7 +25,7 @@ public class WheelcartModel : MonoBehaviour
 
     public float StopWheelcartPercent()
     {
-        return maxHealth * 0.3f;
+        return maxHealth * stopWheelcartPercent;
     }
 
     public void AddLog(int amount)

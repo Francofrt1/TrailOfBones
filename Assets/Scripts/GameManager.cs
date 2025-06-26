@@ -252,10 +252,10 @@ public class GameManager : NetworkBehaviour
     {
         hudView = GameObject.FindObjectOfType<HUDView>(true);
         _subscribeToPlayerPresenter(player.gameObject.GetComponent<IHealthVariation>());
+        player.gameObject.GetComponentInParent<PlayerClient>().OnPlayerSpawned();
         _subscribeToWheelcart();
     }
 
-    [ServerRpc(RequireOwnership = false)]
     public void Cmd_WinMatch()
     {
         MatchWin.Value = !MatchWin.Value;
