@@ -1,54 +1,76 @@
-using System.Collections;
+using FishNet.Object;
 using System.Collections.Generic;
-using UnityEngine;
-using TMPro;
-using UnityEngine.UI;
 using System.Linq;
-using System;
+using UnityEngine;
+using UnityEngine.UI;
 
-public class InventoryView : MonoBehaviour
+public class InventoryView : NetworkBehaviour
 {
     private List<GameObject> slots = new List<GameObject>();
-    // Start is called before the first frame update
-    void Start()
+    private GameObject container;
+    void Awake()
     {
-        GameObject menu = transform.GetChild(0).gameObject;
+        PlayerPresenter.OnPlayerSpawned += HandlePlayerSpawned;
+    }
 
-        for (int i = 0; i < menu.transform.childCount; i++)
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        if (!IsOwner)
         {
-            slots.Add(menu.transform.GetChild(i).gameObject);
+            this.enabled = false;
+            return;
         }
-        
     }
 
-
-    public void UpdateSlot(int quantity, Sprite sprite)
+    private void HandlePlayerSpawned(PlayerPresenter playerPresenter = null)
     {
-        //find a space that has the same sprite
-        GameObject slot = slots.FirstOrDefault(obj => obj.GetComponentInChildren<Image>().sprite == sprite);
-        if (slot == null) {
-            //If it doesn't find a space containing the sprite, it looks for an empty one. If there aren't any empty spaces, it exits the method without doing anything.
-            if (slots.Any(slot => slot.GetComponentInChildren<Image>().sprite == null)){
-                slot = slots.FirstOrDefault(obj => obj.GetComponentInChildren<Image>().sprite == null);
-            }
-            else
+        var hudView = GameObject.FindObjectOfType<HUDView>(true);
+        if (hudView == null)
+        {
+            Debug.LogError("HUDView not found!");
+            return;
+        }
+
+        container = hudView.GetInvetoryMenu();
+        if (container != null)
+        {
+            slots.Clear();
+            for (int i = 0; i < container.transform.childCount; i++)
             {
-                return;
-            } 
+                slots.Add(container.transform.GetChild(i).gameObject);
+            }
         }
-
-        //finds the children that have the text and image components and gives them the new values.
-        slot.GetComponentInChildren<Text>().text = quantity.ToString();
-        slot.GetComponentInChildren<Image>().sprite = sprite;
+        else
+        {
+            Debug.LogError("Inventory container not found!");
+        }
     }
 
-    public void FreeUpSlot(Sprite sprite)
+    public void UpdateSlot(Dictionary<ItemType, (int Quantity, Sprite Sprite)> inventory)
     {
-        if(slots.Any(slot => slot.GetComponentInChildren<Image>().sprite == sprite)){
-            GameObject slot = slots.FirstOrDefault(obj => obj.GetComponentInChildren<Image>().sprite == sprite);
-            //finds the children that have the text and image components and gives them the new values.
-            slot.GetComponentInChildren<Text>().text = "0";
-            slot.GetComponentInChildren<Image>().sprite = null;
+        slots.ForEach( slot => 
+        {
+            Image img = slot.GetComponentInChildren<Image>();
+            Text amountText = slot.GetComponentInChildren<Text>();
+
+            img.sprite = null;
+            amountText.text = "";
+        });
+
+        foreach (var item in inventory)
+        {
+            int itemAmount = item.Value.Quantity;
+            Sprite itemSprite = item.Value.Sprite;
+            GameObject slot = slots.FirstOrDefault(obj => obj.GetComponentInChildren<Image>().sprite == null);
+
+            if(slot != null)
+            {
+                Image slotImage = slot.GetComponentInChildren<Image>();
+                Text slotAmount = slot.GetComponentInChildren<Text>();
+                slotImage.sprite = itemSprite;
+                slotAmount.text = itemAmount.ToString();
+            }
         }
     }
 }

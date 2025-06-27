@@ -1,10 +1,6 @@
 using FishNet.CodeGenerating;
-using FishNet.Component.Spawning;
-using FishNet.Demo.AdditiveScenes;
-using FishNet.Example.Scened;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
-using Multiplayer;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -14,15 +10,16 @@ public class EnemyManager : NetworkBehaviour
     [AllowMutableSyncType]
     private SyncList<EnemyController> enemies = new SyncList<EnemyController>();
     [AllowMutableSyncType]
-    private SyncList<PlayerController> playerControllers = new SyncList<PlayerController>();
+    private SyncList<PlayerPresenter> playerControllers = new SyncList<PlayerPresenter>();
     [AllowMutableSyncType]
     private SyncDictionary<string, int> playerEnemies = new SyncDictionary<string, int>();
     private GameObject wheelcart;
-    [SerializeField]
-    private int maxEnemiesToPlayer = 4;
+    [SerializeField] private int maxEnemiesToPlayer = 4;
+    [SerializeField] private int maxTotalEnemies = 10;
+    private bool spawnersStopped = false;
     private void Awake()
     {
-        PlayerController.OnPlayerSpawned += SetPlayerSpawned;
+        PlayerPresenter.OnPlayerSpawned += SetPlayerSpawned;
     }
 
     void Start()
@@ -32,7 +29,7 @@ public class EnemyManager : NetworkBehaviour
         spawners.ForEach(spawner => spawner.OnEnemiesSpawned += HandleEnemySpawned);
     }
 
-    public void SetPlayerSpawned(PlayerController newPlayer)
+    public void SetPlayerSpawned(PlayerPresenter newPlayer)
     {
         playerControllers.Add(newPlayer);
         playerEnemies.Add(newPlayer.GetID(), 0);
@@ -46,6 +43,11 @@ public class EnemyManager : NetworkBehaviour
             enemy.OnEnemyKilled += HandleEnemyKilled;
         }
         AssignEnemies(spawnedEnemies);
+        if (maxTotalEnemies <= enemies.Count)
+        {
+            StopSpawners();
+            spawnersStopped = true;
+        } 
     }
 
     public void HandleEnemyKilled(EnemyController enemyKilled, bool inPlayer, string playerId)
@@ -55,6 +57,12 @@ public class EnemyManager : NetworkBehaviour
         {
             playerEnemies[playerId] -= 1;
             ReassignEnemiesToPlayer(playerId);
+        }
+
+        if (maxTotalEnemies > enemies.Count && spawnersStopped)
+        {
+            StartSpawners();
+            spawnersStopped = false;
         }
     }
 
@@ -88,7 +96,7 @@ public class EnemyManager : NetworkBehaviour
 
     public void ReassignEnemiesToPlayer(string playerId)
     {
-        PlayerController player = playerControllers.FirstOrDefault(p => p.GetID() == playerId);
+        PlayerPresenter player = playerControllers.FirstOrDefault(p => p.GetID() == playerId);
         int currentEnemies = playerEnemies[playerId];
         if (player == null) return;
 
@@ -101,6 +109,24 @@ public class EnemyManager : NetworkBehaviour
                 enemy.SetIsEnemyOnPlayer(true);
                 playerEnemies[playerId] += 1;
             }
+        }
+    }
+
+    private void StopSpawners()
+    {
+        var spawners = FindObjectsOfType<EnemySpawner>();
+        foreach (var spawner in spawners)
+        {
+            spawner.SetCanSpawn(false);
+        }
+    }
+
+    private void StartSpawners()
+    {
+        var spawners = FindObjectsOfType<EnemySpawner>();
+        foreach (var spawner in spawners)
+        {
+            spawner.SetCanSpawn(true);
         }
     }
 }

@@ -1,3 +1,4 @@
+using Assets.Scripts.Interfaces;
 using System;
 using UnityEngine;
 using UnityEngine.Splines;
@@ -8,21 +9,30 @@ public class WheelcartMovement : MonoBehaviour
     [SerializeField] private float speed = 5f;
     [SerializeField] private Rigidbody rb;
 
-    private float splineProgress;
+    [SerializeField, Range(0f, 1f)] private float splineProgress;
 
     private bool isBlocked = false;
 
     public event Action<float> OnWheelcartprogress;
     public event Action Completed;
+    private WheelcartController wheelcartController;
+    private IStopWheelcart stopWheelcart;
+
+    private void Awake()
+    {
+        wheelcartController = GetComponent<WheelcartController>();
+        stopWheelcart = GetComponent<IStopWheelcart>();
+
+    }
 
     private void OnEnable()
     {
-        //[Sistema de eventos del wheelcart].OnBlockWheelcartRequested += BlockMovement;
+        stopWheelcart.OnBlockWheelcartRequested += BlockMovement;
     }
 
     private void OnDisable()
     {
-        //[Sistema de eventos del wheelcart].OnBlockWheelcartRequested -= BlockMovement;
+        stopWheelcart.OnBlockWheelcartRequested -= BlockMovement;
     }
 
     void FixedUpdate()
@@ -32,7 +42,7 @@ public class WheelcartMovement : MonoBehaviour
 
     private void PerformMovement()
     {
-        if (isBlocked) return;
+        if (isBlocked || spline == null) return;
 
         splineProgress += (speed / spline.CalculateLength()) * Time.fixedDeltaTime;
         splineProgress = Mathf.Min(splineProgress, 1f);
@@ -61,7 +71,12 @@ public class WheelcartMovement : MonoBehaviour
 
     public float GetDuration()
     {
-        float length = spline.CalculateLength();
+        float length = spline != null ? spline.CalculateLength() : 0;
         return length / speed;
+    }
+
+    public void SetSpline(SplineContainer splineContainer)
+    {
+        spline = splineContainer;
     }
 }

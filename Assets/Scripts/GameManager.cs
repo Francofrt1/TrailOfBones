@@ -1,17 +1,18 @@
 using Assets.Scripts.Interfaces;
 using FishNet;
-using FishNet.Component.Spawning;
-using FishNet.Managing;
 using FishNet.Managing.Scened;
 using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using Multiplayer;
+using Multiplayer.PlayerSystem;
+using Multiplayer.Steam;
 using Multiplayer.Utils;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Splines;
 
-public class GameManager : BaseNetworkBehaviour
+public class GameManager : NetworkBehaviour
 {
     public enum GameState
     {
@@ -19,27 +20,22 @@ public class GameManager : BaseNetworkBehaviour
         InMenu,
         InLobby,
         Loading,
-        Pause,
+        StartMatch,
         Playing,
         End
     }
     public static GameManager Instance { get; private set; }
-    public bool gameOver = false;
-    public bool gamePaused = false;
-    public bool winConditionReached = false;
 
-    public event Action<bool> OnGamePaused;
-    public event Action OnWinScreen;
-    public event Action OnLoseScreen;
-
-    private HUD HUD;
+    private HUDView hudView;
     private WheelcartMovement wheelcartMovement;
-    private InputHandler playerInputHandler;
-    public List<GameObject> treePrefab;
-    
+    private int deadPlayers = 0;
+    public readonly SyncVar<bool> MatchWin = new SyncVar<bool>();
+    public readonly SyncVar<bool> GameOver = new SyncVar<bool>();
 
-    [SerializeField]
-    private GameState currentGameState = GameState.None;
+    [SerializeField] private GameObject wheelCartPrefab;    
+
+    [field: SerializeField]
+    public GameState CurrentGameState { get; private set; } = GameState.None;
 
     private void Awake()
     {
@@ -51,143 +47,62 @@ public class GameManager : BaseNetworkBehaviour
         {
             Instance = this;
         }
-
         SetCurrentGameState(GameState.InMenu);
     }
 
-    //TODO fix trees not spawning
-    public void GenerateForest()
+    public override void OnStartNetwork()
+    {
+        base.OnStartNetwork();
+        MatchWin.OnChange += WinScreen;
+        GameOver.OnChange += GameOverScreen;
+    }
+
+    public override void OnStopClient()
+    {
+        base.OnStopClient();
+    }
+
+    private void UnregisterEvents()
+    {
+        MatchWin.OnChange -= WinScreen;
+        GameOver.OnChange -= GameOverScreen;
+        PlayerPresenter.OnPlayerSpawned -= HandlePlayerSpawned;
+        PlayerPresenter.OnPlayerSpawned -= _subscribeToPlayerPresenter;
+        wheelcartMovement.Completed -= () => Cmd_WinMatch();
+    }
+
+    private void _subscribeToPlayerPresenter(IHealthVariation playerHealthEvents)
     {
         try
         {
-            int i = 0;
-            Terrain terrain = Terrain.activeTerrain;
-            int grassIndex = 0;
-            float minDistanceTrees = 3f;
-            GameObject treeContainer = GameObject.Find("TreeContainer");
-            while (i < 3800)
-            {
-                Vector3 randomPos = GetRandomPositionOnTerrain(terrain);
-                bool isOnGrass = IsOnGrass(randomPos, terrain, grassIndex);
-                bool isFarEnough = IsPositionFarEnough(randomPos, minDistanceTrees);
-                if (isOnGrass && isFarEnough)
-                {
-                    int treeCount = treePrefab.Count - 1;
-                    int randomTreeIndex = UnityEngine.Random.Range(0, treeCount);
-                    SpawnTree(randomTreeIndex, randomPos, terrain.transform);
-                    i++;
-                }
-            }
+            if (playerHealthEvents == null) return;
+            hudView.SetPlayerHealthEvent(playerHealthEvents);
+            playerHealthEvents.OnDie += HandlePlayerDeath;
         }
         catch (Exception ex)
         {
-            Debug.Log($"GenerateForest error {ex.Message}");
+            Debug.LogError(ex.Message);
         }
-    }
-
-    public void SpawnTree(int randomTreeIndex, Vector3 randomPos, Transform transform)
-    {
-        var tree = Instantiate(treePrefab[randomTreeIndex], randomPos, Quaternion.identity, transform);
-        ServerManager.Spawn(tree);
-    }
-
-    Vector3 GetRandomPositionOnTerrain(Terrain terrain)
-    {
-        // Obtiene las dimensiones del terreno
-        Vector3 terrainSize = terrain.terrainData.size;
-
-        // Genera coordenadas X y Z aleatorias dentro del terreno
-        float randomX = UnityEngine.Random.Range(0, terrainSize.x);
-        float randomZ = UnityEngine.Random.Range(0, terrainSize.z);
-
-        // Calcula la altura (Y) en ese punto del terreno
-        float height = terrain.SampleHeight(new Vector3(randomX, 0, randomZ));
-
-        // Retorna la posición en coordenadas mundiales (ajustando al centro del terreno)
-        return new Vector3(randomX, height, randomZ) + terrain.transform.position;
-    }
-
-    bool IsOnGrass(Vector3 worldPosition, Terrain terrain, int grassTextureIndex)
-    {
-        // Convierte la posición mundial a coordenadas locales del terreno
-        Vector3 terrainLocalPos = worldPosition - terrain.transform.position;
-
-        // Normaliza las coordenadas (0-1)
-        Vector2 normalizedPos = new Vector2(
-            terrainLocalPos.x / terrain.terrainData.size.x,
-            terrainLocalPos.z / terrain.terrainData.size.z
-        );
-
-        // Obtén el alphamap en esa posición
-        int alphaX = (int)(normalizedPos.x * terrain.terrainData.alphamapWidth);
-        int alphaY = (int)(normalizedPos.y * terrain.terrainData.alphamapHeight);
-
-        float[,,] alphaMap = terrain.terrainData.GetAlphamaps(alphaX, alphaY, 1, 1);
-
-        // Si el valor de la textura de pasto es mayor a un umbral (ej. 0.5), está en pasto
-        return alphaMap[0, 0, grassTextureIndex] > 0.5f;
-    }
-
-    bool IsPositionFarEnough(Vector3 position, float minDistance)
-    {
-        Vector3 halfExtents = new Vector3(minDistance / 2f, minDistance / 2f, minDistance / 2f);
-
-        // Usa OverlapBox para detectar colliders en un área cúbica
-        Collider[] nearbyColliders = Physics.OverlapBox(
-            position,          // Centro del Box
-            halfExtents,       // Mitad del tamaño del Box
-            Quaternion.identity, // Rotación (ninguna en este caso)
-            LayerMask.GetMask("TerrainElements") // Layer a filtrar
-        );
-
-        return nearbyColliders.Length == 0;
-    }
-
-    private void _subscribeToPlayerController(IHealthVariation playerHealthEvents)
-    {
-        if (playerHealthEvents == null) return;
-        HUD.SetPlayerHealthEvent(playerHealthEvents);
-        playerHealthEvents.OnDie += GameOverScreen;
-    }
-
-    private void _subscribeToPlayerInputHandler(InputHandler playerInputHandler)
-    {
-        if (playerInputHandler == null) return;
-        playerInputHandler.OnPauseTogglePerformed += TogglePause;
     }
 
     private void _subscribeToWheelcart()
     {
         try
         {
-            wheelcartMovement = GameObject.Find("Wheelcart").GetComponent<WheelcartMovement>();
-            var wheelcartDurationEvent = GameObject.Find("Wheelcart").GetComponent<IWheelcartDuration>();
-            var wheelcartEvents = GameObject.Find("Wheelcart").GetComponent<IHealthVariation>();
-            wheelcartEvents.OnDie += GameOverScreen;
-            wheelcartMovement.Completed += WinScreen;
-            HUD.SetWheelcartHealthEvent(wheelcartEvents);
-            HUD.SetWheelcartDuration(wheelcartDurationEvent);
+            var wheelCart = GameObject.FindObjectOfType<WheelcartController>();
+            var wheelcartDurationEvent = wheelCart.GetComponent<IWheelcartDuration>();
+            var wheelcartEvents = wheelCart.GetComponent<IHealthVariation>();
+            var wheelcartStopEvent = wheelCart.GetComponent<IStopWheelcart>();
+            wheelcartEvents.OnDie += () => Cmd_GameOver();
+            wheelcartMovement.Completed += () => Cmd_WinMatch();
+            hudView.SetWheelcartHealthEvent(wheelcartEvents);
+            hudView.SetWheelcartDuration(wheelcartDurationEvent);
+            hudView.SetWheelcartBlockedEvent(wheelcartStopEvent);
+            wheelCart.GetComponent<WheelcartController>().OnWheelcartSpawned();
         }
         catch (Exception ex)
         {
             Debug.Log($"_subscribeToWheelcart error {ex.Message}");
-        }
-    }
-
-    private void OnEnable()
-    {
-        
-    }
-
-    void OnDisable()
-    {
-        if (playerInputHandler != null)
-        {
-            playerInputHandler.OnPauseTogglePerformed -= TogglePause;
-        }
-        if (wheelcartMovement != null)
-        {
-            wheelcartMovement.Completed -= WinScreen;
         }
     }
 
@@ -196,39 +111,19 @@ public class GameManager : BaseNetworkBehaviour
         Debug.Log("Game Started");
     }
 
-    public void WinScreen()
+    private void WinScreen(bool prev, bool value, bool asserver)
     {
-        winConditionReached = true;
-        SetPausedState(true);
-        OnWinScreen?.Invoke();
+        Time.timeScale = 0f;
+        SetCursorState(true);
+        ViewManager.Instance.Show<WinView>();
         Debug.Log("Game Over, you win.");
     }
 
-    public void GameOverScreen()
+    public void GameOverScreen(bool prev, bool value, bool asserver)
     {
-        gameOver = true;
-        SetPausedState(true);
-        OnLoseScreen?.Invoke();
-        Debug.Log("Game Over, you lose.");
-    }
-
-    private void TogglePause()
-    {
-        gamePaused = !gamePaused;
-        SetPausedState(gamePaused);
-        OnGamePaused?.Invoke(gamePaused);
-        Debug.Log(gamePaused ? "Game paused" : "Game resumed");
-    }
-
-    private void SetPausedState(bool paused)
-    {
-        //Time.timeScale = paused ? 0f : 1f;
-        SetCursorState(paused);
-    }
-
-    public void SetPauseGame(bool value)
-    {
-        if (gamePaused != value) { TogglePause(); }
+        Time.timeScale = 0f;
+        SetCursorState(true);
+        ViewManager.Instance.Show<LoseView>();
     }
 
     private void SetCursorState(bool value)
@@ -237,37 +132,27 @@ public class GameManager : BaseNetworkBehaviour
         Cursor.lockState = value ? CursorLockMode.None : CursorLockMode.Locked;
     }
 
-    protected override void RegisterEvents()
-    {
-    }
-
-    protected override void UnregisterEvents()
-    {
-    }
-
     public void SetCurrentGameState(GameState newState)
     {
-        currentGameState = newState;
+        CurrentGameState = newState;
 
-        switch (currentGameState)
+        switch (CurrentGameState)
         {
             case GameState.InMenu:
-                // Handle menu state
+                InMenu();
                 break;
             case GameState.InLobby:
                 // Handle lobby state
                 break;
             case GameState.Loading:
-                // Handle loading state
                 break;
-            case GameState.Pause:
-                SetPausedState(true);
-                break;
-            case GameState.Playing:
+            case GameState.StartMatch:
                 StartMatch();
                 break;
+            case GameState.Playing:
+                break;
             case GameState.End:
-                // Handle end state
+                EndMatch();
                 break;
             default:
                 break;
@@ -280,7 +165,6 @@ public class GameManager : BaseNetworkBehaviour
         {
             InstanceFinder.SceneManager.OnLoadEnd += InitializeMatch;
             ScenesManager.ChangeScene("MainLevelMultiplayer", true);
-            // Additional logic to start the match, like spawning players, etc.
             Debug.Log("Match started.");
         }
         catch (Exception ex)
@@ -294,17 +178,9 @@ public class GameManager : BaseNetworkBehaviour
         {
             if (obj.LoadedScenes[0].name != "MainLevelMultiplayer") return;
             InstanceFinder.SceneManager.OnLoadEnd -= InitializeMatch;
-            GenerateForest();
-
-            PlayerController.OnPlayerSpawned += (PlayerController) =>
-            {
-                _subscribeToPlayerController(PlayerController.gameObject.GetComponent<IHealthVariation>());
-                _subscribeToPlayerInputHandler(PlayerController.gameObject.GetComponent<InputHandler>());
-            };
-
-            var hudObj = GameObject.Find("HUD");
-            HUD = hudObj.GetComponent<HUD>();
-            _subscribeToWheelcart();
+            SetCurrentGameState(GameState.Playing);
+            SpawnWheelCart();
+            PlayerPresenter.OnPlayerSpawned += HandlePlayerSpawned;
             var audios = GetComponents<AudioSource>();
             
             foreach (var audio in audios)
@@ -314,7 +190,86 @@ public class GameManager : BaseNetworkBehaviour
         }
         catch (Exception ex)
         {
-            Debug.Log($"InitializeMatch failed: {ex.Message}");
+            Debug.LogError($"InitializeMatch failed: {ex.Message}");
         }
+    }
+
+    private void SpawnWheelCart()
+    {
+        try
+        {
+            var wheelCartSpawnPosition = GameObject.Find("WheelcartSpawnPosition");
+            var wheelcart = Instantiate(wheelCartPrefab, wheelCartSpawnPosition.transform.position, Quaternion.identity);
+            ServerManager.Spawn(wheelcart);
+            var spline = GameObject.Find("Spline");
+            var splineContainer = spline.GetComponent<SplineContainer>();
+            wheelcartMovement = wheelcart.GetComponent<WheelcartMovement>();
+            wheelcartMovement.SetSpline(splineContainer);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"SpawnWheelCart failed: {ex.Message}");
+        }
+    }
+
+    private void HandlePlayerDeath()
+    {
+        deadPlayers++;
+        int totalClients = GameObject.FindObjectsByType<PlayerClient>(FindObjectsInactive.Include, FindObjectsSortMode.None).Length;
+        if (deadPlayers >= totalClients)
+        {
+            Cmd_GameOver();
+        }
+    }
+
+    private void EndMatch()
+    {
+        var clients = GameObject.FindObjectsByType<PlayerClient>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        UnregisterEvents();
+        foreach (var client in clients)
+        {
+            Destroy(client.gameObject);
+        }
+        PlayerConnectionManager.Instance.Unsubscribe();
+        PlayerSpawnManager.Instance.Unsubscribe();
+        SteamLobby.LeaveLobby();
+        Debug.Log("Game Over, you lose.");
+    }
+
+    private void InMenu()
+    {
+        deadPlayers = 0;
+
+        var audios = GetComponents<AudioSource>();
+
+        foreach (var audio in audios)
+        {
+            audio.Stop();
+        }
+    }
+
+    private void HandlePlayerSpawned(PlayerPresenter player)
+    {
+        hudView = GameObject.FindObjectOfType<HUDView>(true);
+        _subscribeToPlayerPresenter(player.gameObject.GetComponent<IHealthVariation>());
+        player.gameObject.GetComponentInParent<PlayerClient>().OnPlayerSpawned();
+        _subscribeToWheelcart();
+    }
+
+    public void Cmd_WinMatch()
+    {
+        MatchWin.Value = !MatchWin.Value;
+    }
+
+    [ObserversRpc(BufferLast = false)]
+    private void Rpc_ShowGameOverScreen()
+    {
+        GameOverScreen(false, true, false);
+    }
+
+    public void Cmd_GameOver()
+    {
+        GameOver.Value = !GameOver.Value;
+        Rpc_ShowGameOverScreen();
     }
 }
