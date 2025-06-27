@@ -1,12 +1,17 @@
-using Multiplayer;
+using Multiplayer; 
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro; 
 
 public class PauseView : View
 {
     [SerializeField] private Button mainMenuButton;
     [SerializeField] private Button continueButton;
+    [SerializeField] private Button controlsButton; 
+
+    
+    [SerializeField] private Button backFromControlsButton;
 
     public static event Action OnPauseMenuHide;
 
@@ -14,8 +19,22 @@ public class PauseView : View
     {
         mainMenuButton.onClick.AddListener(OnMainMenuButtonClicked);
         continueButton.onClick.AddListener(OnContinueButtonClicked);
+        controlsButton.onClick.AddListener(OnControlsButtonClicked);
+        backFromControlsButton.onClick.AddListener(OnBackFromControlsPauseClicked);
 
-        base.Initialize();
+        base.Initialize(); 
+    }
+
+    
+   
+
+    
+    public override void Hide()
+    {
+        base.Hide(); 
+       
+        
+        Debug.Log("PauseView: Ocultada.");
     }
 
     private void OnMainMenuButtonClicked()
@@ -23,10 +42,29 @@ public class PauseView : View
         GameManager.Instance.SetCurrentGameState(GameManager.GameState.End);
         ScenesManager.ChangeScene("MainMenu");
         GameManager.Instance.SetCurrentGameState(GameManager.GameState.InMenu);
+        
+       
     }
 
     private void OnContinueButtonClicked()
     {
         OnPauseMenuHide?.Invoke();
+        
+      
+    }
+
+    public void OnControlsButtonClicked()
+    {
+        ViewManager.Instance.Show<ControlsView>(); 
+        
+
+        
+    }
+
+    public void OnBackFromControlsPauseClicked()
+    {
+        ViewManager.Instance.Show<PauseView>(); 
+      
+       
     }
 }

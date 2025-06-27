@@ -1,7 +1,8 @@
-using Multiplayer;
+using Multiplayer; 
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro; 
 
 public sealed class MainMenuView : View
 {
@@ -9,6 +10,10 @@ public sealed class MainMenuView : View
     [SerializeField] private Button optionsButton;
     [SerializeField] private Button creditsButton;
     [SerializeField] private Button quitButton;
+    [SerializeField] private Button controlsButton; 
+
+    
+    [SerializeField] private Button backFromControlsButton;
 
     public override void Initialize()
     {
@@ -16,8 +21,12 @@ public sealed class MainMenuView : View
         optionsButton?.onClick.AddListener(OnOptionsButtonClicked);
         creditsButton.onClick.AddListener(OnCreditsButtonClicked);
         quitButton.onClick.AddListener(OnQuitButtonClicked);
+        controlsButton.onClick.AddListener(OnControlsButtonClicked); 
 
-        base.Initialize();
+       
+        backFromControlsButton.onClick.AddListener(OnBackFromControlsMainMenuClicked);
+
+        base.Initialize(); 
     }
 
     private void OnPlayButtonClicked()
@@ -27,12 +36,25 @@ public sealed class MainMenuView : View
 
     private void OnOptionsButtonClicked()
     {
-        throw new NotImplementedException();
+        
     }
 
     private void OnCreditsButtonClicked()
     {
         ViewManager.Instance.Show<CreditsView>();
+    }
+
+   
+    public void OnControlsButtonClicked()
+    {
+        ViewManager.Instance.Show<ControlsView>(); 
+    }
+
+    
+    public void OnBackFromControlsMainMenuClicked() 
+    {
+        
+        ViewManager.Instance.Show<MainMenuView>();
     }
 
     private void OnQuitButtonClicked()
