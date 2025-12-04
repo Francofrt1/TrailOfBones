@@ -125,7 +125,7 @@ public abstract class PlayerPresenter : NetworkBehaviour, IDamageable, IAttack, 
         Vector3 localVelocity = playerModel.CalculateLocalVelocity(movementInput);
 
         Vector3 horizontalVelocity = new Vector3(localVelocity.x, 0f, localVelocity.z);
-        float verticalVelocity = rigidBody.velocity.y;
+        float verticalVelocity = rigidBody.linearVelocity.y;
 
         horizontalVelocity = ApplyPushbackPlaneIfNeeded(horizontalVelocity);
 
